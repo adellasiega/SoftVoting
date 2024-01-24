@@ -1,0 +1,72 @@
+
+---
+title: "Exploratory Data Analysis"
+output: html_notebook
+---
+
+Load the data set.
+```{r}
+df <- read.csv("data/caravan-insurance-challenge.csv")
+```
+
+Dimensions of the data set.
+```{r}
+dim(df)
+```
+
+Check for missing values.
+```{r}
+sapply(df, function(x) sum(is.na(x)))
+```
+No missing values.
+
+Check the data types.
+```{r}
+sapply(df, class)
+```
+
+Split the data into training and test sets.
+```{r}
+df_train <- df[df["ORIGIN"] == "train",]
+df_test <- df[df["ORIGIN"] == "test",]
+```
+
+Drop the `ORIGIN` column from both.
+```{r}
+df_train <- df_train[,-which(names(df_test) == "ORIGIN")]
+df_test <- df_test[, -which(names(df_test) == "ORIGIN")]
+```
+
+Save the training and test sets.
+```{r}
+write.csv(df_train, "data/caravan-insurance-challenge-df_train.csv", row.names = FALSE)
+write.csv(df_test, "data/caravan-insurance-challenge-df_test.csv", row.names = FALSE)
+```
+
+Check the distribution of the target variable.
+```{r}
+table(df_train$CARAVAN)
+```
+
+Rate of positive responses.
+```{r}
+sum(df_train$CARAVAN == 1)/nrow(df_train)
+```
+The response variable is higly unbalanced.
+
+Set the categorical variables to factors.
+The only non-categorical variable are "MAANTHUI" and "MGEMOMV".
+```{r}
+categorical_variables <- names(df_train)[!(names(df_train) %in% c("MAANTHUI", "MGEMOMV"))]
+df_train[,categorical_variables] <- lapply(df_train[,categorical_variables], factor)
+```
+
+Visualize the distribution of the variables using a barplot.
+```{r}
+par(mfrow = c(4, 4))
+for (i in 1:length(categorical_variables)) {
+  barplot(table(df_train[,categorical_variables[i]]), main = categorical_variables[i])
+}
+```
+
+
