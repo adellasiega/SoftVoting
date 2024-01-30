@@ -9,9 +9,11 @@ Tuttavia risulta evidente dai dati empirici che la censura "rallenta" lo stimato
 
 Sia $\underline{x} = (x_1, \dots, x_n)$ un campione estratto da $X \sim \exp(\lambda)$, con $\lambda > 0$ ignoto.
 La funzione di verosimiglianza è data da
+
 $$
 L(\lambda) = \prod_{i=1}^n \lambda e^{-\lambda x_i} = \lambda^n e^{-\lambda \sum_{i=1}^n x_i} = \lambda^n e^{-\lambda n \bar{x}},
 $$
+
 e il logaritmo della funzione di verosimiglianza è
 $$
 \ell(\lambda) = n \log \lambda - \lambda \sum_{i=1}^n x_i = n \log \lambda - \lambda n \bar{x}.
