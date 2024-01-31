@@ -11,7 +11,7 @@
 
 
 
-<title>Exploratory Data Analysis</title>
+<title>Train-Test Split</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,358 +1746,253 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Exploratory Data Analysis</h1>
+<h1 class="title toc-ignore">Train-Test Split</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>Load the data set.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGYgPC0gcmVhZC5jc3YoXCJkYXRhL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZS5jc3ZcIikifQ== -->
-<pre class="r"><code>df &lt;- read.csv(&quot;data/caravan-insurance-challenge.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZGF0YSA8LSByZWFkLmNzdihcImRhdGEvY2FyYXZhbi1pbnN1cmFuY2UtY2hhbGxlbmdlLmNzdlwiKSJ9 -->
+<pre class="r"><code>data &lt;- read.csv(&quot;data/caravan-insurance-challenge.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Dimensions of the data set.</p>
+<p>Load the data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGltKGRmKSJ9 -->
-<pre class="r"><code>dim(df)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZGltKGRhdGEpIn0= -->
+<pre class="r"><code>dim(data)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDk4MjIgICA4N1xuIn0= -->
 <pre><code>[1] 9822   87</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Check for missing values.</p>
+<p>Number of rows and columns.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic2FwcGx5KGRmLCBmdW5jdGlvbih4KSBzdW0oaXMubmEoeCkpKSJ9 -->
-<pre class="r"><code>sapply(df, function(x) sum(is.na(x)))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoic3VtKGlzLm5hKGRhdGEpKSJ9 -->
+<pre class="r"><code>sum(is.na(data))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICBPUklHSU4gIE1PU1RZUEUgTUFBTlRIVUkgIE1HRU1PTVYgTUdFTUxFRUYgTU9TSE9PRkQgICBNR09EUksgICBNR09EUFIgXG4gICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCBcbiAgTUdPRE9WICAgTUdPREdFICAgTVJFTEdFICAgTVJFTFNBICAgTVJFTE9WIE1GQUxMRUVOIE1GR0VLSU5EIE1GV0VLSU5EIFxuICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgXG5NT1BMSE9PRyBNT1BMTUlERCBNT1BMTEFBRyBNQkVSSE9PRyBNQkVSWkVMRiBNQkVSQk9FUiBNQkVSTUlERCBNQkVSQVJCRyBcbiAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwIFxuTUJFUkFSQk8gICAgIE1TS0EgICAgTVNLQjEgICAgTVNLQjIgICAgIE1TS0MgICAgIE1TS0QgICBNSEhVVVIgICBNSEtPT1AgXG4gICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCBcbiAgIE1BVVQxICAgIE1BVVQyICAgIE1BVVQwICBNWkZPTkRTICAgTVpQQVJUICBNSU5LTTMwIE1JTkszMDQ1IE1JTks0NTc1IFxuICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgXG5NSU5LNzUxMiBNSU5LMTIzTSAgTUlOS0dFTSBNS09PUEtMQSAgUFdBUEFSVCAgUFdBQkVEUiAgUFdBTEFORCBQUEVSU0FVVCBcbiAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwIFxuIFBCRVNBVVQgIFBNT1RTQ08gIFBWUkFBVVQgUEFBTkhBTkcgUFRSQUNUT1IgICBQV0VSS1QgICAgUEJST00gICBQTEVWRU4gXG4gICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCBcblBQRVJTT05HICBQR0VaT05HICBQV0FPUkVHICAgUEJSQU5EICBQWkVJTFBMIFBQTEVaSUVSICAgUEZJRVRTICBQSU5CT0VEIFxuICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgXG5QQllTVEFORCAgQVdBUEFSVCAgQVdBQkVEUiAgQVdBTEFORCBBUEVSU0FVVCAgQUJFU0FVVCAgQU1PVFNDTyAgQVZSQUFVVCBcbiAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwICAgICAgICAwIFxuQUFBTkhBTkcgQVRSQUNUT1IgICBBV0VSS1QgICAgQUJST00gICBBTEVWRU4gQVBFUlNPTkcgIEFHRVpPTkcgIEFXQU9SRUcgXG4gICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCAgICAgICAgMCBcbiAgQUJSQU5EICBBWkVJTFBMIEFQTEVaSUVSICAgQUZJRVRTICBBSU5CT0VEIEFCWVNUQU5EICBDQVJBVkFOIFxuICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgICAgICAgIDAgXG4ifQ== -->
-<pre><code>  ORIGIN  MOSTYPE MAANTHUI  MGEMOMV MGEMLEEF MOSHOOFD   MGODRK   MGODPR 
-       0        0        0        0        0        0        0        0 
-  MGODOV   MGODGE   MRELGE   MRELSA   MRELOV MFALLEEN MFGEKIND MFWEKIND 
-       0        0        0        0        0        0        0        0 
-MOPLHOOG MOPLMIDD MOPLLAAG MBERHOOG MBERZELF MBERBOER MBERMIDD MBERARBG 
-       0        0        0        0        0        0        0        0 
-MBERARBO     MSKA    MSKB1    MSKB2     MSKC     MSKD   MHHUUR   MHKOOP 
-       0        0        0        0        0        0        0        0 
-   MAUT1    MAUT2    MAUT0  MZFONDS   MZPART  MINKM30 MINK3045 MINK4575 
-       0        0        0        0        0        0        0        0 
-MINK7512 MINK123M  MINKGEM MKOOPKLA  PWAPART  PWABEDR  PWALAND PPERSAUT 
-       0        0        0        0        0        0        0        0 
- PBESAUT  PMOTSCO  PVRAAUT PAANHANG PTRACTOR   PWERKT    PBROM   PLEVEN 
-       0        0        0        0        0        0        0        0 
-PPERSONG  PGEZONG  PWAOREG   PBRAND  PZEILPL PPLEZIER   PFIETS  PINBOED 
-       0        0        0        0        0        0        0        0 
-PBYSTAND  AWAPART  AWABEDR  AWALAND APERSAUT  ABESAUT  AMOTSCO  AVRAAUT 
-       0        0        0        0        0        0        0        0 
-AAANHANG ATRACTOR   AWERKT    ABROM   ALEVEN APERSONG  AGEZONG  AWAOREG 
-       0        0        0        0        0        0        0        0 
-  ABRAND  AZEILPL APLEZIER   AFIETS  AINBOED ABYSTAND  CARAVAN 
-       0        0        0        0        0        0        0 </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
+<pre><code>[1] 0</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>No missing values.</p>
-<p>Check the data types.</p>
+<p>Number of missing values. No missing values are present in the
+data.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic2FwcGx5KGRmLCBjbGFzcykifQ== -->
-<pre class="r"><code>sapply(df, class)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKGRhdGEpIn0= -->
+<pre class="r"><code>str(data)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICBPUklHSU4gICAgIE1PU1RZUEUgICAgTUFBTlRIVUkgICAgIE1HRU1PTVYgICAgTUdFTUxFRUYgICAgTU9TSE9PRkQgXG5cImNoYXJhY3RlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiBcbiAgICAgTUdPRFJLICAgICAgTUdPRFBSICAgICAgTUdPRE9WICAgICAgTUdPREdFICAgICAgTVJFTEdFICAgICAgTVJFTFNBIFxuICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgXG4gICAgIE1SRUxPViAgICBNRkFMTEVFTiAgICBNRkdFS0lORCAgICBNRldFS0lORCAgICBNT1BMSE9PRyAgICBNT1BMTUlERCBcbiAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiIFxuICAgTU9QTExBQUcgICAgTUJFUkhPT0cgICAgTUJFUlpFTEYgICAgTUJFUkJPRVIgICAgTUJFUk1JREQgICAgTUJFUkFSQkcgXG4gIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiBcbiAgIE1CRVJBUkJPICAgICAgICBNU0tBICAgICAgIE1TS0IxICAgICAgIE1TS0IyICAgICAgICBNU0tDICAgICAgICBNU0tEIFxuICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgXG4gICAgIE1ISFVVUiAgICAgIE1IS09PUCAgICAgICBNQVVUMSAgICAgICBNQVVUMiAgICAgICBNQVVUMCAgICAgTVpGT05EUyBcbiAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiIFxuICAgICBNWlBBUlQgICAgIE1JTktNMzAgICAgTUlOSzMwNDUgICAgTUlOSzQ1NzUgICAgTUlOSzc1MTIgICAgTUlOSzEyM00gXG4gIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiBcbiAgICBNSU5LR0VNICAgIE1LT09QS0xBICAgICBQV0FQQVJUICAgICBQV0FCRURSICAgICBQV0FMQU5EICAgIFBQRVJTQVVUIFxuICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgXG4gICAgUEJFU0FVVCAgICAgUE1PVFNDTyAgICAgUFZSQUFVVCAgICBQQUFOSEFORyAgICBQVFJBQ1RPUiAgICAgIFBXRVJLVCBcbiAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiIFxuICAgICAgUEJST00gICAgICBQTEVWRU4gICAgUFBFUlNPTkcgICAgIFBHRVpPTkcgICAgIFBXQU9SRUcgICAgICBQQlJBTkQgXG4gIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiBcbiAgICBQWkVJTFBMICAgIFBQTEVaSUVSICAgICAgUEZJRVRTICAgICBQSU5CT0VEICAgIFBCWVNUQU5EICAgICBBV0FQQVJUIFxuICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgXG4gICAgQVdBQkVEUiAgICAgQVdBTEFORCAgICBBUEVSU0FVVCAgICAgQUJFU0FVVCAgICAgQU1PVFNDTyAgICAgQVZSQUFVVCBcbiAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiIFxuICAgQUFBTkhBTkcgICAgQVRSQUNUT1IgICAgICBBV0VSS1QgICAgICAgQUJST00gICAgICBBTEVWRU4gICAgQVBFUlNPTkcgXG4gIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiBcbiAgICBBR0VaT05HICAgICBBV0FPUkVHICAgICAgQUJSQU5EICAgICBBWkVJTFBMICAgIEFQTEVaSUVSICAgICAgQUZJRVRTIFxuICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiICAgXCJpbnRlZ2VyXCIgXG4gICAgQUlOQk9FRCAgICBBQllTVEFORCAgICAgQ0FSQVZBTiBcbiAgXCJpbnRlZ2VyXCIgICBcImludGVnZXJcIiAgIFwiaW50ZWdlclwiIFxuIn0= -->
-<pre><code>     ORIGIN     MOSTYPE    MAANTHUI     MGEMOMV    MGEMLEEF    MOSHOOFD 
-&quot;character&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-     MGODRK      MGODPR      MGODOV      MGODGE      MRELGE      MRELSA 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-     MRELOV    MFALLEEN    MFGEKIND    MFWEKIND    MOPLHOOG    MOPLMIDD 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-   MOPLLAAG    MBERHOOG    MBERZELF    MBERBOER    MBERMIDD    MBERARBG 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-   MBERARBO        MSKA       MSKB1       MSKB2        MSKC        MSKD 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-     MHHUUR      MHKOOP       MAUT1       MAUT2       MAUT0     MZFONDS 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-     MZPART     MINKM30    MINK3045    MINK4575    MINK7512    MINK123M 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    MINKGEM    MKOOPKLA     PWAPART     PWABEDR     PWALAND    PPERSAUT 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    PBESAUT     PMOTSCO     PVRAAUT    PAANHANG    PTRACTOR      PWERKT 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-      PBROM      PLEVEN    PPERSONG     PGEZONG     PWAOREG      PBRAND 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    PZEILPL    PPLEZIER      PFIETS     PINBOED    PBYSTAND     AWAPART 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    AWABEDR     AWALAND    APERSAUT     ABESAUT     AMOTSCO     AVRAAUT 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-   AAANHANG    ATRACTOR      AWERKT       ABROM      ALEVEN    APERSONG 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    AGEZONG     AWAOREG      ABRAND     AZEILPL    APLEZIER      AFIETS 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; 
-    AINBOED    ABYSTAND     CARAVAN 
-  &quot;integer&quot;   &quot;integer&quot;   &quot;integer&quot; </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjpbImNoYXJhY3RlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIiwiaW50ZWdlclxuIl19 -->
-<pre><code>character
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer
-
-integer</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0OTgyMiBvYnMuIG9mICA4NyB2YXJpYWJsZXM6XG4gJCBPUklHSU4gIDogY2hyICBcInRyYWluXCIgXCJ0cmFpblwiIFwidHJhaW5cIiBcInRyYWluXCIgLi4uXG4gJCBNT1NUWVBFIDogaW50ICAzMyAzNyAzNyA5IDQwIDIzIDM5IDMzIDMzIDExIC4uLlxuICQgTUFBTlRIVUk6IGludCAgMSAxIDEgMSAxIDEgMiAxIDEgMiAuLi5cbiAkIE1HRU1PTVYgOiBpbnQgIDMgMiAyIDMgNCAyIDMgMiAyIDMgLi4uXG4gJCBNR0VNTEVFRjogaW50ICAyIDIgMiAzIDIgMSAyIDMgNCAzIC4uLlxuICQgTU9TSE9PRkQ6IGludCAgOCA4IDggMyAxMCA1IDkgOCA4IDMgLi4uXG4gJCBNR09EUksgIDogaW50ICAwIDEgMCAyIDEgMCAyIDAgMCAzIC4uLlxuICQgTUdPRFBSICA6IGludCAgNSA0IDQgMyA0IDUgMiA3IDEgNSAuLi5cbiAkIE1HT0RPViAgOiBpbnQgIDEgMSAyIDIgMSAwIDAgMCAzIDAgLi4uXG4gJCBNR09ER0UgIDogaW50ICAzIDQgNCA0IDQgNSA1IDIgNiAyIC4uLlxuICQgTVJFTEdFICA6IGludCAgNyA2IDMgNSA3IDAgNyA3IDYgNyAuLi5cbiAkIE1SRUxTQSAgOiBpbnQgIDAgMiAyIDIgMSA2IDIgMiAwIDAgLi4uXG4gJCBNUkVMT1YgIDogaW50ICAyIDIgNCAyIDIgMyAwIDAgMyAyIC4uLlxuICQgTUZBTExFRU46IGludCAgMSAwIDQgMiAyIDMgMCAwIDMgMiAuLi5cbiAkIE1GR0VLSU5EOiBpbnQgIDIgNCA0IDMgNCA1IDMgNSAzIDIgLi4uXG4gJCBNRldFS0lORDogaW50ICA2IDUgMiA0IDQgMiA2IDQgMyA2IC4uLlxuICQgTU9QTEhPT0c6IGludCAgMSAwIDAgMyA1IDAgMCAwIDAgMCAuLi5cbiAkIE1PUExNSUREOiBpbnQgIDIgNSA1IDQgNCA1IDQgMyAxIDQgLi4uXG4gJCBNT1BMTEFBRzogaW50ICA3IDQgNCAyIDAgNCA1IDYgOCA1IC4uLlxuICQgTUJFUkhPT0c6IGludCAgMSAwIDAgNCAwIDIgMCAyIDEgMiAuLi5cbiAkIE1CRVJaRUxGOiBpbnQgIDAgMCAwIDAgNSAwIDAgMCAxIDAgLi4uXG4gJCBNQkVSQk9FUjogaW50ICAxIDAgMCAwIDQgMCAwIDAgMCAwIC4uLlxuICQgTUJFUk1JREQ6IGludCAgMiA1IDcgMyAwIDQgNCAyIDEgMyAuLi5cbiAkIE1CRVJBUkJHOiBpbnQgIDUgMCAwIDEgMCAyIDEgNSA4IDMgLi4uXG4gJCBNQkVSQVJCTzogaW50ICAyIDQgMiAyIDAgMiA1IDIgMSAzIC4uLlxuICQgTVNLQSAgICA6IGludCAgMSAwIDAgMyA5IDIgMCAyIDEgMSAuLi5cbiAkIE1TS0IxICAgOiBpbnQgIDEgMiA1IDIgMCAyIDEgMSAxIDIgLi4uXG4gJCBNU0tCMiAgIDogaW50ICAyIDMgMCAxIDAgMiA0IDIgMCAxIC4uLlxuICQgTVNLQyAgICA6IGludCAgNiA1IDQgNCAwIDQgNSA1IDggNCAuLi5cbiAkIE1TS0QgICAgOiBpbnQgIDEgMCAwIDAgMCAyIDAgMiAxIDIgLi4uXG4gJCBNSEhVVVIgIDogaW50ICAxIDIgNyA1IDQgOSA2IDAgOSAwIC4uLlxuICQgTUhLT09QICA6IGludCAgOCA3IDIgNCA1IDAgMyA5IDAgOSAuLi5cbiAkIE1BVVQxICAgOiBpbnQgIDggNyA3IDkgNiA1IDggNCA1IDYgLi4uXG4gJCBNQVVUMiAgIDogaW50ICAwIDEgMCAwIDIgMyAwIDQgMiAxIC4uLlxuICQgTUFVVDAgICA6IGludCAgMSAyIDIgMCAxIDMgMSAyIDMgMiAuLi5cbiAkIE1aRk9ORFMgOiBpbnQgIDggNiA5IDcgNSA5IDkgNiA3IDYgLi4uXG4gJCBNWlBBUlQgIDogaW50ICAxIDMgMCAyIDQgMCAwIDMgMiAzIC4uLlxuICQgTUlOS00zMCA6IGludCAgMCAyIDQgMSAwIDUgNCAyIDcgMiAuLi5cbiAkIE1JTkszMDQ1OiBpbnQgIDQgMCA1IDUgMCAyIDMgNSAyIDMgLi4uXG4gJCBNSU5LNDU3NTogaW50ICA1IDUgMCAzIDkgMyAzIDMgMSAzIC4uLlxuICQgTUlOSzc1MTI6IGludCAgMCAyIDAgMCAwIDAgMCAwIDAgMSAuLi5cbiAkIE1JTksxMjNNOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBNSU5LR0VNIDogaW50ICA0IDUgMyA0IDYgMyAzIDMgMiA0IC4uLlxuICQgTUtPT1BLTEE6IGludCAgMyA0IDQgNCAzIDMgNSAzIDMgNyAuLi5cbiAkIFBXQVBBUlQgOiBpbnQgIDAgMiAyIDAgMCAwIDAgMCAwIDIgLi4uXG4gJCBQV0FCRURSIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFdBTEFORCA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBQRVJTQVVUOiBpbnQgIDYgMCA2IDYgMCA2IDYgMCA1IDAgLi4uXG4gJCBQQkVTQVVUIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUE1PVFNDTyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBWUkFBVVQgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQQUFOSEFORzogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFRSQUNUT1I6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBXRVJLVCAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQQlJPTSAgIDogaW50ICAwIDAgMCAwIDAgMCAwIDMgMCAwIC4uLlxuICQgUExFVkVOICA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBQRVJTT05HOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQR0VaT05HIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFdBT1JFRyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBCUkFORCAgOiBpbnQgIDUgMiAyIDIgNiAwIDAgMCAwIDMgLi4uXG4gJCBQWkVJTFBMIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFBMRVpJRVI6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBGSUVUUyAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQSU5CT0VEIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUEJZU1RBTkQ6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFXQVBBUlQgOiBpbnQgIDAgMiAxIDAgMCAwIDAgMCAwIDEgLi4uXG4gJCBBV0FCRURSIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVdBTEFORCA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFQRVJTQVVUOiBpbnQgIDEgMCAxIDEgMCAxIDEgMCAxIDAgLi4uXG4gJCBBQkVTQVVUIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQU1PVFNDTyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFWUkFBVVQgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBQUFOSEFORzogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVRSQUNUT1I6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFXRVJLVCAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBQlJPTSAgIDogaW50ICAwIDAgMCAwIDAgMCAwIDEgMCAwIC4uLlxuICQgQUxFVkVOICA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFQRVJTT05HOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBR0VaT05HIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVdBT1JFRyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFCUkFORCAgOiBpbnQgIDEgMSAxIDEgMSAwIDAgMCAwIDEgLi4uXG4gJCBBWkVJTFBMIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVBMRVpJRVI6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFGSUVUUyAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBSU5CT0VEIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQUJZU1RBTkQ6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIENBUkFWQU4gOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4ifQ== -->
+<pre><code>&#39;data.frame&#39;:   9822 obs. of  87 variables:
+ $ ORIGIN  : chr  &quot;train&quot; &quot;train&quot; &quot;train&quot; &quot;train&quot; ...
+ $ MOSTYPE : int  33 37 37 9 40 23 39 33 33 11 ...
+ $ MAANTHUI: int  1 1 1 1 1 1 2 1 1 2 ...
+ $ MGEMOMV : int  3 2 2 3 4 2 3 2 2 3 ...
+ $ MGEMLEEF: int  2 2 2 3 2 1 2 3 4 3 ...
+ $ MOSHOOFD: int  8 8 8 3 10 5 9 8 8 3 ...
+ $ MGODRK  : int  0 1 0 2 1 0 2 0 0 3 ...
+ $ MGODPR  : int  5 4 4 3 4 5 2 7 1 5 ...
+ $ MGODOV  : int  1 1 2 2 1 0 0 0 3 0 ...
+ $ MGODGE  : int  3 4 4 4 4 5 5 2 6 2 ...
+ $ MRELGE  : int  7 6 3 5 7 0 7 7 6 7 ...
+ $ MRELSA  : int  0 2 2 2 1 6 2 2 0 0 ...
+ $ MRELOV  : int  2 2 4 2 2 3 0 0 3 2 ...
+ $ MFALLEEN: int  1 0 4 2 2 3 0 0 3 2 ...
+ $ MFGEKIND: int  2 4 4 3 4 5 3 5 3 2 ...
+ $ MFWEKIND: int  6 5 2 4 4 2 6 4 3 6 ...
+ $ MOPLHOOG: int  1 0 0 3 5 0 0 0 0 0 ...
+ $ MOPLMIDD: int  2 5 5 4 4 5 4 3 1 4 ...
+ $ MOPLLAAG: int  7 4 4 2 0 4 5 6 8 5 ...
+ $ MBERHOOG: int  1 0 0 4 0 2 0 2 1 2 ...
+ $ MBERZELF: int  0 0 0 0 5 0 0 0 1 0 ...
+ $ MBERBOER: int  1 0 0 0 4 0 0 0 0 0 ...
+ $ MBERMIDD: int  2 5 7 3 0 4 4 2 1 3 ...
+ $ MBERARBG: int  5 0 0 1 0 2 1 5 8 3 ...
+ $ MBERARBO: int  2 4 2 2 0 2 5 2 1 3 ...
+ $ MSKA    : int  1 0 0 3 9 2 0 2 1 1 ...
+ $ MSKB1   : int  1 2 5 2 0 2 1 1 1 2 ...
+ $ MSKB2   : int  2 3 0 1 0 2 4 2 0 1 ...
+ $ MSKC    : int  6 5 4 4 0 4 5 5 8 4 ...
+ $ MSKD    : int  1 0 0 0 0 2 0 2 1 2 ...
+ $ MHHUUR  : int  1 2 7 5 4 9 6 0 9 0 ...
+ $ MHKOOP  : int  8 7 2 4 5 0 3 9 0 9 ...
+ $ MAUT1   : int  8 7 7 9 6 5 8 4 5 6 ...
+ $ MAUT2   : int  0 1 0 0 2 3 0 4 2 1 ...
+ $ MAUT0   : int  1 2 2 0 1 3 1 2 3 2 ...
+ $ MZFONDS : int  8 6 9 7 5 9 9 6 7 6 ...
+ $ MZPART  : int  1 3 0 2 4 0 0 3 2 3 ...
+ $ MINKM30 : int  0 2 4 1 0 5 4 2 7 2 ...
+ $ MINK3045: int  4 0 5 5 0 2 3 5 2 3 ...
+ $ MINK4575: int  5 5 0 3 9 3 3 3 1 3 ...
+ $ MINK7512: int  0 2 0 0 0 0 0 0 0 1 ...
+ $ MINK123M: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ MINKGEM : int  4 5 3 4 6 3 3 3 2 4 ...
+ $ MKOOPKLA: int  3 4 4 4 3 3 5 3 3 7 ...
+ $ PWAPART : int  0 2 2 0 0 0 0 0 0 2 ...
+ $ PWABEDR : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PWALAND : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PPERSAUT: int  6 0 6 6 0 6 6 0 5 0 ...
+ $ PBESAUT : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PMOTSCO : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PVRAAUT : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PAANHANG: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PTRACTOR: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PWERKT  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PBROM   : int  0 0 0 0 0 0 0 3 0 0 ...
+ $ PLEVEN  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PPERSONG: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PGEZONG : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PWAOREG : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PBRAND  : int  5 2 2 2 6 0 0 0 0 3 ...
+ $ PZEILPL : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PPLEZIER: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PFIETS  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PINBOED : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ PBYSTAND: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AWAPART : int  0 2 1 0 0 0 0 0 0 1 ...
+ $ AWABEDR : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AWALAND : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ APERSAUT: int  1 0 1 1 0 1 1 0 1 0 ...
+ $ ABESAUT : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AMOTSCO : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AVRAAUT : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AAANHANG: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ATRACTOR: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AWERKT  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ABROM   : int  0 0 0 0 0 0 0 1 0 0 ...
+ $ ALEVEN  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ APERSONG: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AGEZONG : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AWAOREG : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ABRAND  : int  1 1 1 1 1 0 0 0 0 1 ...
+ $ AZEILPL : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ APLEZIER: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AFIETS  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ AINBOED : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ABYSTAND: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ CARAVAN : int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Split the data into training and test sets.</p>
+<p>Check the data types. All the variables are numeric (int) except the
+‘ORIGIN’ variable which is a string. According to the data description
+(<a href="https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge" class="uri">https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge</a>),
+all the variables can be thought as factors. So, we will convert all the
+variables to factors.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRmX3RyYWluIDwtIGRmW2RmW1wiT1JJR0lOXCJdID09IFwidHJhaW5cIiwgXSIsImRmX3Rlc3QgPC0gZGZbZGZbXCJPUklHSU5cIl0gPT0gXCJ0ZXN0XCIsIF0iXX0= -->
-<pre class="r"><code>df_train &lt;- df[df[&quot;ORIGIN&quot;] == &quot;train&quot;, ]
-df_test &lt;- df[df[&quot;ORIGIN&quot;] == &quot;test&quot;, ]</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZGF0YSA8LSBkYXRhLmZyYW1lKGxhcHBseShkYXRhLCBmYWN0b3IpKSJ9 -->
+<pre class="r"><code>data &lt;- data.frame(lapply(data, factor))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Drop the <code>ORIGIN</code> column from both.</p>
+<p>Convert all the variables to factors.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImRmX3RyYWluIDwtIGRmX3RyYWluWywgLXdoaWNoKG5hbWVzKGRmX3Rlc3QpID09IFwiT1JJR0lOXCIpXSIsImRmX3Rlc3QgPC0gZGZfdGVzdFssIC13aGljaChuYW1lcyhkZl90ZXN0KSA9PSBcIk9SSUdJTlwiKV0iXX0= -->
-<pre class="r"><code>df_train &lt;- df_train[, -which(names(df_test) == &quot;ORIGIN&quot;)]
-df_test &lt;- df_test[, -which(names(df_test) == &quot;ORIGIN&quot;)]</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKGRhdGEpIn0= -->
+<pre class="r"><code>str(data)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Save the training and test sets.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIndyaXRlLmNzdihkZl90cmFpbiwgXCJkYXRhL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZS1kZl90cmFpbi5jc3ZcIiwgcm93Lm5hbWVzID0gRkFMU0UpIiwid3JpdGUuY3N2KGRmX3Rlc3QsIFwiZGF0YS9jYXJhdmFuLWluc3VyYW5jZS1jaGFsbGVuZ2UtZGZfdGVzdC5jc3ZcIiwgcm93Lm5hbWVzID0gRkFMU0UpIl19 -->
-<pre class="r"><code>write.csv(df_train, &quot;data/caravan-insurance-challenge-df_train.csv&quot;, row.names = FALSE)
-write.csv(df_test, &quot;data/caravan-insurance-challenge-df_test.csv&quot;, row.names = FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Check the distribution of the target variable.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoidGFibGUoZGZfdHJhaW4kQ0FSQVZBTikifQ== -->
-<pre class="r"><code>table(df_train$CARAVAN)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG4gICAwICAgIDEgXG41NDc0ICAzNDggXG4ifQ== -->
-<pre><code>
-   0    1 
-5474  348 </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0OTgyMiBvYnMuIG9mICA4NyB2YXJpYWJsZXM6XG4gJCBPUklHSU4gIDogRmFjdG9yIHcvIDIgbGV2ZWxzIFwidGVzdFwiLFwidHJhaW5cIjogMiAyIDIgMiAyIDIgMiAyIDIgMiAuLi5cbiAkIE1PU1RZUEUgOiBGYWN0b3Igdy8gNDAgbGV2ZWxzIFwiMVwiLFwiMlwiLFwiM1wiLFwiNFwiLC4uOiAzMiAzNiAzNiA5IDM5IDIyIDM4IDMyIDMyIDExIC4uLlxuICQgTUFBTlRIVUk6IEZhY3RvciB3LyA5IGxldmVscyBcIjFcIixcIjJcIixcIjNcIixcIjRcIiwuLjogMSAxIDEgMSAxIDEgMiAxIDEgMiAuLi5cbiAkIE1HRU1PTVYgOiBGYWN0b3Igdy8gNiBsZXZlbHMgXCIxXCIsXCIyXCIsXCIzXCIsXCI0XCIsLi46IDMgMiAyIDMgNCAyIDMgMiAyIDMgLi4uXG4gJCBNR0VNTEVFRjogRmFjdG9yIHcvIDYgbGV2ZWxzIFwiMVwiLFwiMlwiLFwiM1wiLFwiNFwiLC4uOiAyIDIgMiAzIDIgMSAyIDMgNCAzIC4uLlxuICQgTU9TSE9PRkQ6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIxXCIsXCIyXCIsXCIzXCIsXCI0XCIsLi46IDggOCA4IDMgMTAgNSA5IDggOCAzIC4uLlxuICQgTUdPRFJLICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDEgMiAxIDMgMiAxIDMgMSAxIDQgLi4uXG4gJCBNR09EUFIgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogNiA1IDUgNCA1IDYgMyA4IDIgNiAuLi5cbiAkIE1HT0RPViAgOiBGYWN0b3Igdy8gNiBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDIgMiAzIDMgMiAxIDEgMSA0IDEgLi4uXG4gJCBNR09ER0UgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogNCA1IDUgNSA1IDYgNiAzIDcgMyAuLi5cbiAkIE1SRUxHRSAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiA4IDcgNCA2IDggMSA4IDggNyA4IC4uLlxuICQgTVJFTFNBICA6IEZhY3RvciB3LyA4IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAzIDMgMyAyIDcgMyAzIDEgMSAuLi5cbiAkIE1SRUxPViAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAzIDMgNSAzIDMgNCAxIDEgNCAzIC4uLlxuICQgTUZBTExFRU46IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDIgMSA1IDMgMyA0IDEgMSA0IDMgLi4uXG4gJCBNRkdFS0lORDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMyA1IDUgNCA1IDYgNCA2IDQgMyAuLi5cbiAkIE1GV0VLSU5EOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiA3IDYgMyA1IDUgMyA3IDUgNCA3IC4uLlxuICQgTU9QTEhPT0c6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDIgMSAxIDQgNiAxIDEgMSAxIDEgLi4uXG4gJCBNT1BMTUlERDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMyA2IDYgNSA1IDYgNSA0IDIgNSAuLi5cbiAkIE1PUExMQUFHOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiA4IDUgNSAzIDEgNSA2IDcgOSA2IC4uLlxuICQgTUJFUkhPT0c6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDIgMSAxIDUgMSAzIDEgMyAyIDMgLi4uXG4gJCBNQkVSWkVMRjogRmFjdG9yIHcvIDYgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDYgMSAxIDEgMiAxIC4uLlxuICQgTUJFUkJPRVI6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDIgMSAxIDEgNSAxIDEgMSAxIDEgLi4uXG4gJCBNQkVSTUlERDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMyA2IDggNCAxIDUgNSAzIDIgNCAuLi5cbiAkIE1CRVJBUkJHOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiA2IDEgMSAyIDEgMyAyIDYgOSA0IC4uLlxuICQgTUJFUkFSQk86IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDMgNSAzIDMgMSAzIDYgMyAyIDQgLi4uXG4gJCBNU0tBICAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiAxIDEgNCAxMCAzIDEgMyAyIDIgLi4uXG4gJCBNU0tCMSAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiAzIDYgMyAxIDMgMiAyIDIgMyAuLi5cbiAkIE1TS0IyICAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAzIDQgMSAyIDEgMyA1IDMgMSAyIC4uLlxuICQgTVNLQyAgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDcgNiA1IDUgMSA1IDYgNiA5IDUgLi4uXG4gJCBNU0tEICAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiAxIDEgMSAxIDMgMSAzIDIgMyAuLi5cbiAkIE1ISFVVUiAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAyIDMgOCA2IDUgMTAgNyAxIDEwIDEgLi4uXG4gJCBNSEtPT1AgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogOSA4IDMgNSA2IDEgNCAxMCAxIDEwIC4uLlxuICQgTUFVVDEgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDkgOCA4IDEwIDcgNiA5IDUgNiA3IC4uLlxuICQgTUFVVDIgICA6IEZhY3RvciB3LyA5IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAyIDEgMSAzIDQgMSA1IDMgMiAuLi5cbiAkIE1BVVQwICAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAyIDMgMyAxIDIgNCAyIDMgNCAzIC4uLlxuICQgTVpGT05EUyA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDkgNyAxMCA4IDYgMTAgMTAgNyA4IDcgLi4uXG4gJCBNWlBBUlQgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiA0IDEgMyA1IDEgMSA0IDMgNCAuLi5cbiAkIE1JTktNMzAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDMgNSAyIDEgNiA1IDMgOCAzIC4uLlxuICQgTUlOSzMwNDU6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDUgMSA2IDYgMSAzIDQgNiAzIDQgLi4uXG4gJCBNSU5LNDU3NTogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogNiA2IDEgNCAxMCA0IDQgNCAyIDQgLi4uXG4gJCBNSU5LNzUxMjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAzIDEgMSAxIDEgMSAxIDEgMiAuLi5cbiAkIE1JTksxMjNNOiBGYWN0b3Igdy8gOSBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBNSU5LR0VNIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogNSA2IDQgNSA3IDQgNCA0IDMgNSAuLi5cbiAkIE1LT09QS0xBOiBGYWN0b3Igdy8gOCBsZXZlbHMgXCIxXCIsXCIyXCIsXCIzXCIsXCI0XCIsLi46IDMgNCA0IDQgMyAzIDUgMyAzIDcgLi4uXG4gJCBQV0FQQVJUIDogRmFjdG9yIHcvIDQgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiOiAxIDMgMyAxIDEgMSAxIDEgMSAzIC4uLlxuICQgUFdBQkVEUiA6IEZhY3RvciB3LyA3IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBXQUxBTkQgOiBGYWN0b3Igdy8gNSBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQUEVSU0FVVDogRmFjdG9yIHcvIDcgbGV2ZWxzIFwiMFwiLFwiNFwiLFwiNVwiLFwiNlwiLC4uOiA0IDEgNCA0IDEgNCA0IDEgMyAxIC4uLlxuICQgUEJFU0FVVCA6IEZhY3RvciB3LyA0IGxldmVscyBcIjBcIixcIjVcIixcIjZcIixcIjdcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBNT1RTQ08gOiBGYWN0b3Igdy8gNiBsZXZlbHMgXCIwXCIsXCIzXCIsXCI0XCIsXCI1XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQVlJBQVVUIDogRmFjdG9yIHcvIDUgbGV2ZWxzIFwiMFwiLFwiNFwiLFwiNlwiLFwiN1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEFBTkhBTkc6IEZhY3RvciB3LyA2IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBUUkFDVE9SOiBGYWN0b3Igdy8gNiBsZXZlbHMgXCIwXCIsXCIzXCIsXCI0XCIsXCI1XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQV0VSS1QgIDogRmFjdG9yIHcvIDYgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEJST00gICA6IEZhY3RvciB3LyA2IGxldmVscyBcIjBcIixcIjJcIixcIjNcIixcIjRcIiwuLjogMSAxIDEgMSAxIDEgMSAzIDEgMSAuLi5cbiAkIFBMRVZFTiAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUFBFUlNPTkc6IEZhY3RvciB3LyA3IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBHRVpPTkcgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCIwXCIsXCIyXCIsXCIzXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQV0FPUkVHIDogRmFjdG9yIHcvIDUgbGV2ZWxzIFwiMFwiLFwiNFwiLFwiNVwiLFwiNlwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEJSQU5EICA6IEZhY3RvciB3LyA5IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogNiAzIDMgMyA3IDEgMSAxIDEgNCAuLi5cbiAkIFBaRUlMUEwgOiBGYWN0b3Igdy8gNCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQUExFWklFUjogRmFjdG9yIHcvIDcgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEZJRVRTICA6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBJTkJPRUQgOiBGYWN0b3Igdy8gNyBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQQllTVEFORDogRmFjdG9yIHcvIDUgbGV2ZWxzIFwiMFwiLFwiMlwiLFwiM1wiLFwiNFwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVdBUEFSVCA6IEZhY3RvciB3LyAzIGxldmVscyBcIjBcIixcIjFcIixcIjJcIjogMSAzIDIgMSAxIDEgMSAxIDEgMiAuLi5cbiAkIEFXQUJFRFIgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCIwXCIsXCIxXCIsXCI1XCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBV0FMQU5EIDogRmFjdG9yIHcvIDIgbGV2ZWxzIFwiMFwiLFwiMVwiOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVBFUlNBVVQ6IEZhY3RvciB3LyA5IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiAxIDIgMiAxIDIgMiAxIDIgMSAuLi5cbiAkIEFCRVNBVVQgOiBGYWN0b3Igdy8gNiBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBTU9UU0NPIDogRmFjdG9yIHcvIDUgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVZSQUFVVCA6IEZhY3RvciB3LyA1IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFBQU5IQU5HOiBGYWN0b3Igdy8gNCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBVFJBQ1RPUjogRmFjdG9yIHcvIDcgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVdFUktUICA6IEZhY3RvciB3LyA2IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFCUk9NICAgOiBGYWN0b3Igdy8gNCBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCIsXCIzXCI6IDEgMSAxIDEgMSAxIDEgMiAxIDEgLi4uXG4gJCBBTEVWRU4gIDogRmFjdG9yIHcvIDcgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiLFwiM1wiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVBFUlNPTkc6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFHRVpPTkcgOiBGYWN0b3Igdy8gMiBsZXZlbHMgXCIwXCIsXCIxXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBV0FPUkVHIDogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQUJSQU5EICA6IEZhY3RvciB3LyA4IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMiAyIDIgMiAyIDEgMSAxIDEgMiAuLi5cbiAkIEFaRUlMUEwgOiBGYWN0b3Igdy8gMiBsZXZlbHMgXCIwXCIsXCIxXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBUExFWklFUjogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQUZJRVRTICA6IEZhY3RvciB3LyA1IGxldmVscyBcIjBcIixcIjFcIixcIjJcIixcIjNcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFJTkJPRUQgOiBGYWN0b3Igdy8gMyBsZXZlbHMgXCIwXCIsXCIxXCIsXCIyXCI6IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBQllTVEFORDogRmFjdG9yIHcvIDMgbGV2ZWxzIFwiMFwiLFwiMVwiLFwiMlwiOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQ0FSQVZBTiA6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiJ9 -->
+<pre><code>&#39;data.frame&#39;:   9822 obs. of  87 variables:
+ $ ORIGIN  : Factor w/ 2 levels &quot;test&quot;,&quot;train&quot;: 2 2 2 2 2 2 2 2 2 2 ...
+ $ MOSTYPE : Factor w/ 40 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 32 36 36 9 39 22 38 32 32 11 ...
+ $ MAANTHUI: Factor w/ 9 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 2 1 1 2 ...
+ $ MGEMOMV : Factor w/ 6 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 3 2 2 3 4 2 3 2 2 3 ...
+ $ MGEMLEEF: Factor w/ 6 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 2 2 2 3 2 1 2 3 4 3 ...
+ $ MOSHOOFD: Factor w/ 10 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 8 8 8 3 10 5 9 8 8 3 ...
+ $ MGODRK  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 2 1 3 2 1 3 1 1 4 ...
+ $ MGODPR  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 6 5 5 4 5 6 3 8 2 6 ...
+ $ MGODOV  : Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 2 3 3 2 1 1 1 4 1 ...
+ $ MGODGE  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 4 5 5 5 5 6 6 3 7 3 ...
+ $ MRELGE  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 8 7 4 6 8 1 8 8 7 8 ...
+ $ MRELSA  : Factor w/ 8 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 3 3 3 2 7 3 3 1 1 ...
+ $ MRELOV  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 3 5 3 3 4 1 1 4 3 ...
+ $ MFALLEEN: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 5 3 3 4 1 1 4 3 ...
+ $ MFGEKIND: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 5 5 4 5 6 4 6 4 3 ...
+ $ MFWEKIND: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 7 6 3 5 5 3 7 5 4 7 ...
+ $ MOPLHOOG: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 1 4 6 1 1 1 1 1 ...
+ $ MOPLMIDD: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 6 6 5 5 6 5 4 2 5 ...
+ $ MOPLLAAG: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 8 5 5 3 1 5 6 7 9 6 ...
+ $ MBERHOOG: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 1 5 1 3 1 3 2 3 ...
+ $ MBERZELF: Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 6 1 1 1 2 1 ...
+ $ MBERBOER: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 1 1 5 1 1 1 1 1 ...
+ $ MBERMIDD: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 6 8 4 1 5 5 3 2 4 ...
+ $ MBERARBG: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 6 1 1 2 1 3 2 6 9 4 ...
+ $ MBERARBO: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 5 3 3 1 3 6 3 2 4 ...
+ $ MSKA    : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 1 4 10 3 1 3 2 2 ...
+ $ MSKB1   : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 3 6 3 1 3 2 2 2 3 ...
+ $ MSKB2   : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 3 4 1 2 1 3 5 3 1 2 ...
+ $ MSKC    : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 7 6 5 5 1 5 6 6 9 5 ...
+ $ MSKD    : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 1 1 1 3 1 3 2 3 ...
+ $ MHHUUR  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 3 8 6 5 10 7 1 10 1 ...
+ $ MHKOOP  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 9 8 3 5 6 1 4 10 1 10 ...
+ $ MAUT1   : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 9 8 8 10 7 6 9 5 6 7 ...
+ $ MAUT2   : Factor w/ 9 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 2 1 1 3 4 1 5 3 2 ...
+ $ MAUT0   : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 3 3 1 2 4 2 3 4 3 ...
+ $ MZFONDS : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 9 7 10 8 6 10 10 7 8 7 ...
+ $ MZPART  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 4 1 3 5 1 1 4 3 4 ...
+ $ MINKM30 : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 3 5 2 1 6 5 3 8 3 ...
+ $ MINK3045: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 5 1 6 6 1 3 4 6 3 4 ...
+ $ MINK4575: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 6 6 1 4 10 4 4 4 2 4 ...
+ $ MINK7512: Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 3 1 1 1 1 1 1 1 2 ...
+ $ MINK123M: Factor w/ 9 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ MINKGEM : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 5 6 4 5 7 4 4 4 3 5 ...
+ $ MKOOPKLA: Factor w/ 8 levels &quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 3 4 4 4 3 3 5 3 3 7 ...
+ $ PWAPART : Factor w/ 4 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 3 3 1 1 1 1 1 1 3 ...
+ $ PWABEDR : Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PWALAND : Factor w/ 5 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PPERSAUT: Factor w/ 7 levels &quot;0&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,..: 4 1 4 4 1 4 4 1 3 1 ...
+ $ PBESAUT : Factor w/ 4 levels &quot;0&quot;,&quot;5&quot;,&quot;6&quot;,&quot;7&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PMOTSCO : Factor w/ 6 levels &quot;0&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PVRAAUT : Factor w/ 5 levels &quot;0&quot;,&quot;4&quot;,&quot;6&quot;,&quot;7&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PAANHANG: Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PTRACTOR: Factor w/ 6 levels &quot;0&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PWERKT  : Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PBROM   : Factor w/ 6 levels &quot;0&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 3 1 1 ...
+ $ PLEVEN  : Factor w/ 10 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PPERSONG: Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PGEZONG : Factor w/ 3 levels &quot;0&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PWAOREG : Factor w/ 5 levels &quot;0&quot;,&quot;4&quot;,&quot;5&quot;,&quot;6&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PBRAND  : Factor w/ 9 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 6 3 3 3 7 1 1 1 1 4 ...
+ $ PZEILPL : Factor w/ 4 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PPLEZIER: Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PFIETS  : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PINBOED : Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ PBYSTAND: Factor w/ 5 levels &quot;0&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AWAPART : Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;: 1 3 2 1 1 1 1 1 1 2 ...
+ $ AWABEDR : Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;5&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AWALAND : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ APERSAUT: Factor w/ 9 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 1 2 2 1 2 2 1 2 1 ...
+ $ ABESAUT : Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AMOTSCO : Factor w/ 5 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AVRAAUT : Factor w/ 5 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AAANHANG: Factor w/ 4 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ ATRACTOR: Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AWERKT  : Factor w/ 6 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ ABROM   : Factor w/ 4 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;: 1 1 1 1 1 1 1 2 1 1 ...
+ $ ALEVEN  : Factor w/ 7 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ APERSONG: Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AGEZONG : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AWAOREG : Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ ABRAND  : Factor w/ 8 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 2 2 2 2 2 1 1 1 1 2 ...
+ $ AZEILPL : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ APLEZIER: Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AFIETS  : Factor w/ 5 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ AINBOED : Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ ABYSTAND: Factor w/ 3 levels &quot;0&quot;,&quot;1&quot;,&quot;2&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+ $ CARAVAN : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Rate of positive responses.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic3VtKGRmX3RyYWluJENBUkFWQU4gPT0gMSkvbnJvdyhkZl90cmFpbikifQ== -->
-<pre class="r"><code>sum(df_train$CARAVAN == 1)/nrow(df_train)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU5NzczMjdcbiJ9 -->
-<pre><code>[1] 0.05977327</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The response variable is higly unbalanced.</p>
-<p>Set the categorical variables to factors. The only non-categorical
-variable are “MAANTHUI” and “MGEMOMV”.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImNhdGVnb3JpY2FsX3ZhcmlhYmxlcyA8LSBuYW1lcyhkZl90cmFpbilbIShuYW1lcyhkZl90cmFpbikgJWluJSBjKFwiTUFBTlRIVUlcIiwgXCJNR0VNT01WXCIpKV0iLCJkZl90cmFpblssY2F0ZWdvcmljYWxfdmFyaWFibGVzXSA8LSBsYXBwbHkoZGZfdHJhaW5bLGNhdGVnb3JpY2FsX3ZhcmlhYmxlc10sIGZhY3RvcikiXX0= -->
-<pre class="r"><code>categorical_variables &lt;- names(df_train)[!(names(df_train) %in% c(&quot;MAANTHUI&quot;, &quot;MGEMOMV&quot;))]
-df_train[,categorical_variables] &lt;- lapply(df_train[,categorical_variables], factor)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Visualize the distribution of the variables using a barplot.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInBhcihtZnJvdyA9IGMoNCwgNCkpIiwiZm9yIChpIGluIHNlcV9hbG9uZyhsZW5ndGgoY2F0ZWdvcmljYWxfdmFyaWFibGVzKSkpIHtcbiAgYmFycGxvdCh0YWJsZShkZl90cmFpblssY2F0ZWdvcmljYWxfdmFyaWFibGVzW2ldXSksIG1haW4gPSBjYXRlZ29yaWNhbF92YXJpYWJsZXNbaV0pXG59Il19 -->
-<pre class="r"><code>par(mfrow = c(4, 4))
-for (i in seq_along(length(categorical_variables))) {
-  barplot(table(df_train[,categorical_variables[i]]), main = categorical_variables[i])
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin -->
-<p><img src="data:image/png;base64,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uHLst6vq0XJ0a//7Ze4WZn6xfLASUGBQOiug697avH0zfnE5Z8AFtmJqy7cmjP5J9cyISa2dm8oFm5+16jknrRNQYHA6K6BV9b0PvO1f77++vGMrFhhwatuV5ZKqOmB8a3xduWxLk06ZP3/+q8vz5p+/ddcJ0HEBbVlcPrW1C2x56u2zrmhtv1neWFXThz3cnr1085OvLN3GDuI6gT1bZwX0vec+UP+7fuK43w24wIBTV5TjW9sryoeq6h/Kp5vjaSP7++qnH+GBQemsgC4ur1lfVReWiwZeYOCp01pvTn/x/NF3VNVDIw99pKquKfP6vTgBBQajswK6Zmo54qwXlHOeGniBgafetk+Zevapo4b9S3PnquEHvvkVI/v/LryAAoPSWQGtVl84eexLLn9maxYYeOryv/iTMZPm/qi98+XZ+x/x1of7vzgBBQbDH1QGCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChASUICQgAKEBBQgJKAAIQEFCAkoQEhAAUICChD6f6+gN7AWoCUdAAAAAElFTkSuQmCC" width="672" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRXhwbG9yYXRvcnkgRGF0YSBBbmFseXNpcyIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKTG9hZCB0aGUgZGF0YSBzZXQuCmBgYHtyfQpkZiA8LSByZWFkLmNzdigiZGF0YS9jYXJhdmFuLWluc3VyYW5jZS1jaGFsbGVuZ2UuY3N2IikKYGBgCgpEaW1lbnNpb25zIG9mIHRoZSBkYXRhIHNldC4KYGBge3J9CmRpbShkZikKYGBgCgpDaGVjayBmb3IgbWlzc2luZyB2YWx1ZXMuCmBgYHtyfQpzYXBwbHkoZGYsIGZ1bmN0aW9uKHgpIHN1bShpcy5uYSh4KSkpCmBgYApObyBtaXNzaW5nIHZhbHVlcy4KCkNoZWNrIHRoZSBkYXRhIHR5cGVzLgpgYGB7cn0Kc2FwcGx5KGRmLCBjbGFzcykKYGBgCgpTcGxpdCB0aGUgZGF0YSBpbnRvIHRyYWluaW5nIGFuZCB0ZXN0IHNldHMuCmBgYHtyfQpkZl90cmFpbiA8LSBkZltkZlsiT1JJR0lOIl0gPT0gInRyYWluIiwgXQpkZl90ZXN0IDwtIGRmW2RmWyJPUklHSU4iXSA9PSAidGVzdCIsIF0KYGBgCgpEcm9wIHRoZSBgT1JJR0lOYCBjb2x1bW4gZnJvbSBib3RoLgpgYGB7cn0KZGZfdHJhaW4gPC0gZGZfdHJhaW5bLCAtd2hpY2gobmFtZXMoZGZfdGVzdCkgPT0gIk9SSUdJTiIpXQpkZl90ZXN0IDwtIGRmX3Rlc3RbLCAtd2hpY2gobmFtZXMoZGZfdGVzdCkgPT0gIk9SSUdJTiIpXQpgYGAKClNhdmUgdGhlIHRyYWluaW5nIGFuZCB0ZXN0IHNldHMuCmBgYHtyfQp3cml0ZS5jc3YoZGZfdHJhaW4sICJkYXRhL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZS1kZl90cmFpbi5jc3YiLCByb3cubmFtZXMgPSBGQUxTRSkKd3JpdGUuY3N2KGRmX3Rlc3QsICJkYXRhL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZS1kZl90ZXN0LmNzdiIsIHJvdy5uYW1lcyA9IEZBTFNFKQpgYGAKCkNoZWNrIHRoZSBkaXN0cmlidXRpb24gb2YgdGhlIHRhcmdldCB2YXJpYWJsZS4KYGBge3J9CnRhYmxlKGRmX3RyYWluJENBUkFWQU4pCmBgYAoKUmF0ZSBvZiBwb3NpdGl2ZSByZXNwb25zZXMuCmBgYHtyfQpzdW0oZGZfdHJhaW4kQ0FSQVZBTiA9PSAxKS9ucm93KGRmX3RyYWluKQpgYGAKVGhlIHJlc3BvbnNlIHZhcmlhYmxlIGlzIGhpZ2x5IHVuYmFsYW5jZWQuCgpTZXQgdGhlIGNhdGVnb3JpY2FsIHZhcmlhYmxlcyB0byBmYWN0b3JzLgpUaGUgb25seSBub24tY2F0ZWdvcmljYWwgdmFyaWFibGUgYXJlICJNQUFOVEhVSSIgYW5kICJNR0VNT01WIi4KYGBge3J9CmNhdGVnb3JpY2FsX3ZhcmlhYmxlcyA8LSBuYW1lcyhkZl90cmFpbilbIShuYW1lcyhkZl90cmFpbikgJWluJSBjKCJNQUFOVEhVSSIsICJNR0VNT01WIikpXQpkZl90cmFpblssY2F0ZWdvcmljYWxfdmFyaWFibGVzXSA8LSBsYXBwbHkoZGZfdHJhaW5bLGNhdGVnb3JpY2FsX3ZhcmlhYmxlc10sIGZhY3RvcikKYGBgCgpWaXN1YWxpemUgdGhlIGRpc3RyaWJ1dGlvbiBvZiB0aGUgdmFyaWFibGVzIHVzaW5nIGEgYmFycGxvdC4KYGBge3J9CnBhcihtZnJvdyA9IGMoNCwgNCkpCmZvciAoaSBpbiBzZXFfYWxvbmcobGVuZ3RoKGNhdGVnb3JpY2FsX3ZhcmlhYmxlcykpKSB7CiAgYmFycGxvdCh0YWJsZShkZl90cmFpblssY2F0ZWdvcmljYWxfdmFyaWFibGVzW2ldXSksIG1haW4gPSBjYXRlZ29yaWNhbF92YXJpYWJsZXNbaV0pCn0KYGBgCgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiVHJhaW4tVGVzdCBTcGxpdCIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmRhdGEgPC0gcmVhZC5jc3YoImRhdGEvY2FyYXZhbi1pbnN1cmFuY2UtY2hhbGxlbmdlLmNzdiIpCmBgYApMb2FkIHRoZSBkYXRhLgoKYGBge3J9CmRpbShkYXRhKQpgYGAKTnVtYmVyIG9mIHJvd3MgYW5kIGNvbHVtbnMuCgpgYGB7cn0Kc3VtKGlzLm5hKGRhdGEpKQpgYGAKTnVtYmVyIG9mIG1pc3NpbmcgdmFsdWVzLiBObyBtaXNzaW5nIHZhbHVlcyBhcmUgcHJlc2VudCBpbiB0aGUgZGF0YS4KCmBgYHtyfQpzdHIoZGF0YSkKYGBgCkNoZWNrIHRoZSBkYXRhIHR5cGVzLiBBbGwgdGhlIHZhcmlhYmxlcyBhcmUgbnVtZXJpYyAoaW50KSBleGNlcHQgdGhlICdPUklHSU4nCnZhcmlhYmxlIHdoaWNoIGlzIGEgc3RyaW5nLiBBY2NvcmRpbmcgdG8gdGhlIGRhdGEgZGVzY3JpcHRpb24gCihodHRwczovL3d3dy5rYWdnbGUuY29tL2RhdGFzZXRzL3VjaW1sL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZSksIGFsbCB0aGUgCnZhcmlhYmxlcyBjYW4gYmUgdGhvdWdodCBhcyBmYWN0b3JzLgpTbywgd2Ugd2lsbCBjb252ZXJ0IGFsbCB0aGUgdmFyaWFibGVzIHRvIGZhY3RvcnMuCgpgYGB7cn0KZGF0YSA8LSBkYXRhLmZyYW1lKGxhcHBseShkYXRhLCBmYWN0b3IpKQpgYGAKQ29udmVydCBhbGwgdGhlIHZhcmlhYmxlcyB0byBmYWN0b3JzLgoKYGBge3J9CnN0cihkYXRhKQpgYGAKCgoK</div>
 
 
 
@@ -2144,7 +2039,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("exploratory_data_analysis.Rmd");
+  window.initializeSourceEmbed("1_train_test_split.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

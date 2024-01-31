@@ -1,4 +1,3 @@
-
 ---
 title: "Exploratory Data Analysis"
 output: html_notebook
@@ -27,13 +26,13 @@ sapply(df, class)
 
 Split the data into training and test sets.
 ```{r}
-df_train <- df[df["ORIGIN"] == "train",]
-df_test <- df[df["ORIGIN"] == "test",]
+df_train <- df[df["ORIGIN"] == "train", ]
+df_test <- df[df["ORIGIN"] == "test", ]
 ```
 
 Drop the `ORIGIN` column from both.
 ```{r}
-df_train <- df_train[,-which(names(df_test) == "ORIGIN")]
+df_train <- df_train[, -which(names(df_test) == "ORIGIN")]
 df_test <- df_test[, -which(names(df_test) == "ORIGIN")]
 ```
 
@@ -64,7 +63,7 @@ df_train[,categorical_variables] <- lapply(df_train[,categorical_variables], fac
 Visualize the distribution of the variables using a barplot.
 ```{r}
 par(mfrow = c(4, 4))
-for (i in 1:length(categorical_variables)) {
+for (i in seq_along(length(categorical_variables))) {
   barplot(table(df_train[,categorical_variables[i]]), main = categorical_variables[i])
 }
 ```

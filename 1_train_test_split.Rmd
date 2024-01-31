@@ -1,0 +1,97 @@
+---
+title: "Train-Test Split"
+output: html_notebook
+---
+
+```{r}
+data <- read.csv("data/caravan-insurance-challenge.csv")
+```
+Load the data.
+
+```{r}
+dim(data)
+```
+Number of rows and columns.
+
+```{r}
+sum(is.na(data))
+```
+Number of missing values. No missing values are present in the data.
+
+```{r}
+str(data)
+```
+Check the data types. 
+All the variables are numeric (int) except the 'ORIGIN'
+variable which is a chr.
+According to the data description 
+(https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge), all the 
+variables can be thought as factors except MAANTHUI' (avg size household) and
+'MEGEMOMV' (avg size hosehold).
+So, we will convert all the variables to factors.
+
+```{r}
+#Convert all the variables to factors except 'MAANTHUI' and 'MGEMOMV'
+for (column in names(data)) {
+  if (column != "MAANTHUI" && column != "MGEMOMV") {
+    data[, column] <- as.factor(data[, column])
+  }
+}
+```
+
+```{r}
+l0_descriptions <- c(
+  "High Income, expensive child", "Very Important Provincials",
+  "High status seniors", "Affluent senior apartments", "Mixed seniors",
+  "Career and childcare", "Dinki's (double income no kids)",
+  "Middle class families", "Modern, complete families", "Stable family",
+  "Family starters", "Affluent young families", "Young all american family",
+  "Junior cosmopolitan", "Senior cosmopolitans", "Students in apartments",
+  "Fresh masters in the city", "Single youth", "Suburban youth",
+  "Etnically diverse", "Young urban have-nots", "Mixed apartment dwellers",
+  "Young and rising","Young, low educated", "Young seniors in the city",
+  "Own home elderly", "Seniors in apartments", "Residential elderly",
+  "Porchless seniors: no front yard", "Religious elderly singles",
+  "Low income catholics", "Mixed seniors", "Lower class large families",
+  "Large family, employed child", "Village families",
+  "Couples with teens 'Married with children'", "Mixed small town dwellers",
+  "Traditional families", "Large religous families", "Large family farms",
+  "Mixed rurals"
+)
+
+l1_descriptions <- c("20-30 years", "30-40 years", "40-50 years",
+                     "50-60 years", "60-70 years", "70-80 years")
+
+l2_descriptions <- c(
+  "Successful hedonists", "Driven Growers", "Average Family", "Career Loners",
+  "Living well", "Cruising Seniors", "Retired and Religious",
+  "Family with grown ups", "Conservative families", "Farmers"
+)
+
+l3_descriptions <- c(
+  "0%", "1 - 10%", "11 - 23%", "24 - 36%", "37 - 49%",
+  "50 - 62%", "63 - 75%", "76 - 88%", "89 - 99%", "100%"
+)
+
+l4_descriptions <- c(
+  "0", "1 - 49", "50 - 99", "100 - 199", "200 - 499",
+  "500 - 999", "1000 - 4999", "5000 - 9999", "10,000 - 19,999", ">= 20,000"
+)
+```
+
+Rename the levels of the variables to their corresponding labels given by the descri
+
+```{r}
+no_endoded_variables <- c("MAANTHUI", "MGEMOMV")
+l0_variables <- c("MOSTYPE")
+l1_variables <- c("MGEMLEEF")
+l2_variables <- c("MOSHOOFD")
+#l3_variables are the variables not in the list above that start with M
+l3_variables <- 
+
+```
+
+
+
+
+
