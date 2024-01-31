@@ -11,16 +11,34 @@ Load the train data set.
 ```{r}
 table(data$CARAVAN)
 ```
-Distribution of the target variable.
-
-```{r}
-summary(data)
-```
+Absolute frequency of the target variable.
 
 ```{r}
 sum(data$CARAVAN == 1) / nrow(data)
 ```
-The categories of the target variable are higly unbalanced, the ratio is 1:19.
+The categories of the target variable are higly unbalanced, the ratio is 1:19 
+for the value 1.
 
+```{r}
+names(data)
+```
+
+```{r}
+num_vars <- c("MAANTHUI", "MGEMOMV")
+par(mfrow = c(1, 2))
+for (var in num_vars) {
+  hist(data[, var], main = var, xlab = var, las = 2)
+}
+```
+Plot of the distribution of the numerical variables
+
+```{r}
+par(mfrow = c(1, 1))
+cat_vars <- setdiff(names(data), num_vars)
+for (var in cat_vars) {
+  barplot(table(data[, var]), main = var, xlab = var, las = 2)
+}
+```
+Plot of the distribution of the numerical variables
 
 
