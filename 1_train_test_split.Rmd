@@ -3,6 +3,8 @@ title: "Train-Test Split"
 output: html_notebook
 ---
 
+# Sanity Check
+
 ```{r}
 data <- read.csv("data/caravan-insurance-challenge.csv")
 ```
@@ -40,7 +42,7 @@ for (column in names(data)) {
 ```
 
 ```{r}
-l0_descriptions <- c(
+l0_labels <- c(
   "High Income, expensive child", "Very Important Provincials",
   "High status seniors", "Affluent senior apartments", "Mixed seniors",
   "Career and childcare", "Dinki's (double income no kids)",
@@ -59,21 +61,21 @@ l0_descriptions <- c(
   "Mixed rurals"
 )
 
-l1_descriptions <- c("20-30 years", "30-40 years", "40-50 years",
+l1_labels <- c("20-30 years", "30-40 years", "40-50 years",
                      "50-60 years", "60-70 years", "70-80 years")
 
-l2_descriptions <- c(
+l2_labels <- c(
   "Successful hedonists", "Driven Growers", "Average Family", "Career Loners",
   "Living well", "Cruising Seniors", "Retired and Religious",
   "Family with grown ups", "Conservative families", "Farmers"
 )
 
-l3_descriptions <- c(
+l3_labels <- c(
   "0%", "1 - 10%", "11 - 23%", "24 - 36%", "37 - 49%",
   "50 - 62%", "63 - 75%", "76 - 88%", "89 - 99%", "100%"
 )
 
-l4_descriptions <- c(
+l4_labels <- c(
   "0", "1 - 49", "50 - 99", "100 - 199", "200 - 499",
   "500 - 999", "1000 - 4999", "5000 - 9999", "10,000 - 19,999", ">= 20,000"
 )
@@ -83,15 +85,78 @@ Rename the levels of the variables to their corresponding labels given by the de
 
 ```{r}
 no_endoded_variables <- c("MAANTHUI", "MGEMOMV")
-l0_variables <- c("MOSTYPE")
-l1_variables <- c("MGEMLEEF")
-l2_variables <- c("MOSHOOFD")
-#l3_variables are the variables not in the list above that start with M
-l3_variables <- 
 
+l0_var <- c("MOSTYPE")
+
+l1_vars <- c("MGEMLEEF")
+
+l2_vars <- c("MOSHOOFD")
+
+l3_vars <- c(
+  "MGODRK", "MGODPR", "MGODOV", "MGODGE", "MRELGE", "MRELSA", "MRELOV",
+  "MFALLEEN", "MFGEKIND", "MFWEKIND", "MOPLHOOG", "MOPLMIDD", "MOPLLAAG",
+  "MBERHOOG", "MBERZELF", "MBERBOER", "MBERMIDD", "MBERARBG", "MBERARBO",
+  "MSKA", "MSKB1", "MSKB2", "MSKC", "MSKD", "MHHUUR", "MHKOOP", "MAUT1",
+  "MAUT2", "MAUT0", "MZFONDS", "MZPART", "MINKM30", "MINK3045", "MINK4575",
+  "MINK7512", "MINK123M", "MINKGEM", "MKOOPKLA"
+)
+
+l4_vars <- c(
+  "PWAPART", "PWABEDR", "PWALAND", "PPERSAUT", "PBESAUT", "PMOTSCO",
+  "PVRAAUT", "PAANHANG", "PTRACTOR", "PWERKT", "PBROM", "PLEVEN",
+  "PPERSONG", "PGEZONG", "PWAOREG", "PBRAND", "PZEILPL", "PPLEZIER",
+  "PFIETS", "PINBOED", "PBYSTAND", "AWAPART", "AWABEDR", "AWALAND",
+  "APERSAUT", "ABESAUT", "AMOTSCO", "AVRAAUT", "AAANHANG", "ATRACTOR",
+  "AWERKT", "ABROM", "ALEVEN", "APERSONG", "AGEZONG", "AWAOREG",
+  "ABRAND", "AZEILPL", "APLEZIER", "AFIETS", "AINBOED", "ABYSTAND",
+  "CARAVAN"
+)
 ```
 
 
+```{r}
+for (column in names(data)) {
+  if (column %in% l0_var) {
+    levels(data[, column]) <- l0_labels
+  } else if (column %in% l1_vars) {
+    levels(data[, column]) <- l1_labels
+  } else if (column %in% l2_vars) {
+    levels(data[, column]) <- l2_labels
+  } else if (column %in% l3_vars) {
+    levels(data[, column]) <- l3_labels
+  } else if (column %in% l4_vars) {
+    levels(data[, column]) <- l4_labels
+  }
+}
+```
 
+# Train-Test Split
+```{r}
+str(data)
+```
 
+```{r}
+train <- data[data$ORIGIN == "train", ]
+test <- data[data$ORIGIN == "test", ]
+```
+Perform the train-test split according to the variable.
 
+```{r}
+train <- train[, -which(names(train) == "ORIGIN")]
+test <- test[, -which(names(test) == "ORIGIN")]
+```
+Remove the 'ORIGIN' variable from the data.
+
+```{r}
+dim(train)
+```
+
+```{r}
+dim(test)
+```
+
+```{r}
+write.csv(train, "data/train.csv", row.names = FALSE)
+write.csv(test, "data/test.csv", row.names = FALSE)
+```
+Save the train and test data.

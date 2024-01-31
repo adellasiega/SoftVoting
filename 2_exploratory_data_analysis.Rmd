@@ -8,27 +8,6 @@ Load the data set.
 df <- read.csv("data/caravan-insurance-challenge.csv")
 ```
 
-Dimensions of the data set.
-```{r}
-dim(df)
-```
-
-Check for missing values.
-```{r}
-sapply(df, function(x) sum(is.na(x)))
-```
-No missing values.
-
-Check the data types.
-```{r}
-sapply(df, class)
-```
-
-Split the data into training and test sets.
-```{r}
-df_train <- df[df["ORIGIN"] == "train", ]
-df_test <- df[df["ORIGIN"] == "test", ]
-```
 
 Drop the `ORIGIN` column from both.
 ```{r}
