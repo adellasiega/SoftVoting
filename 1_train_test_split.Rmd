@@ -108,10 +108,12 @@ l4_vars <- c(
   "PFIETS", "PINBOED", "PBYSTAND", "AWAPART", "AWABEDR", "AWALAND",
   "APERSAUT", "ABESAUT", "AMOTSCO", "AVRAAUT", "AAANHANG", "ATRACTOR",
   "AWERKT", "ABROM", "ALEVEN", "APERSONG", "AGEZONG", "AWAOREG",
-  "ABRAND", "AZEILPL", "APLEZIER", "AFIETS", "AINBOED", "ABYSTAND",
-  "CARAVAN"
+  "ABRAND", "AZEILPL", "APLEZIER", "AFIETS", "AINBOED", "ABYSTAND"
 )
 ```
+The 'CARAVAN' variable belongs to the l4 encoding but it will be considered
+as a binary variable (0 or 1) instead of a categorical variable (0,1,2,3,...)
+because such variable shows only 0,1 values.
 
 
 ```{r}
@@ -126,6 +128,8 @@ for (column in names(data)) {
     levels(data[, column]) <- l3_labels
   } else if (column %in% l4_vars) {
     levels(data[, column]) <- l4_labels
+  } else if (column == "CARAVAN") {
+    levels(data[, column]) <- c("0", "1")
   }
 }
 ```

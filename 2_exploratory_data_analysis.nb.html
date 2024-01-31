@@ -11,7 +11,7 @@
 
 
 
-<title>Train-Test Split</title>
+<title>Exploratory Data Analysis</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,411 +1746,211 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Train-Test Split</h1>
+<h1 class="title toc-ignore">Exploratory Data Analysis</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="sanity-check" class="section level1">
-<h1>Sanity Check</h1>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGF0YSA8LSByZWFkLmNzdihcImRhdGEvY2FyYXZhbi1pbnN1cmFuY2UtY2hhbGxlbmdlLmNzdlwiKSJ9 -->
-<pre class="r"><code>data &lt;- read.csv(&quot;data/caravan-insurance-challenge.csv&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZGF0YSA8LSByZWFkLmNzdihcImRhdGEvdHJhaW4uY3N2XCIpIn0= -->
+<pre class="r"><code>data &lt;- read.csv(&quot;data/train.csv&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Load the data.</p>
+<p>Load the train data set.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGltKGRhdGEpIn0= -->
-<pre class="r"><code>dim(data)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoidGFibGUoZGF0YSRDQVJBVkFOKSJ9 -->
+<pre class="r"><code>table(data$CARAVAN)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDk4MjIgICA4N1xuIn0= -->
-<pre><code>[1] 9822   87</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiXG4gICAgIDAgMSAtIDQ5IFxuICA1NDc0ICAgIDM0OCBcbiJ9 -->
+<pre><code>
+     0 1 - 49 
+  5474    348 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Number of rows and columns.</p>
+<p>Distribution of the target variable.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic3VtKGlzLm5hKGRhdGEpKSJ9 -->
-<pre class="r"><code>sum(is.na(data))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoic3VtbWFyeShkYXRhKSJ9 -->
+<pre class="r"><code>summary(data)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgTU9TVFlQRSAgICAgICAgICAgICBNQUFOVEhVSSAgICAgICAgIE1HRU1PTVYgICAgICAgIE1HRU1MRUVGICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTWluLiAgIDogMS4wMDAgICBNaW4uICAgOjEuMDAwICAgTGVuZ3RoOjU4MjIgICAgICAgXG4gQ2xhc3MgOmNoYXJhY3RlciAgIDFzdCBRdS46IDEuMDAwICAgMXN0IFF1LjoyLjAwMCAgIENsYXNzIDpjaGFyYWN0ZXIgIFxuIE1vZGUgIDpjaGFyYWN0ZXIgICBNZWRpYW4gOiAxLjAwMCAgIE1lZGlhbiA6My4wMDAgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgTWVhbiAgIDogMS4xMTEgICBNZWFuICAgOjIuNjc5ICAgICAgICAgICAgICAgICAgICAgXG4gICAgICAgICAgICAgICAgICAgIDNyZCBRdS46IDEuMDAwICAgM3JkIFF1LjozLjAwMCAgICAgICAgICAgICAgICAgICAgIFxuICAgICAgICAgICAgICAgICAgICBNYXguICAgOjEwLjAwMCAgIE1heC4gICA6NS4wMDAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1PU0hPT0ZEICAgICAgICAgICAgTUdPRFJLICAgICAgICAgICAgIE1HT0RQUiAgICAgICAgICAgICBNR09ET1YgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICBNR09ER0UgICAgICAgICAgICAgTVJFTEdFICAgICAgICAgICAgIE1SRUxTQSAgICAgICAgICAgICBNUkVMT1YgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1GQUxMRUVOICAgICAgICAgICBNRkdFS0lORCAgICAgICAgICAgTUZXRUtJTkQgICAgICAgICAgIE1PUExIT09HICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1PUExNSUREICAgICAgICAgICBNT1BMTEFBRyAgICAgICAgICAgTUJFUkhPT0cgICAgICAgICAgIE1CRVJaRUxGICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1CRVJCT0VSICAgICAgICAgICBNQkVSTUlERCAgICAgICAgICAgTUJFUkFSQkcgICAgICAgICAgIE1CRVJBUkJPICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgTVNLQSAgICAgICAgICAgICAgTVNLQjEgICAgICAgICAgICAgIE1TS0IyICAgICAgICAgICAgICAgTVNLQyAgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgTVNLRCAgICAgICAgICAgICAgTUhIVVVSICAgICAgICAgICAgIE1IS09PUCAgICAgICAgICAgICBNQVVUMSAgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICBNQVVUMiAgICAgICAgICAgICAgTUFVVDAgICAgICAgICAgICAgTVpGT05EUyAgICAgICAgICAgICBNWlBBUlQgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1JTktNMzAgICAgICAgICAgICBNSU5LMzA0NSAgICAgICAgICAgTUlOSzQ1NzUgICAgICAgICAgIE1JTks3NTEyICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIE1JTksxMjNNICAgICAgICAgICBNSU5LR0VNICAgICAgICAgICAgTUtPT1BLTEEgICAgICAgICAgIFBXQVBBUlQgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIFBXQUJFRFIgICAgICAgICAgICBQV0FMQU5EICAgICAgICAgICAgUFBFUlNBVVQgICAgICAgICAgIFBCRVNBVVQgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIFBNT1RTQ08gICAgICAgICAgICBQVlJBQVVUICAgICAgICAgICAgUEFBTkhBTkcgICAgICAgICAgIFBUUkFDVE9SICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICBQV0VSS1QgICAgICAgICAgICAgUEJST00gICAgICAgICAgICAgIFBMRVZFTiAgICAgICAgICAgIFBQRVJTT05HICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIFBHRVpPTkcgICAgICAgICAgICBQV0FPUkVHICAgICAgICAgICAgIFBCUkFORCAgICAgICAgICAgIFBaRUlMUEwgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIFBQTEVaSUVSICAgICAgICAgICAgUEZJRVRTICAgICAgICAgICAgUElOQk9FRCAgICAgICAgICAgIFBCWVNUQU5EICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFXQVBBUlQgICAgICAgICAgICBBV0FCRURSICAgICAgICAgICAgQVdBTEFORCAgICAgICAgICAgIEFQRVJTQVVUICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFCRVNBVVQgICAgICAgICAgICBBTU9UU0NPICAgICAgICAgICAgQVZSQUFVVCAgICAgICAgICAgIEFBQU5IQU5HICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFUUkFDVE9SICAgICAgICAgICAgQVdFUktUICAgICAgICAgICAgIEFCUk9NICAgICAgICAgICAgICBBTEVWRU4gICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFQRVJTT05HICAgICAgICAgICBBR0VaT05HICAgICAgICAgICAgQVdBT1JFRyAgICAgICAgICAgICBBQlJBTkQgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFaRUlMUEwgICAgICAgICAgICBBUExFWklFUiAgICAgICAgICAgIEFGSUVUUyAgICAgICAgICAgIEFJTkJPRUQgICAgICAgICBcbiBMZW5ndGg6NTgyMiAgICAgICAgTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgICBMZW5ndGg6NTgyMiAgICAgICBcbiBDbGFzcyA6Y2hhcmFjdGVyICAgQ2xhc3MgOmNoYXJhY3RlciAgIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgIE1vZGUgIDpjaGFyYWN0ZXIgICBNb2RlICA6Y2hhcmFjdGVyICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgIEFCWVNUQU5EICAgICAgICAgICBDQVJBVkFOICAgICAgICAgXG4gTGVuZ3RoOjU4MjIgICAgICAgIExlbmd0aDo1ODIyICAgICAgIFxuIENsYXNzIDpjaGFyYWN0ZXIgICBDbGFzcyA6Y2hhcmFjdGVyICBcbiBNb2RlICA6Y2hhcmFjdGVyICAgTW9kZSAgOmNoYXJhY3RlciAgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4ifQ== -->
+<pre><code>   MOSTYPE             MAANTHUI         MGEMOMV        MGEMLEEF        
+ Length:5822        Min.   : 1.000   Min.   :1.000   Length:5822       
+ Class :character   1st Qu.: 1.000   1st Qu.:2.000   Class :character  
+ Mode  :character   Median : 1.000   Median :3.000   Mode  :character  
+                    Mean   : 1.111   Mean   :2.679                     
+                    3rd Qu.: 1.000   3rd Qu.:3.000                     
+                    Max.   :10.000   Max.   :5.000                     
+   MOSHOOFD            MGODRK             MGODPR             MGODOV         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    MGODGE             MRELGE             MRELSA             MRELOV         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   MFALLEEN           MFGEKIND           MFWEKIND           MOPLHOOG        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   MOPLMIDD           MOPLLAAG           MBERHOOG           MBERZELF        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   MBERBOER           MBERMIDD           MBERARBG           MBERARBO        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+     MSKA              MSKB1              MSKB2               MSKC          
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+     MSKD              MHHUUR             MHKOOP             MAUT1          
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    MAUT2              MAUT0             MZFONDS             MZPART         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   MINKM30            MINK3045           MINK4575           MINK7512        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   MINK123M           MINKGEM            MKOOPKLA           PWAPART         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   PWABEDR            PWALAND            PPERSAUT           PBESAUT         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   PMOTSCO            PVRAAUT            PAANHANG           PTRACTOR        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    PWERKT             PBROM              PLEVEN            PPERSONG        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   PGEZONG            PWAOREG             PBRAND            PZEILPL         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   PPLEZIER            PFIETS            PINBOED            PBYSTAND        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   AWAPART            AWABEDR            AWALAND            APERSAUT        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   ABESAUT            AMOTSCO            AVRAAUT            AAANHANG        
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   ATRACTOR            AWERKT             ABROM              ALEVEN         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   APERSONG           AGEZONG            AWAOREG             ABRAND         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   AZEILPL            APLEZIER            AFIETS            AINBOED         
+ Length:5822        Length:5822        Length:5822        Length:5822       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+   ABYSTAND           CARAVAN         
+ Length:5822        Length:5822       
+ Class :character   Class :character  
+ Mode  :character   Mode  :character  
+                                      
+                                      
+                                      </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoic3VtKGRhdGEkQ0FSQVZBTiA9PSAxKSAvIG5yb3coZGF0YSkifQ== -->
+<pre class="r"><code>sum(data$CARAVAN == 1) / nrow(data)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
 <pre><code>[1] 0</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Number of missing values. No missing values are present in the
-data.</p>
+<p>The categories of the target variable are higly unbalanced, the ratio
+is 1:19.</p>
 <!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic3RyKGRhdGEpIn0= -->
-<pre class="r"><code>str(data)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0OTgyMiBvYnMuIG9mICA4NyB2YXJpYWJsZXM6XG4gJCBPUklHSU4gIDogY2hyICBcInRyYWluXCIgXCJ0cmFpblwiIFwidHJhaW5cIiBcInRyYWluXCIgLi4uXG4gJCBNT1NUWVBFIDogaW50ICAzMyAzNyAzNyA5IDQwIDIzIDM5IDMzIDMzIDExIC4uLlxuICQgTUFBTlRIVUk6IGludCAgMSAxIDEgMSAxIDEgMiAxIDEgMiAuLi5cbiAkIE1HRU1PTVYgOiBpbnQgIDMgMiAyIDMgNCAyIDMgMiAyIDMgLi4uXG4gJCBNR0VNTEVFRjogaW50ICAyIDIgMiAzIDIgMSAyIDMgNCAzIC4uLlxuICQgTU9TSE9PRkQ6IGludCAgOCA4IDggMyAxMCA1IDkgOCA4IDMgLi4uXG4gJCBNR09EUksgIDogaW50ICAwIDEgMCAyIDEgMCAyIDAgMCAzIC4uLlxuICQgTUdPRFBSICA6IGludCAgNSA0IDQgMyA0IDUgMiA3IDEgNSAuLi5cbiAkIE1HT0RPViAgOiBpbnQgIDEgMSAyIDIgMSAwIDAgMCAzIDAgLi4uXG4gJCBNR09ER0UgIDogaW50ICAzIDQgNCA0IDQgNSA1IDIgNiAyIC4uLlxuICQgTVJFTEdFICA6IGludCAgNyA2IDMgNSA3IDAgNyA3IDYgNyAuLi5cbiAkIE1SRUxTQSAgOiBpbnQgIDAgMiAyIDIgMSA2IDIgMiAwIDAgLi4uXG4gJCBNUkVMT1YgIDogaW50ICAyIDIgNCAyIDIgMyAwIDAgMyAyIC4uLlxuICQgTUZBTExFRU46IGludCAgMSAwIDQgMiAyIDMgMCAwIDMgMiAuLi5cbiAkIE1GR0VLSU5EOiBpbnQgIDIgNCA0IDMgNCA1IDMgNSAzIDIgLi4uXG4gJCBNRldFS0lORDogaW50ICA2IDUgMiA0IDQgMiA2IDQgMyA2IC4uLlxuICQgTU9QTEhPT0c6IGludCAgMSAwIDAgMyA1IDAgMCAwIDAgMCAuLi5cbiAkIE1PUExNSUREOiBpbnQgIDIgNSA1IDQgNCA1IDQgMyAxIDQgLi4uXG4gJCBNT1BMTEFBRzogaW50ICA3IDQgNCAyIDAgNCA1IDYgOCA1IC4uLlxuICQgTUJFUkhPT0c6IGludCAgMSAwIDAgNCAwIDIgMCAyIDEgMiAuLi5cbiAkIE1CRVJaRUxGOiBpbnQgIDAgMCAwIDAgNSAwIDAgMCAxIDAgLi4uXG4gJCBNQkVSQk9FUjogaW50ICAxIDAgMCAwIDQgMCAwIDAgMCAwIC4uLlxuICQgTUJFUk1JREQ6IGludCAgMiA1IDcgMyAwIDQgNCAyIDEgMyAuLi5cbiAkIE1CRVJBUkJHOiBpbnQgIDUgMCAwIDEgMCAyIDEgNSA4IDMgLi4uXG4gJCBNQkVSQVJCTzogaW50ICAyIDQgMiAyIDAgMiA1IDIgMSAzIC4uLlxuICQgTVNLQSAgICA6IGludCAgMSAwIDAgMyA5IDIgMCAyIDEgMSAuLi5cbiAkIE1TS0IxICAgOiBpbnQgIDEgMiA1IDIgMCAyIDEgMSAxIDIgLi4uXG4gJCBNU0tCMiAgIDogaW50ICAyIDMgMCAxIDAgMiA0IDIgMCAxIC4uLlxuICQgTVNLQyAgICA6IGludCAgNiA1IDQgNCAwIDQgNSA1IDggNCAuLi5cbiAkIE1TS0QgICAgOiBpbnQgIDEgMCAwIDAgMCAyIDAgMiAxIDIgLi4uXG4gJCBNSEhVVVIgIDogaW50ICAxIDIgNyA1IDQgOSA2IDAgOSAwIC4uLlxuICQgTUhLT09QICA6IGludCAgOCA3IDIgNCA1IDAgMyA5IDAgOSAuLi5cbiAkIE1BVVQxICAgOiBpbnQgIDggNyA3IDkgNiA1IDggNCA1IDYgLi4uXG4gJCBNQVVUMiAgIDogaW50ICAwIDEgMCAwIDIgMyAwIDQgMiAxIC4uLlxuICQgTUFVVDAgICA6IGludCAgMSAyIDIgMCAxIDMgMSAyIDMgMiAuLi5cbiAkIE1aRk9ORFMgOiBpbnQgIDggNiA5IDcgNSA5IDkgNiA3IDYgLi4uXG4gJCBNWlBBUlQgIDogaW50ICAxIDMgMCAyIDQgMCAwIDMgMiAzIC4uLlxuICQgTUlOS00zMCA6IGludCAgMCAyIDQgMSAwIDUgNCAyIDcgMiAuLi5cbiAkIE1JTkszMDQ1OiBpbnQgIDQgMCA1IDUgMCAyIDMgNSAyIDMgLi4uXG4gJCBNSU5LNDU3NTogaW50ICA1IDUgMCAzIDkgMyAzIDMgMSAzIC4uLlxuICQgTUlOSzc1MTI6IGludCAgMCAyIDAgMCAwIDAgMCAwIDAgMSAuLi5cbiAkIE1JTksxMjNNOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBNSU5LR0VNIDogaW50ICA0IDUgMyA0IDYgMyAzIDMgMiA0IC4uLlxuICQgTUtPT1BLTEE6IGludCAgMyA0IDQgNCAzIDMgNSAzIDMgNyAuLi5cbiAkIFBXQVBBUlQgOiBpbnQgIDAgMiAyIDAgMCAwIDAgMCAwIDIgLi4uXG4gJCBQV0FCRURSIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFdBTEFORCA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBQRVJTQVVUOiBpbnQgIDYgMCA2IDYgMCA2IDYgMCA1IDAgLi4uXG4gJCBQQkVTQVVUIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUE1PVFNDTyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBWUkFBVVQgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQQUFOSEFORzogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFRSQUNUT1I6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBXRVJLVCAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQQlJPTSAgIDogaW50ICAwIDAgMCAwIDAgMCAwIDMgMCAwIC4uLlxuICQgUExFVkVOICA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBQRVJTT05HOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQR0VaT05HIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFdBT1JFRyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBCUkFORCAgOiBpbnQgIDUgMiAyIDIgNiAwIDAgMCAwIDMgLi4uXG4gJCBQWkVJTFBMIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUFBMRVpJRVI6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIFBGSUVUUyAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBQSU5CT0VEIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgUEJZU1RBTkQ6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFXQVBBUlQgOiBpbnQgIDAgMiAxIDAgMCAwIDAgMCAwIDEgLi4uXG4gJCBBV0FCRURSIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVdBTEFORCA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFQRVJTQVVUOiBpbnQgIDEgMCAxIDEgMCAxIDEgMCAxIDAgLi4uXG4gJCBBQkVTQVVUIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQU1PVFNDTyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFWUkFBVVQgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBQUFOSEFORzogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVRSQUNUT1I6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFXRVJLVCAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBQlJPTSAgIDogaW50ICAwIDAgMCAwIDAgMCAwIDEgMCAwIC4uLlxuICQgQUxFVkVOICA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFQRVJTT05HOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBR0VaT05HIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVdBT1JFRyA6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFCUkFORCAgOiBpbnQgIDEgMSAxIDEgMSAwIDAgMCAwIDEgLi4uXG4gJCBBWkVJTFBMIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQVBMRVpJRVI6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIEFGSUVUUyAgOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4gJCBBSU5CT0VEIDogaW50ICAwIDAgMCAwIDAgMCAwIDAgMCAwIC4uLlxuICQgQUJZU1RBTkQ6IGludCAgMCAwIDAgMCAwIDAgMCAwIDAgMCAuLi5cbiAkIENBUkFWQU4gOiBpbnQgIDAgMCAwIDAgMCAwIDAgMCAwIDAgLi4uXG4ifQ== -->
-<pre><code>&#39;data.frame&#39;:   9822 obs. of  87 variables:
- $ ORIGIN  : chr  &quot;train&quot; &quot;train&quot; &quot;train&quot; &quot;train&quot; ...
- $ MOSTYPE : int  33 37 37 9 40 23 39 33 33 11 ...
- $ MAANTHUI: int  1 1 1 1 1 1 2 1 1 2 ...
- $ MGEMOMV : int  3 2 2 3 4 2 3 2 2 3 ...
- $ MGEMLEEF: int  2 2 2 3 2 1 2 3 4 3 ...
- $ MOSHOOFD: int  8 8 8 3 10 5 9 8 8 3 ...
- $ MGODRK  : int  0 1 0 2 1 0 2 0 0 3 ...
- $ MGODPR  : int  5 4 4 3 4 5 2 7 1 5 ...
- $ MGODOV  : int  1 1 2 2 1 0 0 0 3 0 ...
- $ MGODGE  : int  3 4 4 4 4 5 5 2 6 2 ...
- $ MRELGE  : int  7 6 3 5 7 0 7 7 6 7 ...
- $ MRELSA  : int  0 2 2 2 1 6 2 2 0 0 ...
- $ MRELOV  : int  2 2 4 2 2 3 0 0 3 2 ...
- $ MFALLEEN: int  1 0 4 2 2 3 0 0 3 2 ...
- $ MFGEKIND: int  2 4 4 3 4 5 3 5 3 2 ...
- $ MFWEKIND: int  6 5 2 4 4 2 6 4 3 6 ...
- $ MOPLHOOG: int  1 0 0 3 5 0 0 0 0 0 ...
- $ MOPLMIDD: int  2 5 5 4 4 5 4 3 1 4 ...
- $ MOPLLAAG: int  7 4 4 2 0 4 5 6 8 5 ...
- $ MBERHOOG: int  1 0 0 4 0 2 0 2 1 2 ...
- $ MBERZELF: int  0 0 0 0 5 0 0 0 1 0 ...
- $ MBERBOER: int  1 0 0 0 4 0 0 0 0 0 ...
- $ MBERMIDD: int  2 5 7 3 0 4 4 2 1 3 ...
- $ MBERARBG: int  5 0 0 1 0 2 1 5 8 3 ...
- $ MBERARBO: int  2 4 2 2 0 2 5 2 1 3 ...
- $ MSKA    : int  1 0 0 3 9 2 0 2 1 1 ...
- $ MSKB1   : int  1 2 5 2 0 2 1 1 1 2 ...
- $ MSKB2   : int  2 3 0 1 0 2 4 2 0 1 ...
- $ MSKC    : int  6 5 4 4 0 4 5 5 8 4 ...
- $ MSKD    : int  1 0 0 0 0 2 0 2 1 2 ...
- $ MHHUUR  : int  1 2 7 5 4 9 6 0 9 0 ...
- $ MHKOOP  : int  8 7 2 4 5 0 3 9 0 9 ...
- $ MAUT1   : int  8 7 7 9 6 5 8 4 5 6 ...
- $ MAUT2   : int  0 1 0 0 2 3 0 4 2 1 ...
- $ MAUT0   : int  1 2 2 0 1 3 1 2 3 2 ...
- $ MZFONDS : int  8 6 9 7 5 9 9 6 7 6 ...
- $ MZPART  : int  1 3 0 2 4 0 0 3 2 3 ...
- $ MINKM30 : int  0 2 4 1 0 5 4 2 7 2 ...
- $ MINK3045: int  4 0 5 5 0 2 3 5 2 3 ...
- $ MINK4575: int  5 5 0 3 9 3 3 3 1 3 ...
- $ MINK7512: int  0 2 0 0 0 0 0 0 0 1 ...
- $ MINK123M: int  0 0 0 0 0 0 0 0 0 0 ...
- $ MINKGEM : int  4 5 3 4 6 3 3 3 2 4 ...
- $ MKOOPKLA: int  3 4 4 4 3 3 5 3 3 7 ...
- $ PWAPART : int  0 2 2 0 0 0 0 0 0 2 ...
- $ PWABEDR : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PWALAND : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PPERSAUT: int  6 0 6 6 0 6 6 0 5 0 ...
- $ PBESAUT : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PMOTSCO : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PVRAAUT : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PAANHANG: int  0 0 0 0 0 0 0 0 0 0 ...
- $ PTRACTOR: int  0 0 0 0 0 0 0 0 0 0 ...
- $ PWERKT  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PBROM   : int  0 0 0 0 0 0 0 3 0 0 ...
- $ PLEVEN  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PPERSONG: int  0 0 0 0 0 0 0 0 0 0 ...
- $ PGEZONG : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PWAOREG : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PBRAND  : int  5 2 2 2 6 0 0 0 0 3 ...
- $ PZEILPL : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PPLEZIER: int  0 0 0 0 0 0 0 0 0 0 ...
- $ PFIETS  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PINBOED : int  0 0 0 0 0 0 0 0 0 0 ...
- $ PBYSTAND: int  0 0 0 0 0 0 0 0 0 0 ...
- $ AWAPART : int  0 2 1 0 0 0 0 0 0 1 ...
- $ AWABEDR : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AWALAND : int  0 0 0 0 0 0 0 0 0 0 ...
- $ APERSAUT: int  1 0 1 1 0 1 1 0 1 0 ...
- $ ABESAUT : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AMOTSCO : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AVRAAUT : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AAANHANG: int  0 0 0 0 0 0 0 0 0 0 ...
- $ ATRACTOR: int  0 0 0 0 0 0 0 0 0 0 ...
- $ AWERKT  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ ABROM   : int  0 0 0 0 0 0 0 1 0 0 ...
- $ ALEVEN  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ APERSONG: int  0 0 0 0 0 0 0 0 0 0 ...
- $ AGEZONG : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AWAOREG : int  0 0 0 0 0 0 0 0 0 0 ...
- $ ABRAND  : int  1 1 1 1 1 0 0 0 0 1 ...
- $ AZEILPL : int  0 0 0 0 0 0 0 0 0 0 ...
- $ APLEZIER: int  0 0 0 0 0 0 0 0 0 0 ...
- $ AFIETS  : int  0 0 0 0 0 0 0 0 0 0 ...
- $ AINBOED : int  0 0 0 0 0 0 0 0 0 0 ...
- $ ABYSTAND: int  0 0 0 0 0 0 0 0 0 0 ...
- $ CARAVAN : int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Check the data types. All the variables are numeric (int) except the
-‘ORIGIN’ variable which is a chr. According to the data description (<a href="https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge" class="uri">https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge</a>),
-all the variables can be thought as factors except MAANTHUI’ (avg size
-household) and ‘MEGEMOMV’ (avg size hosehold). So, we will convert all
-the variables to factors.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIiNDb252ZXJ0IGFsbCB0aGUgdmFyaWFibGVzIHRvIGZhY3RvcnMgZXhjZXB0ICdNQUFOVEhVSScgYW5kICdNR0VNT01WJyIsImZvciAoY29sdW1uIGluIG5hbWVzKGRhdGEpKSB7XG4gIGlmIChjb2x1bW4gIT0gXCJNQUFOVEhVSVwiICYmIGNvbHVtbiAhPSBcIk1HRU1PTVZcIikge1xuICAgIGRhdGFbLCBjb2x1bW5dIDwtIGFzLmZhY3RvcihkYXRhWywgY29sdW1uXSlcbiAgfVxufSJdfQ== -->
-<pre class="r"><code>#Convert all the variables to factors except &#39;MAANTHUI&#39; and &#39;MGEMOMV&#39;
-for (column in names(data)) {
-  if (column != &quot;MAANTHUI&quot; &amp;&amp; column != &quot;MGEMOMV&quot;) {
-    data[, column] &lt;- as.factor(data[, column])
-  }
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbImwwX2xhYmVscyA8LSBjKFxuICBcIkhpZ2ggSW5jb21lLCBleHBlbnNpdmUgY2hpbGRcIiwgXCJWZXJ5IEltcG9ydGFudCBQcm92aW5jaWFsc1wiLFxuICBcIkhpZ2ggc3RhdHVzIHNlbmlvcnNcIiwgXCJBZmZsdWVudCBzZW5pb3IgYXBhcnRtZW50c1wiLCBcIk1peGVkIHNlbmlvcnNcIixcbiAgXCJDYXJlZXIgYW5kIGNoaWxkY2FyZVwiLCBcIkRpbmtpJ3MgKGRvdWJsZSBpbmNvbWUgbm8ga2lkcylcIixcbiAgXCJNaWRkbGUgY2xhc3MgZmFtaWxpZXNcIiwgXCJNb2Rlcm4sIGNvbXBsZXRlIGZhbWlsaWVzXCIsIFwiU3RhYmxlIGZhbWlseVwiLFxuICBcIkZhbWlseSBzdGFydGVyc1wiLCBcIkFmZmx1ZW50IHlvdW5nIGZhbWlsaWVzXCIsIFwiWW91bmcgYWxsIGFtZXJpY2FuIGZhbWlseVwiLFxuICBcIkp1bmlvciBjb3Ntb3BvbGl0YW5cIiwgXCJTZW5pb3IgY29zbW9wb2xpdGFuc1wiLCBcIlN0dWRlbnRzIGluIGFwYXJ0bWVudHNcIixcbiAgXCJGcmVzaCBtYXN0ZXJzIGluIHRoZSBjaXR5XCIsIFwiU2luZ2xlIHlvdXRoXCIsIFwiU3VidXJiYW4geW91dGhcIixcbiAgXCJFdG5pY2FsbHkgZGl2ZXJzZVwiLCBcIllvdW5nIHVyYmFuIGhhdmUtbm90c1wiLCBcIk1peGVkIGFwYXJ0bWVudCBkd2VsbGVyc1wiLFxuICBcIllvdW5nIGFuZCByaXNpbmdcIixcIllvdW5nLCBsb3cgZWR1Y2F0ZWRcIiwgXCJZb3VuZyBzZW5pb3JzIGluIHRoZSBjaXR5XCIsXG4gIFwiT3duIGhvbWUgZWxkZXJseVwiLCBcIlNlbmlvcnMgaW4gYXBhcnRtZW50c1wiLCBcIlJlc2lkZW50aWFsIGVsZGVybHlcIixcbiAgXCJQb3JjaGxlc3Mgc2VuaW9yczogbm8gZnJvbnQgeWFyZFwiLCBcIlJlbGlnaW91cyBlbGRlcmx5IHNpbmdsZXNcIixcbiAgXCJMb3cgaW5jb21lIGNhdGhvbGljc1wiLCBcIk1peGVkIHNlbmlvcnNcIiwgXCJMb3dlciBjbGFzcyBsYXJnZSBmYW1pbGllc1wiLFxuICBcIkxhcmdlIGZhbWlseSwgZW1wbG95ZWQgY2hpbGRcIiwgXCJWaWxsYWdlIGZhbWlsaWVzXCIsXG4gIFwiQ291cGxlcyB3aXRoIHRlZW5zICdNYXJyaWVkIHdpdGggY2hpbGRyZW4nXCIsIFwiTWl4ZWQgc21hbGwgdG93biBkd2VsbGVyc1wiLFxuICBcIlRyYWRpdGlvbmFsIGZhbWlsaWVzXCIsIFwiTGFyZ2UgcmVsaWdvdXMgZmFtaWxpZXNcIiwgXCJMYXJnZSBmYW1pbHkgZmFybXNcIixcbiAgXCJNaXhlZCBydXJhbHNcIlxuKSIsIiIsImwxX2xhYmVscyA8LSBjKFwiMjAtMzAgeWVhcnNcIiwgXCIzMC00MCB5ZWFyc1wiLCBcIjQwLTUwIHllYXJzXCIsXG4gICAgICAgICAgICAgICAgICAgICBcIjUwLTYwIHllYXJzXCIsIFwiNjAtNzAgeWVhcnNcIiwgXCI3MC04MCB5ZWFyc1wiKSIsIiIsImwyX2xhYmVscyA8LSBjKFxuICBcIlN1Y2Nlc3NmdWwgaGVkb25pc3RzXCIsIFwiRHJpdmVuIEdyb3dlcnNcIiwgXCJBdmVyYWdlIEZhbWlseVwiLCBcIkNhcmVlciBMb25lcnNcIixcbiAgXCJMaXZpbmcgd2VsbFwiLCBcIkNydWlzaW5nIFNlbmlvcnNcIiwgXCJSZXRpcmVkIGFuZCBSZWxpZ2lvdXNcIixcbiAgXCJGYW1pbHkgd2l0aCBncm93biB1cHNcIiwgXCJDb25zZXJ2YXRpdmUgZmFtaWxpZXNcIiwgXCJGYXJtZXJzXCJcbikiLCIiLCJsM19sYWJlbHMgPC0gYyhcbiAgXCIwJVwiLCBcIjEgLSAxMCVcIiwgXCIxMSAtIDIzJVwiLCBcIjI0IC0gMzYlXCIsIFwiMzcgLSA0OSVcIixcbiAgXCI1MCAtIDYyJVwiLCBcIjYzIC0gNzUlXCIsIFwiNzYgLSA4OCVcIiwgXCI4OSAtIDk5JVwiLCBcIjEwMCVcIlxuKSIsIiIsImw0X2xhYmVscyA8LSBjKFxuICBcIjBcIiwgXCIxIC0gNDlcIiwgXCI1MCAtIDk5XCIsIFwiMTAwIC0gMTk5XCIsIFwiMjAwIC0gNDk5XCIsXG4gIFwiNTAwIC0gOTk5XCIsIFwiMTAwMCAtIDQ5OTlcIiwgXCI1MDAwIC0gOTk5OVwiLCBcIjEwLDAwMCAtIDE5LDk5OVwiLCBcIj49IDIwLDAwMFwiXG4pIl19 -->
-<pre class="r"><code>l0_labels &lt;- c(
-  &quot;High Income, expensive child&quot;, &quot;Very Important Provincials&quot;,
-  &quot;High status seniors&quot;, &quot;Affluent senior apartments&quot;, &quot;Mixed seniors&quot;,
-  &quot;Career and childcare&quot;, &quot;Dinki&#39;s (double income no kids)&quot;,
-  &quot;Middle class families&quot;, &quot;Modern, complete families&quot;, &quot;Stable family&quot;,
-  &quot;Family starters&quot;, &quot;Affluent young families&quot;, &quot;Young all american family&quot;,
-  &quot;Junior cosmopolitan&quot;, &quot;Senior cosmopolitans&quot;, &quot;Students in apartments&quot;,
-  &quot;Fresh masters in the city&quot;, &quot;Single youth&quot;, &quot;Suburban youth&quot;,
-  &quot;Etnically diverse&quot;, &quot;Young urban have-nots&quot;, &quot;Mixed apartment dwellers&quot;,
-  &quot;Young and rising&quot;,&quot;Young, low educated&quot;, &quot;Young seniors in the city&quot;,
-  &quot;Own home elderly&quot;, &quot;Seniors in apartments&quot;, &quot;Residential elderly&quot;,
-  &quot;Porchless seniors: no front yard&quot;, &quot;Religious elderly singles&quot;,
-  &quot;Low income catholics&quot;, &quot;Mixed seniors&quot;, &quot;Lower class large families&quot;,
-  &quot;Large family, employed child&quot;, &quot;Village families&quot;,
-  &quot;Couples with teens &#39;Married with children&#39;&quot;, &quot;Mixed small town dwellers&quot;,
-  &quot;Traditional families&quot;, &quot;Large religous families&quot;, &quot;Large family farms&quot;,
-  &quot;Mixed rurals&quot;
-)
 
-l1_labels &lt;- c(&quot;20-30 years&quot;, &quot;30-40 years&quot;, &quot;40-50 years&quot;,
-                     &quot;50-60 years&quot;, &quot;60-70 years&quot;, &quot;70-80 years&quot;)
-
-l2_labels &lt;- c(
-  &quot;Successful hedonists&quot;, &quot;Driven Growers&quot;, &quot;Average Family&quot;, &quot;Career Loners&quot;,
-  &quot;Living well&quot;, &quot;Cruising Seniors&quot;, &quot;Retired and Religious&quot;,
-  &quot;Family with grown ups&quot;, &quot;Conservative families&quot;, &quot;Farmers&quot;
-)
-
-l3_labels &lt;- c(
-  &quot;0%&quot;, &quot;1 - 10%&quot;, &quot;11 - 23%&quot;, &quot;24 - 36%&quot;, &quot;37 - 49%&quot;,
-  &quot;50 - 62%&quot;, &quot;63 - 75%&quot;, &quot;76 - 88%&quot;, &quot;89 - 99%&quot;, &quot;100%&quot;
-)
-
-l4_labels &lt;- c(
-  &quot;0&quot;, &quot;1 - 49&quot;, &quot;50 - 99&quot;, &quot;100 - 199&quot;, &quot;200 - 499&quot;,
-  &quot;500 - 999&quot;, &quot;1000 - 4999&quot;, &quot;5000 - 9999&quot;, &quot;10,000 - 19,999&quot;, &quot;&gt;= 20,000&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Rename the levels of the variables to their corresponding labels
-given by the descri</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIm5vX2VuZG9kZWRfdmFyaWFibGVzIDwtIGMoXCJNQUFOVEhVSVwiLCBcIk1HRU1PTVZcIikiLCIiLCJsMF92YXIgPC0gYyhcIk1PU1RZUEVcIikiLCIiLCJsMV92YXJzIDwtIGMoXCJNR0VNTEVFRlwiKSIsIiIsImwyX3ZhcnMgPC0gYyhcIk1PU0hPT0ZEXCIpIiwiIiwibDNfdmFycyA8LSBjKFxuICBcIk1HT0RSS1wiLCBcIk1HT0RQUlwiLCBcIk1HT0RPVlwiLCBcIk1HT0RHRVwiLCBcIk1SRUxHRVwiLCBcIk1SRUxTQVwiLCBcIk1SRUxPVlwiLFxuICBcIk1GQUxMRUVOXCIsIFwiTUZHRUtJTkRcIiwgXCJNRldFS0lORFwiLCBcIk1PUExIT09HXCIsIFwiTU9QTE1JRERcIiwgXCJNT1BMTEFBR1wiLFxuICBcIk1CRVJIT09HXCIsIFwiTUJFUlpFTEZcIiwgXCJNQkVSQk9FUlwiLCBcIk1CRVJNSUREXCIsIFwiTUJFUkFSQkdcIiwgXCJNQkVSQVJCT1wiLFxuICBcIk1TS0FcIiwgXCJNU0tCMVwiLCBcIk1TS0IyXCIsIFwiTVNLQ1wiLCBcIk1TS0RcIiwgXCJNSEhVVVJcIiwgXCJNSEtPT1BcIiwgXCJNQVVUMVwiLFxuICBcIk1BVVQyXCIsIFwiTUFVVDBcIiwgXCJNWkZPTkRTXCIsIFwiTVpQQVJUXCIsIFwiTUlOS00zMFwiLCBcIk1JTkszMDQ1XCIsIFwiTUlOSzQ1NzVcIixcbiAgXCJNSU5LNzUxMlwiLCBcIk1JTksxMjNNXCIsIFwiTUlOS0dFTVwiLCBcIk1LT09QS0xBXCJcbikiLCIiLCJsNF92YXJzIDwtIGMoXG4gIFwiUFdBUEFSVFwiLCBcIlBXQUJFRFJcIiwgXCJQV0FMQU5EXCIsIFwiUFBFUlNBVVRcIiwgXCJQQkVTQVVUXCIsIFwiUE1PVFNDT1wiLFxuICBcIlBWUkFBVVRcIiwgXCJQQUFOSEFOR1wiLCBcIlBUUkFDVE9SXCIsIFwiUFdFUktUXCIsIFwiUEJST01cIiwgXCJQTEVWRU5cIixcbiAgXCJQUEVSU09OR1wiLCBcIlBHRVpPTkdcIiwgXCJQV0FPUkVHXCIsIFwiUEJSQU5EXCIsIFwiUFpFSUxQTFwiLCBcIlBQTEVaSUVSXCIsXG4gIFwiUEZJRVRTXCIsIFwiUElOQk9FRFwiLCBcIlBCWVNUQU5EXCIsIFwiQVdBUEFSVFwiLCBcIkFXQUJFRFJcIiwgXCJBV0FMQU5EXCIsXG4gIFwiQVBFUlNBVVRcIiwgXCJBQkVTQVVUXCIsIFwiQU1PVFNDT1wiLCBcIkFWUkFBVVRcIiwgXCJBQUFOSEFOR1wiLCBcIkFUUkFDVE9SXCIsXG4gIFwiQVdFUktUXCIsIFwiQUJST01cIiwgXCJBTEVWRU5cIiwgXCJBUEVSU09OR1wiLCBcIkFHRVpPTkdcIiwgXCJBV0FPUkVHXCIsXG4gIFwiQUJSQU5EXCIsIFwiQVpFSUxQTFwiLCBcIkFQTEVaSUVSXCIsIFwiQUZJRVRTXCIsIFwiQUlOQk9FRFwiLCBcIkFCWVNUQU5EXCJcbikiXX0= -->
-<pre class="r"><code>no_endoded_variables &lt;- c(&quot;MAANTHUI&quot;, &quot;MGEMOMV&quot;)
-
-l0_var &lt;- c(&quot;MOSTYPE&quot;)
-
-l1_vars &lt;- c(&quot;MGEMLEEF&quot;)
-
-l2_vars &lt;- c(&quot;MOSHOOFD&quot;)
-
-l3_vars &lt;- c(
-  &quot;MGODRK&quot;, &quot;MGODPR&quot;, &quot;MGODOV&quot;, &quot;MGODGE&quot;, &quot;MRELGE&quot;, &quot;MRELSA&quot;, &quot;MRELOV&quot;,
-  &quot;MFALLEEN&quot;, &quot;MFGEKIND&quot;, &quot;MFWEKIND&quot;, &quot;MOPLHOOG&quot;, &quot;MOPLMIDD&quot;, &quot;MOPLLAAG&quot;,
-  &quot;MBERHOOG&quot;, &quot;MBERZELF&quot;, &quot;MBERBOER&quot;, &quot;MBERMIDD&quot;, &quot;MBERARBG&quot;, &quot;MBERARBO&quot;,
-  &quot;MSKA&quot;, &quot;MSKB1&quot;, &quot;MSKB2&quot;, &quot;MSKC&quot;, &quot;MSKD&quot;, &quot;MHHUUR&quot;, &quot;MHKOOP&quot;, &quot;MAUT1&quot;,
-  &quot;MAUT2&quot;, &quot;MAUT0&quot;, &quot;MZFONDS&quot;, &quot;MZPART&quot;, &quot;MINKM30&quot;, &quot;MINK3045&quot;, &quot;MINK4575&quot;,
-  &quot;MINK7512&quot;, &quot;MINK123M&quot;, &quot;MINKGEM&quot;, &quot;MKOOPKLA&quot;
-)
-
-l4_vars &lt;- c(
-  &quot;PWAPART&quot;, &quot;PWABEDR&quot;, &quot;PWALAND&quot;, &quot;PPERSAUT&quot;, &quot;PBESAUT&quot;, &quot;PMOTSCO&quot;,
-  &quot;PVRAAUT&quot;, &quot;PAANHANG&quot;, &quot;PTRACTOR&quot;, &quot;PWERKT&quot;, &quot;PBROM&quot;, &quot;PLEVEN&quot;,
-  &quot;PPERSONG&quot;, &quot;PGEZONG&quot;, &quot;PWAOREG&quot;, &quot;PBRAND&quot;, &quot;PZEILPL&quot;, &quot;PPLEZIER&quot;,
-  &quot;PFIETS&quot;, &quot;PINBOED&quot;, &quot;PBYSTAND&quot;, &quot;AWAPART&quot;, &quot;AWABEDR&quot;, &quot;AWALAND&quot;,
-  &quot;APERSAUT&quot;, &quot;ABESAUT&quot;, &quot;AMOTSCO&quot;, &quot;AVRAAUT&quot;, &quot;AAANHANG&quot;, &quot;ATRACTOR&quot;,
-  &quot;AWERKT&quot;, &quot;ABROM&quot;, &quot;ALEVEN&quot;, &quot;APERSONG&quot;, &quot;AGEZONG&quot;, &quot;AWAOREG&quot;,
-  &quot;ABRAND&quot;, &quot;AZEILPL&quot;, &quot;APLEZIER&quot;, &quot;AFIETS&quot;, &quot;AINBOED&quot;, &quot;ABYSTAND&quot;
-)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The ‘CARAVAN’ variable belongs to the l4 encoding but it will be
-considered as a binary variable (0 or 1) instead of a categorical
-variable (0,1,2,3,…) because such variable shows only 0,1 values.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZm9yIChjb2x1bW4gaW4gbmFtZXMoZGF0YSkpIHtcbiAgaWYgKGNvbHVtbiAlaW4lIGwwX3Zhcikge1xuICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDBfbGFiZWxzXG4gIH0gZWxzZSBpZiAoY29sdW1uICVpbiUgbDFfdmFycykge1xuICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDFfbGFiZWxzXG4gIH0gZWxzZSBpZiAoY29sdW1uICVpbiUgbDJfdmFycykge1xuICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDJfbGFiZWxzXG4gIH0gZWxzZSBpZiAoY29sdW1uICVpbiUgbDNfdmFycykge1xuICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDNfbGFiZWxzXG4gIH0gZWxzZSBpZiAoY29sdW1uICVpbiUgbDRfdmFycykge1xuICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDRfbGFiZWxzXG4gIH0gZWxzZSBpZiAoY29sdW1uID09IFwiQ0FSQVZBTlwiKSB7XG4gICAgbGV2ZWxzKGRhdGFbLCBjb2x1bW5dKSA8LSBjKFwiMFwiLCBcIjFcIilcbiAgfVxufSJ9 -->
-<pre class="r"><code>for (column in names(data)) {
-  if (column %in% l0_var) {
-    levels(data[, column]) &lt;- l0_labels
-  } else if (column %in% l1_vars) {
-    levels(data[, column]) &lt;- l1_labels
-  } else if (column %in% l2_vars) {
-    levels(data[, column]) &lt;- l2_labels
-  } else if (column %in% l3_vars) {
-    levels(data[, column]) &lt;- l3_labels
-  } else if (column %in% l4_vars) {
-    levels(data[, column]) &lt;- l4_labels
-  } else if (column == &quot;CARAVAN&quot;) {
-    levels(data[, column]) &lt;- c(&quot;0&quot;, &quot;1&quot;)
-  }
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-</div>
-<div id="train-test-split" class="section level1">
-<h1>Train-Test Split</h1>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoic3RyKGRhdGEpIn0= -->
-<pre class="r"><code>str(data)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0OTgyMiBvYnMuIG9mICA4NyB2YXJpYWJsZXM6XG4gJCBPUklHSU4gIDogRmFjdG9yIHcvIDIgbGV2ZWxzIFwidGVzdFwiLFwidHJhaW5cIjogMiAyIDIgMiAyIDIgMiAyIDIgMiAuLi5cbiAkIE1PU1RZUEUgOiBGYWN0b3Igdy8gNDAgbGV2ZWxzIFwiSGlnaCBJbmNvbWUsIGV4cGVuc2l2ZSBjaGlsZFwiLC4uOiA1IDM1IDM1IDkgMzggMjIgMzcgNSA1IDExIC4uLlxuICQgTUFBTlRIVUk6IGludCAgMSAxIDEgMSAxIDEgMiAxIDEgMiAuLi5cbiAkIE1HRU1PTVYgOiBpbnQgIDMgMiAyIDMgNCAyIDMgMiAyIDMgLi4uXG4gJCBNR0VNTEVFRjogRmFjdG9yIHcvIDYgbGV2ZWxzIFwiMjAtMzAgeWVhcnNcIiwuLjogMiAyIDIgMyAyIDEgMiAzIDQgMyAuLi5cbiAkIE1PU0hPT0ZEOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiU3VjY2Vzc2Z1bCBoZWRvbmlzdHNcIiwuLjogOCA4IDggMyAxMCA1IDkgOCA4IDMgLi4uXG4gJCBNR09EUksgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDEgMiAxIDMgMiAxIDMgMSAxIDQgLi4uXG4gJCBNR09EUFIgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDYgNSA1IDQgNSA2IDMgOCAyIDYgLi4uXG4gJCBNR09ET1YgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMiAzIDMgMiAxIDEgMSA0IDEgLi4uXG4gJCBNR09ER0UgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDQgNSA1IDUgNSA2IDYgMyA3IDMgLi4uXG4gJCBNUkVMR0UgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDggNyA0IDYgOCAxIDggOCA3IDggLi4uXG4gJCBNUkVMU0EgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDEgMyAzIDMgMiA3IDMgMyAxIDEgLi4uXG4gJCBNUkVMT1YgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDMgMyA1IDMgMyA0IDEgMSA0IDMgLi4uXG4gJCBNRkFMTEVFTjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMSA1IDMgMyA0IDEgMSA0IDMgLi4uXG4gJCBNRkdFS0lORDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDMgNSA1IDQgNSA2IDQgNiA0IDMgLi4uXG4gJCBNRldFS0lORDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDcgNiAzIDUgNSAzIDcgNSA0IDcgLi4uXG4gJCBNT1BMSE9PRzogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMSAxIDQgNiAxIDEgMSAxIDEgLi4uXG4gJCBNT1BMTUlERDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDMgNiA2IDUgNSA2IDUgNCAyIDUgLi4uXG4gJCBNT1BMTEFBRzogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDggNSA1IDMgMSA1IDYgNyA5IDYgLi4uXG4gJCBNQkVSSE9PRzogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMSAxIDUgMSAzIDEgMyAyIDMgLi4uXG4gJCBNQkVSWkVMRjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDEgMSAxIDEgNiAxIDEgMSAyIDEgLi4uXG4gJCBNQkVSQk9FUjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMSAxIDEgNSAxIDEgMSAxIDEgLi4uXG4gJCBNQkVSTUlERDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDMgNiA4IDQgMSA1IDUgMyAyIDQgLi4uXG4gJCBNQkVSQVJCRzogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDYgMSAxIDIgMSAzIDIgNiA5IDQgLi4uXG4gJCBNQkVSQVJCTzogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDMgNSAzIDMgMSAzIDYgMyAyIDQgLi4uXG4gJCBNU0tBICAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMSAxIDQgMTAgMyAxIDMgMiAyIC4uLlxuICQgTVNLQjEgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAyIDMgNiAzIDEgMyAyIDIgMiAzIC4uLlxuICQgTVNLQjIgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAzIDQgMSAyIDEgMyA1IDMgMSAyIC4uLlxuICQgTVNLQyAgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiA3IDYgNSA1IDEgNSA2IDYgOSA1IC4uLlxuICQgTVNLRCAgICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAyIDEgMSAxIDEgMyAxIDMgMiAzIC4uLlxuICQgTUhIVVVSICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAyIDMgOCA2IDUgMTAgNyAxIDEwIDEgLi4uXG4gJCBNSEtPT1AgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDkgOCAzIDUgNiAxIDQgMTAgMSAxMCAuLi5cbiAkIE1BVVQxICAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMCVcIixcIjEgLSAxMCVcIiwuLjogOSA4IDggMTAgNyA2IDkgNSA2IDcgLi4uXG4gJCBNQVVUMiAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDEgMiAxIDEgMyA0IDEgNSAzIDIgLi4uXG4gJCBNQVVUMCAgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgMyAzIDEgMiA0IDIgMyA0IDMgLi4uXG4gJCBNWkZPTkRTIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDkgNyAxMCA4IDYgMTAgMTAgNyA4IDcgLi4uXG4gJCBNWlBBUlQgIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDIgNCAxIDMgNSAxIDEgNCAzIDQgLi4uXG4gJCBNSU5LTTMwIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDEgMyA1IDIgMSA2IDUgMyA4IDMgLi4uXG4gJCBNSU5LMzA0NTogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDUgMSA2IDYgMSAzIDQgNiAzIDQgLi4uXG4gJCBNSU5LNDU3NTogRmFjdG9yIHcvIDEwIGxldmVscyBcIjAlXCIsXCIxIC0gMTAlXCIsLi46IDYgNiAxIDQgMTAgNCA0IDQgMiA0IC4uLlxuICQgTUlOSzc1MTI6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAxIDMgMSAxIDEgMSAxIDEgMSAyIC4uLlxuICQgTUlOSzEyM006IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgTUlOS0dFTSA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiA1IDYgNCA1IDcgNCA0IDQgMyA1IC4uLlxuICQgTUtPT1BLTEE6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwJVwiLFwiMSAtIDEwJVwiLC4uOiAzIDQgNCA0IDMgMyA1IDMgMyA3IC4uLlxuICQgUFdBUEFSVCA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAzIDMgMSAxIDEgMSAxIDEgMyAuLi5cbiAkIFBXQUJFRFIgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQV0FMQU5EIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUFBFUlNBVVQ6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogNCAxIDQgNCAxIDQgNCAxIDMgMSAuLi5cbiAkIFBCRVNBVVQgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQTU9UU0NPIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUFZSQUFVVCA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBBQU5IQU5HOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQVFJBQ1RPUjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUFdFUktUICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBCUk9NICAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMyAxIDEgLi4uXG4gJCBQTEVWRU4gIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUFBFUlNPTkc6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBHRVpPTkcgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQV0FPUkVHIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEJSQU5EICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogNiAzIDMgMyA3IDEgMSAxIDEgNCAuLi5cbiAkIFBaRUlMUEwgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQUExFWklFUjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgUEZJRVRTICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIFBJTkJPRUQgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBQQllTVEFORDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVdBUEFSVCA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAzIDIgMSAxIDEgMSAxIDEgMiAuLi5cbiAkIEFXQUJFRFIgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBV0FMQU5EIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVBFUlNBVVQ6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMiAxIDIgMiAxIDIgMiAxIDIgMSAuLi5cbiAkIEFCRVNBVVQgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBTU9UU0NPIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVZSQUFVVCA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFBQU5IQU5HOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBVFJBQ1RPUjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVdFUktUICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFCUk9NICAgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMiAxIDEgLi4uXG4gJCBBTEVWRU4gIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQVBFUlNPTkc6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFHRVpPTkcgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBV0FPUkVHIDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQUJSQU5EICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMiAyIDIgMiAyIDEgMSAxIDEgMiAuLi5cbiAkIEFaRUlMUEwgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBUExFWklFUjogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQUZJRVRTICA6IEZhY3RvciB3LyAxMCBsZXZlbHMgXCIwXCIsXCIxIC0gNDlcIixcIjUwIC0gOTlcIiwuLjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiAkIEFJTkJPRUQgOiBGYWN0b3Igdy8gMTAgbGV2ZWxzIFwiMFwiLFwiMSAtIDQ5XCIsXCI1MCAtIDk5XCIsLi46IDEgMSAxIDEgMSAxIDEgMSAxIDEgLi4uXG4gJCBBQllTVEFORDogRmFjdG9yIHcvIDEwIGxldmVscyBcIjBcIixcIjEgLSA0OVwiLFwiNTAgLSA5OVwiLC4uOiAxIDEgMSAxIDEgMSAxIDEgMSAxIC4uLlxuICQgQ0FSQVZBTiA6IEZhY3RvciB3LyAyIGxldmVscyBcIjBcIixcIjFcIjogMSAxIDEgMSAxIDEgMSAxIDEgMSAuLi5cbiJ9 -->
-<pre><code>&#39;data.frame&#39;:   9822 obs. of  87 variables:
- $ ORIGIN  : Factor w/ 2 levels &quot;test&quot;,&quot;train&quot;: 2 2 2 2 2 2 2 2 2 2 ...
- $ MOSTYPE : Factor w/ 40 levels &quot;High Income, expensive child&quot;,..: 5 35 35 9 38 22 37 5 5 11 ...
- $ MAANTHUI: int  1 1 1 1 1 1 2 1 1 2 ...
- $ MGEMOMV : int  3 2 2 3 4 2 3 2 2 3 ...
- $ MGEMLEEF: Factor w/ 6 levels &quot;20-30 years&quot;,..: 2 2 2 3 2 1 2 3 4 3 ...
- $ MOSHOOFD: Factor w/ 10 levels &quot;Successful hedonists&quot;,..: 8 8 8 3 10 5 9 8 8 3 ...
- $ MGODRK  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 2 1 3 2 1 3 1 1 4 ...
- $ MGODPR  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 6 5 5 4 5 6 3 8 2 6 ...
- $ MGODOV  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 2 3 3 2 1 1 1 4 1 ...
- $ MGODGE  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 4 5 5 5 5 6 6 3 7 3 ...
- $ MRELGE  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 8 7 4 6 8 1 8 8 7 8 ...
- $ MRELSA  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 3 3 3 2 7 3 3 1 1 ...
- $ MRELOV  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 3 5 3 3 4 1 1 4 3 ...
- $ MFALLEEN: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 5 3 3 4 1 1 4 3 ...
- $ MFGEKIND: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 5 5 4 5 6 4 6 4 3 ...
- $ MFWEKIND: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 7 6 3 5 5 3 7 5 4 7 ...
- $ MOPLHOOG: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 1 4 6 1 1 1 1 1 ...
- $ MOPLMIDD: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 6 6 5 5 6 5 4 2 5 ...
- $ MOPLLAAG: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 8 5 5 3 1 5 6 7 9 6 ...
- $ MBERHOOG: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 1 5 1 3 1 3 2 3 ...
- $ MBERZELF: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 1 1 1 6 1 1 1 2 1 ...
- $ MBERBOER: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 1 1 5 1 1 1 1 1 ...
- $ MBERMIDD: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 6 8 4 1 5 5 3 2 4 ...
- $ MBERARBG: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 6 1 1 2 1 3 2 6 9 4 ...
- $ MBERARBO: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 5 3 3 1 3 6 3 2 4 ...
- $ MSKA    : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 1 4 10 3 1 3 2 2 ...
- $ MSKB1   : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 3 6 3 1 3 2 2 2 3 ...
- $ MSKB2   : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 4 1 2 1 3 5 3 1 2 ...
- $ MSKC    : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 7 6 5 5 1 5 6 6 9 5 ...
- $ MSKD    : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 1 1 1 1 3 1 3 2 3 ...
- $ MHHUUR  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 3 8 6 5 10 7 1 10 1 ...
- $ MHKOOP  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 9 8 3 5 6 1 4 10 1 10 ...
- $ MAUT1   : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 9 8 8 10 7 6 9 5 6 7 ...
- $ MAUT2   : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 2 1 1 3 4 1 5 3 2 ...
- $ MAUT0   : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 3 3 1 2 4 2 3 4 3 ...
- $ MZFONDS : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 9 7 10 8 6 10 10 7 8 7 ...
- $ MZPART  : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 2 4 1 3 5 1 1 4 3 4 ...
- $ MINKM30 : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 3 5 2 1 6 5 3 8 3 ...
- $ MINK3045: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 5 1 6 6 1 3 4 6 3 4 ...
- $ MINK4575: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 6 6 1 4 10 4 4 4 2 4 ...
- $ MINK7512: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 3 1 1 1 1 1 1 1 2 ...
- $ MINK123M: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ MINKGEM : Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 5 6 4 5 7 4 4 4 3 5 ...
- $ MKOOPKLA: Factor w/ 10 levels &quot;0%&quot;,&quot;1 - 10%&quot;,..: 3 4 4 4 3 3 5 3 3 7 ...
- $ PWAPART : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 3 3 1 1 1 1 1 1 3 ...
- $ PWABEDR : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PWALAND : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PPERSAUT: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 4 1 4 4 1 4 4 1 3 1 ...
- $ PBESAUT : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PMOTSCO : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PVRAAUT : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PAANHANG: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PTRACTOR: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PWERKT  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PBROM   : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 3 1 1 ...
- $ PLEVEN  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PPERSONG: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PGEZONG : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PWAOREG : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PBRAND  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 6 3 3 3 7 1 1 1 1 4 ...
- $ PZEILPL : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PPLEZIER: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PFIETS  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PINBOED : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ PBYSTAND: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AWAPART : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 3 2 1 1 1 1 1 1 2 ...
- $ AWABEDR : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AWALAND : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ APERSAUT: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 2 1 2 2 1 2 2 1 2 1 ...
- $ ABESAUT : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AMOTSCO : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AVRAAUT : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AAANHANG: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ ATRACTOR: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AWERKT  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ ABROM   : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 2 1 1 ...
- $ ALEVEN  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ APERSONG: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AGEZONG : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AWAOREG : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ ABRAND  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 2 2 2 2 2 1 1 1 1 2 ...
- $ AZEILPL : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ APLEZIER: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AFIETS  : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ AINBOED : Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ ABYSTAND: Factor w/ 10 levels &quot;0&quot;,&quot;1 - 49&quot;,&quot;50 - 99&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
- $ CARAVAN : Factor w/ 2 levels &quot;0&quot;,&quot;1&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInRyYWluIDwtIGRhdGFbZGF0YSRPUklHSU4gPT0gXCJ0cmFpblwiLCBdIiwidGVzdCA8LSBkYXRhW2RhdGEkT1JJR0lOID09IFwidGVzdFwiLCBdIl19 -->
-<pre class="r"><code>train &lt;- data[data$ORIGIN == &quot;train&quot;, ]
-test &lt;- data[data$ORIGIN == &quot;test&quot;, ]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Perform the train-test split according to the variable.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbInRyYWluIDwtIHRyYWluWywgLXdoaWNoKG5hbWVzKHRyYWluKSA9PSBcIk9SSUdJTlwiKV0iLCJ0ZXN0IDwtIHRlc3RbLCAtd2hpY2gobmFtZXModGVzdCkgPT0gXCJPUklHSU5cIildIl19 -->
-<pre class="r"><code>train &lt;- train[, -which(names(train) == &quot;ORIGIN&quot;)]
-test &lt;- test[, -which(names(test) == &quot;ORIGIN&quot;)]</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Remove the ‘ORIGIN’ variable from the data.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGltKHRyYWluKSJ9 -->
-<pre class="r"><code>dim(train)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDU4MjIgICA4NlxuIn0= -->
-<pre><code>[1] 5822   86</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiZGltKHRlc3QpIn0= -->
-<pre class="r"><code>dim(test)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQwMDAgICA4NlxuIn0= -->
-<pre><code>[1] 4000   86</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjpbIndyaXRlLmNzdih0cmFpbiwgXCJkYXRhL3RyYWluLmNzdlwiLCByb3cubmFtZXMgPSBGQUxTRSkiLCJ3cml0ZS5jc3YodGVzdCwgXCJkYXRhL3Rlc3QuY3N2XCIsIHJvdy5uYW1lcyA9IEZBTFNFKSJdfQ== -->
-<pre class="r"><code>write.csv(train, &quot;data/train.csv&quot;, row.names = FALSE)
-write.csv(test, &quot;data/test.csv&quot;, row.names = FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Save the train and test data.</p>
-<!-- rnb-text-end -->
-</div>
-
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiVHJhaW4tVGVzdCBTcGxpdCIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTYW5pdHkgQ2hlY2sKCmBgYHtyfQpkYXRhIDwtIHJlYWQuY3N2KCJkYXRhL2NhcmF2YW4taW5zdXJhbmNlLWNoYWxsZW5nZS5jc3YiKQpgYGAKTG9hZCB0aGUgZGF0YS4KCmBgYHtyfQpkaW0oZGF0YSkKYGBgCk51bWJlciBvZiByb3dzIGFuZCBjb2x1bW5zLgoKYGBge3J9CnN1bShpcy5uYShkYXRhKSkKYGBgCk51bWJlciBvZiBtaXNzaW5nIHZhbHVlcy4gTm8gbWlzc2luZyB2YWx1ZXMgYXJlIHByZXNlbnQgaW4gdGhlIGRhdGEuCgpgYGB7cn0Kc3RyKGRhdGEpCmBgYApDaGVjayB0aGUgZGF0YSB0eXBlcy4gCkFsbCB0aGUgdmFyaWFibGVzIGFyZSBudW1lcmljIChpbnQpIGV4Y2VwdCB0aGUgJ09SSUdJTicKdmFyaWFibGUgd2hpY2ggaXMgYSBjaHIuCkFjY29yZGluZyB0byB0aGUgZGF0YSBkZXNjcmlwdGlvbiAKKGh0dHBzOi8vd3d3LmthZ2dsZS5jb20vZGF0YXNldHMvdWNpbWwvY2FyYXZhbi1pbnN1cmFuY2UtY2hhbGxlbmdlKSwgYWxsIHRoZSAKdmFyaWFibGVzIGNhbiBiZSB0aG91Z2h0IGFzIGZhY3RvcnMgZXhjZXB0IE1BQU5USFVJJyAoYXZnIHNpemUgaG91c2Vob2xkKSBhbmQKJ01FR0VNT01WJyAoYXZnIHNpemUgaG9zZWhvbGQpLgpTbywgd2Ugd2lsbCBjb252ZXJ0IGFsbCB0aGUgdmFyaWFibGVzIHRvIGZhY3RvcnMuCgpgYGB7cn0KI0NvbnZlcnQgYWxsIHRoZSB2YXJpYWJsZXMgdG8gZmFjdG9ycyBleGNlcHQgJ01BQU5USFVJJyBhbmQgJ01HRU1PTVYnCmZvciAoY29sdW1uIGluIG5hbWVzKGRhdGEpKSB7CiAgaWYgKGNvbHVtbiAhPSAiTUFBTlRIVUkiICYmIGNvbHVtbiAhPSAiTUdFTU9NViIpIHsKICAgIGRhdGFbLCBjb2x1bW5dIDwtIGFzLmZhY3RvcihkYXRhWywgY29sdW1uXSkKICB9Cn0KYGBgCgpgYGB7cn0KbDBfbGFiZWxzIDwtIGMoCiAgIkhpZ2ggSW5jb21lLCBleHBlbnNpdmUgY2hpbGQiLCAiVmVyeSBJbXBvcnRhbnQgUHJvdmluY2lhbHMiLAogICJIaWdoIHN0YXR1cyBzZW5pb3JzIiwgIkFmZmx1ZW50IHNlbmlvciBhcGFydG1lbnRzIiwgIk1peGVkIHNlbmlvcnMiLAogICJDYXJlZXIgYW5kIGNoaWxkY2FyZSIsICJEaW5raSdzIChkb3VibGUgaW5jb21lIG5vIGtpZHMpIiwKICAiTWlkZGxlIGNsYXNzIGZhbWlsaWVzIiwgIk1vZGVybiwgY29tcGxldGUgZmFtaWxpZXMiLCAiU3RhYmxlIGZhbWlseSIsCiAgIkZhbWlseSBzdGFydGVycyIsICJBZmZsdWVudCB5b3VuZyBmYW1pbGllcyIsICJZb3VuZyBhbGwgYW1lcmljYW4gZmFtaWx5IiwKICAiSnVuaW9yIGNvc21vcG9saXRhbiIsICJTZW5pb3IgY29zbW9wb2xpdGFucyIsICJTdHVkZW50cyBpbiBhcGFydG1lbnRzIiwKICAiRnJlc2ggbWFzdGVycyBpbiB0aGUgY2l0eSIsICJTaW5nbGUgeW91dGgiLCAiU3VidXJiYW4geW91dGgiLAogICJFdG5pY2FsbHkgZGl2ZXJzZSIsICJZb3VuZyB1cmJhbiBoYXZlLW5vdHMiLCAiTWl4ZWQgYXBhcnRtZW50IGR3ZWxsZXJzIiwKICAiWW91bmcgYW5kIHJpc2luZyIsIllvdW5nLCBsb3cgZWR1Y2F0ZWQiLCAiWW91bmcgc2VuaW9ycyBpbiB0aGUgY2l0eSIsCiAgIk93biBob21lIGVsZGVybHkiLCAiU2VuaW9ycyBpbiBhcGFydG1lbnRzIiwgIlJlc2lkZW50aWFsIGVsZGVybHkiLAogICJQb3JjaGxlc3Mgc2VuaW9yczogbm8gZnJvbnQgeWFyZCIsICJSZWxpZ2lvdXMgZWxkZXJseSBzaW5nbGVzIiwKICAiTG93IGluY29tZSBjYXRob2xpY3MiLCAiTWl4ZWQgc2VuaW9ycyIsICJMb3dlciBjbGFzcyBsYXJnZSBmYW1pbGllcyIsCiAgIkxhcmdlIGZhbWlseSwgZW1wbG95ZWQgY2hpbGQiLCAiVmlsbGFnZSBmYW1pbGllcyIsCiAgIkNvdXBsZXMgd2l0aCB0ZWVucyAnTWFycmllZCB3aXRoIGNoaWxkcmVuJyIsICJNaXhlZCBzbWFsbCB0b3duIGR3ZWxsZXJzIiwKICAiVHJhZGl0aW9uYWwgZmFtaWxpZXMiLCAiTGFyZ2UgcmVsaWdvdXMgZmFtaWxpZXMiLCAiTGFyZ2UgZmFtaWx5IGZhcm1zIiwKICAiTWl4ZWQgcnVyYWxzIgopCgpsMV9sYWJlbHMgPC0gYygiMjAtMzAgeWVhcnMiLCAiMzAtNDAgeWVhcnMiLCAiNDAtNTAgeWVhcnMiLAogICAgICAgICAgICAgICAgICAgICAiNTAtNjAgeWVhcnMiLCAiNjAtNzAgeWVhcnMiLCAiNzAtODAgeWVhcnMiKQoKbDJfbGFiZWxzIDwtIGMoCiAgIlN1Y2Nlc3NmdWwgaGVkb25pc3RzIiwgIkRyaXZlbiBHcm93ZXJzIiwgIkF2ZXJhZ2UgRmFtaWx5IiwgIkNhcmVlciBMb25lcnMiLAogICJMaXZpbmcgd2VsbCIsICJDcnVpc2luZyBTZW5pb3JzIiwgIlJldGlyZWQgYW5kIFJlbGlnaW91cyIsCiAgIkZhbWlseSB3aXRoIGdyb3duIHVwcyIsICJDb25zZXJ2YXRpdmUgZmFtaWxpZXMiLCAiRmFybWVycyIKKQoKbDNfbGFiZWxzIDwtIGMoCiAgIjAlIiwgIjEgLSAxMCUiLCAiMTEgLSAyMyUiLCAiMjQgLSAzNiUiLCAiMzcgLSA0OSUiLAogICI1MCAtIDYyJSIsICI2MyAtIDc1JSIsICI3NiAtIDg4JSIsICI4OSAtIDk5JSIsICIxMDAlIgopCgpsNF9sYWJlbHMgPC0gYygKICAiMCIsICIxIC0gNDkiLCAiNTAgLSA5OSIsICIxMDAgLSAxOTkiLCAiMjAwIC0gNDk5IiwKICAiNTAwIC0gOTk5IiwgIjEwMDAgLSA0OTk5IiwgIjUwMDAgLSA5OTk5IiwgIjEwLDAwMCAtIDE5LDk5OSIsICI+PSAyMCwwMDAiCikKYGBgCgpSZW5hbWUgdGhlIGxldmVscyBvZiB0aGUgdmFyaWFibGVzIHRvIHRoZWlyIGNvcnJlc3BvbmRpbmcgbGFiZWxzIGdpdmVuIGJ5IHRoZSBkZXNjcmkKCmBgYHtyfQpub19lbmRvZGVkX3ZhcmlhYmxlcyA8LSBjKCJNQUFOVEhVSSIsICJNR0VNT01WIikKCmwwX3ZhciA8LSBjKCJNT1NUWVBFIikKCmwxX3ZhcnMgPC0gYygiTUdFTUxFRUYiKQoKbDJfdmFycyA8LSBjKCJNT1NIT09GRCIpCgpsM192YXJzIDwtIGMoCiAgIk1HT0RSSyIsICJNR09EUFIiLCAiTUdPRE9WIiwgIk1HT0RHRSIsICJNUkVMR0UiLCAiTVJFTFNBIiwgIk1SRUxPViIsCiAgIk1GQUxMRUVOIiwgIk1GR0VLSU5EIiwgIk1GV0VLSU5EIiwgIk1PUExIT09HIiwgIk1PUExNSUREIiwgIk1PUExMQUFHIiwKICAiTUJFUkhPT0ciLCAiTUJFUlpFTEYiLCAiTUJFUkJPRVIiLCAiTUJFUk1JREQiLCAiTUJFUkFSQkciLCAiTUJFUkFSQk8iLAogICJNU0tBIiwgIk1TS0IxIiwgIk1TS0IyIiwgIk1TS0MiLCAiTVNLRCIsICJNSEhVVVIiLCAiTUhLT09QIiwgIk1BVVQxIiwKICAiTUFVVDIiLCAiTUFVVDAiLCAiTVpGT05EUyIsICJNWlBBUlQiLCAiTUlOS00zMCIsICJNSU5LMzA0NSIsICJNSU5LNDU3NSIsCiAgIk1JTks3NTEyIiwgIk1JTksxMjNNIiwgIk1JTktHRU0iLCAiTUtPT1BLTEEiCikKCmw0X3ZhcnMgPC0gYygKICAiUFdBUEFSVCIsICJQV0FCRURSIiwgIlBXQUxBTkQiLCAiUFBFUlNBVVQiLCAiUEJFU0FVVCIsICJQTU9UU0NPIiwKICAiUFZSQUFVVCIsICJQQUFOSEFORyIsICJQVFJBQ1RPUiIsICJQV0VSS1QiLCAiUEJST00iLCAiUExFVkVOIiwKICAiUFBFUlNPTkciLCAiUEdFWk9ORyIsICJQV0FPUkVHIiwgIlBCUkFORCIsICJQWkVJTFBMIiwgIlBQTEVaSUVSIiwKICAiUEZJRVRTIiwgIlBJTkJPRUQiLCAiUEJZU1RBTkQiLCAiQVdBUEFSVCIsICJBV0FCRURSIiwgIkFXQUxBTkQiLAogICJBUEVSU0FVVCIsICJBQkVTQVVUIiwgIkFNT1RTQ08iLCAiQVZSQUFVVCIsICJBQUFOSEFORyIsICJBVFJBQ1RPUiIsCiAgIkFXRVJLVCIsICJBQlJPTSIsICJBTEVWRU4iLCAiQVBFUlNPTkciLCAiQUdFWk9ORyIsICJBV0FPUkVHIiwKICAiQUJSQU5EIiwgIkFaRUlMUEwiLCAiQVBMRVpJRVIiLCAiQUZJRVRTIiwgIkFJTkJPRUQiLCAiQUJZU1RBTkQiCikKYGBgClRoZSAnQ0FSQVZBTicgdmFyaWFibGUgYmVsb25ncyB0byB0aGUgbDQgZW5jb2RpbmcgYnV0IGl0IHdpbGwgYmUgY29uc2lkZXJlZAphcyBhIGJpbmFyeSB2YXJpYWJsZSAoMCBvciAxKSBpbnN0ZWFkIG9mIGEgY2F0ZWdvcmljYWwgdmFyaWFibGUgKDAsMSwyLDMsLi4uKQpiZWNhdXNlIHN1Y2ggdmFyaWFibGUgc2hvd3Mgb25seSAwLDEgdmFsdWVzLgoKCmBgYHtyfQpmb3IgKGNvbHVtbiBpbiBuYW1lcyhkYXRhKSkgewogIGlmIChjb2x1bW4gJWluJSBsMF92YXIpIHsKICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDBfbGFiZWxzCiAgfSBlbHNlIGlmIChjb2x1bW4gJWluJSBsMV92YXJzKSB7CiAgICBsZXZlbHMoZGF0YVssIGNvbHVtbl0pIDwtIGwxX2xhYmVscwogIH0gZWxzZSBpZiAoY29sdW1uICVpbiUgbDJfdmFycykgewogICAgbGV2ZWxzKGRhdGFbLCBjb2x1bW5dKSA8LSBsMl9sYWJlbHMKICB9IGVsc2UgaWYgKGNvbHVtbiAlaW4lIGwzX3ZhcnMpIHsKICAgIGxldmVscyhkYXRhWywgY29sdW1uXSkgPC0gbDNfbGFiZWxzCiAgfSBlbHNlIGlmIChjb2x1bW4gJWluJSBsNF92YXJzKSB7CiAgICBsZXZlbHMoZGF0YVssIGNvbHVtbl0pIDwtIGw0X2xhYmVscwogIH0gZWxzZSBpZiAoY29sdW1uID09ICJDQVJBVkFOIikgewogICAgbGV2ZWxzKGRhdGFbLCBjb2x1bW5dKSA8LSBjKCIwIiwgIjEiKQogIH0KfQpgYGAKCiMgVHJhaW4tVGVzdCBTcGxpdApgYGB7cn0Kc3RyKGRhdGEpCmBgYAoKYGBge3J9CnRyYWluIDwtIGRhdGFbZGF0YSRPUklHSU4gPT0gInRyYWluIiwgXQp0ZXN0IDwtIGRhdGFbZGF0YSRPUklHSU4gPT0gInRlc3QiLCBdCmBgYApQZXJmb3JtIHRoZSB0cmFpbi10ZXN0IHNwbGl0IGFjY29yZGluZyB0byB0aGUgdmFyaWFibGUuCgpgYGB7cn0KdHJhaW4gPC0gdHJhaW5bLCAtd2hpY2gobmFtZXModHJhaW4pID09ICJPUklHSU4iKV0KdGVzdCA8LSB0ZXN0WywgLXdoaWNoKG5hbWVzKHRlc3QpID09ICJPUklHSU4iKV0KYGBgClJlbW92ZSB0aGUgJ09SSUdJTicgdmFyaWFibGUgZnJvbSB0aGUgZGF0YS4KCmBgYHtyfQpkaW0odHJhaW4pCmBgYAoKYGBge3J9CmRpbSh0ZXN0KQpgYGAKCmBgYHtyfQp3cml0ZS5jc3YodHJhaW4sICJkYXRhL3RyYWluLmNzdiIsIHJvdy5uYW1lcyA9IEZBTFNFKQp3cml0ZS5jc3YodGVzdCwgImRhdGEvdGVzdC5jc3YiLCByb3cubmFtZXMgPSBGQUxTRSkKYGBgClNhdmUgdGhlIHRyYWluIGFuZCB0ZXN0IGRhdGEu</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRXhwbG9yYXRvcnkgRGF0YSBBbmFseXNpcyIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmRhdGEgPC0gcmVhZC5jc3YoImRhdGEvdHJhaW4uY3N2IikKYGBgCkxvYWQgdGhlIHRyYWluIGRhdGEgc2V0LgoKYGBge3J9CnRhYmxlKGRhdGEkQ0FSQVZBTikKYGBgCkRpc3RyaWJ1dGlvbiBvZiB0aGUgdGFyZ2V0IHZhcmlhYmxlLgoKYGBge3J9CnN1bW1hcnkoZGF0YSkKYGBgCgpgYGB7cn0Kc3VtKGRhdGEkQ0FSQVZBTiA9PSAxKSAvIG5yb3coZGF0YSkKYGBgClRoZSBjYXRlZ29yaWVzIG9mIHRoZSB0YXJnZXQgdmFyaWFibGUgYXJlIGhpZ2x5IHVuYmFsYW5jZWQsIHRoZSByYXRpbyBpcyAxOjE5LgoKCgo=</div>
 
 
 
@@ -2197,7 +1997,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("1_train_test_split.Rmd");
+  window.initializeSourceEmbed("2_exploratory_data_analysis.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
