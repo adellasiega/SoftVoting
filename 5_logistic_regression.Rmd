@@ -1,4 +1,4 @@
-# Logistic Regression
+68
 
 Load the data 
 ```{r}
