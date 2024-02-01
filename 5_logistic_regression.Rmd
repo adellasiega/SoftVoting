@@ -1,4 +1,4 @@
-68
+# Logistic Regression
 
 Load the data 
 ```{r}
@@ -12,11 +12,10 @@ Fit the model
 logit_rose <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
 ```
 
-
-
 ```{r}
 summary(logit_rose)
 ```
+
 
 ```{r}
 #Test the ROSE model
@@ -27,4 +26,22 @@ pred_rose <- as.numeric(predict(logit_rose, newdata = test, type = "response") >
 library(caret)
 #change the positive class to 1
 confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = "1")
+```
+```{r}
+# Get the variables with p-value < 0.05
+selected_vars <- summary(logit_rose)$coefficients[summary(logit_rose)$coefficients[, 4] < 0.05, ]
+#Get only the names of the variables, excluding the intercept
+selected_vars <- c(rownames(selected_vars)[-1], "CARAVAN")
+```
+```{r}
+#make a trainset with only the selected variables
+truncated_train_rose <- train_rose[, selected_vars]
+dim(truncated_train_rose)
+logit_rose_truncated <- glm(CARAVAN ~ ., data = train_rose[, selected_vars], family = "binomial")
+
+```
+```{r}
+#test the truncated model
+pred_rose_truncated <- as.numeric(predict(logit_rose_truncated, newdata = test[, selected_vars], type = "response") > 0.5)
+confusionMatrix(factor(pred_rose_truncated), factor(test$CARAVAN), positive = "1")
 ```

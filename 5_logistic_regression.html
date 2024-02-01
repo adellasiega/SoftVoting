@@ -468,6 +468,45 @@ confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = &quot;1&quot
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
+<pre class="r"><code># Get the variables with p-value &lt; 0.05
+selected_vars &lt;- summary(logit_rose)$coefficients[summary(logit_rose)$coefficients[, 4] &lt; 0.05, ]
+#Get only the names of the variables, excluding the intercept
+selected_vars &lt;- c(rownames(selected_vars)[-1], &quot;CARAVAN&quot;)</code></pre>
+<pre class="r"><code>#make a trainset with only the selected variables
+truncated_train_rose &lt;- train_rose[, selected_vars]
+dim(truncated_train_rose)</code></pre>
+<pre><code>## [1] 10948    34</code></pre>
+<pre class="r"><code>logit_rose_truncated &lt;- glm(CARAVAN ~ ., data = train_rose[, selected_vars], family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>#test the truncated model
+pred_rose_truncated &lt;- as.numeric(predict(logit_rose_truncated, newdata = test[, selected_vars], type = &quot;response&quot;) &gt; 0.5)
+confusionMatrix(factor(pred_rose_truncated), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 2634  100
+##          1 1128  138
+##                                           
+##                Accuracy : 0.693           
+##                  95% CI : (0.6784, 0.7073)
+##     No Information Rate : 0.9405          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : 0.0926          
+##                                           
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##                                           
+##             Sensitivity : 0.5798          
+##             Specificity : 0.7002          
+##          Pos Pred Value : 0.1090          
+##          Neg Pred Value : 0.9634          
+##              Prevalence : 0.0595          
+##          Detection Rate : 0.0345          
+##    Detection Prevalence : 0.3165          
+##       Balanced Accuracy : 0.6400          
+##                                           
+##        &#39;Positive&#39; Class : 1               
+## </code></pre>
 </div>
 
 

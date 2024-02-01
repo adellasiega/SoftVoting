@@ -15,7 +15,6 @@ test <- read.csv("data/test.csv")
 rf <- randomForest(CARAVAN ~ ., data = train, ntree = 50, importance = TRUE)
 ```
 
-
 ```{r}
 #test the model
 pred <- as.numeric(predict(rf, test) > 0.5)
@@ -26,4 +25,3 @@ print(levels(factor(test$CARAVAN)))
 ```{r}
 confusionMatrix(factor(pred), factor(test$CARAVAN), positive = "1")
 ```
-68
