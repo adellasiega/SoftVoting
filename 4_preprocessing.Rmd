@@ -42,7 +42,7 @@ library(ROSE)
 
 ```{r}
 # Perform ROSE oversampling
-data_rose <- ovun.sample(CARAVAN ~ ., data = data, method = "over", N = 2*n_0)$data
+data_rose <- ovun.sample(CARAVAN ~ ., data = data, method = "over", N = n_0+round(0.5*n_0))$data
 #Save the data
 write.csv(data_rose, "data/train_rose.csv", row.names = FALSE)
 ```

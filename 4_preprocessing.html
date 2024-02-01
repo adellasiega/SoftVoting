@@ -389,14 +389,14 @@ write.csv(data_over, &quot;data/train_oversampled.csv&quot;, row.names = FALSE)<
 <pre class="r"><code>library(ROSE)</code></pre>
 <pre><code>## Loaded ROSE 0.0-4</code></pre>
 <pre class="r"><code># Perform ROSE oversampling
-data_rose &lt;- ovun.sample(CARAVAN ~ ., data = data, method = &quot;over&quot;, N = 2*n_0)$data
+data_rose &lt;- ovun.sample(CARAVAN ~ ., data = data, method = &quot;over&quot;, N = n_0+round(0.5*n_0))$data
 #Save the data
 write.csv(data_rose, &quot;data/train_rose.csv&quot;, row.names = FALSE)</code></pre>
 <p>Check the distribution of data_rose</p>
 <pre class="r"><code>table(data_rose$CARAVAN)</code></pre>
 <pre><code>## 
 ##    0    1 
-## 5474 5474</code></pre>
+## 5474 2737</code></pre>
 </div>
 </div>
 </div>
