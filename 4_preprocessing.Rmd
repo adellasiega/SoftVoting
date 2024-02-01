@@ -1,0 +1,56 @@
+# Preprocessing
+
+## Scaling
+```{r}
+# Load the data
+data <- read.csv("data/train.csv", header = TRUE, sep = ",")
+```
+
+```{r}
+# Perform Min-Max Normalization on each column
+minmax_norm <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x)))
+}
+
+#data <- as.data.frame(lapply(data, minmax_norm))
+```
+
+## Balancing target variable
+
+### Oversampling
+```{r}
+# Perform naive random oversampling
+
+data_0 <- data[data["CARAVAN"] == 0, ]
+data_1 <- data[data["CARAVAN"] == 1, ]
+
+n_0 <- nrow(data_0)
+n_1 <- nrow(data_1)
+
+data_over <- rbind(data_0, data_1[sample(n_1, n_0, replace = TRUE), ])
+# Shuffle the data
+data_over <- data_over[sample(nrow(data_over)), ]
+
+# Save the data
+write.csv(data_over, "data/train_oversampled.csv", row.names = FALSE)
+```
+
+```{r}
+install.packages("ROSE")
+library(ROSE)
+```
+
+```{r}
+# Perform ROSE oversampling
+data_rose <- ovun.sample(CARAVAN ~ ., data = data, method = "over", N = 2*n_0)$data
+#Save the data
+write.csv(data_rose, "data/train_rose.csv", row.names = FALSE)
+```
+
+Check the distribution of data_rose
+```{r}
+table(data_rose$CARAVAN)
+```
+
+
+

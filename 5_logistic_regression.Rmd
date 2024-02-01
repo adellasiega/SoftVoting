@@ -1,0 +1,32 @@
+# Logistic Regression
+
+Load the data 
+```{r}
+train_oversampled <- read.csv("data/train_oversampled.csv")
+train_rose <- read.csv("data/train_rose.csv")
+test <- read.csv("data/test.csv")
+```
+
+Fit the model
+```{r}
+logit_rose <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
+```
+
+
+```{r}
+summary(logit_rose)
+```
+
+```{r}
+#Test the ROSE model
+pred_rose <- as.numeric(predict(logit_rose, newdata = test, type = "response") > 0.5)
+```
+
+```{r}
+library(caret)
+#change the positive class to 1
+confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = "1")
+```
+
+```{r}
+```
