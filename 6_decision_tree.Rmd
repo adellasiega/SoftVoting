@@ -1,0 +1,27 @@
+# Decision Tree
+Load the data
+```{r}
+train <- read.csv("data/train_rose.csv")
+test <- read.csv("data/test.csv")
+```
+
+```{r}
+# Create a decision tree model
+library(rpart)
+library(rpart.plot)
+tree <- rpart(CARAVAN ~ ., data = train)
+rpart.plot(tree)
+```
+
+```{r}
+# Predict the test data
+pred <- predict(tree, test)
+pred <- as.numeric(pred > 0.5)
+```
+
+```{r}
+# Create a confusion matrix
+library(caret)
+confusionMatrix(factor(pred), factor(test$CARAVAN), positive = "1")
+```
+

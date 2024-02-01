@@ -26,3 +26,4 @@ print(levels(factor(test$CARAVAN)))
 ```{r}
 confusionMatrix(factor(pred), factor(test$CARAVAN), positive = "1")
 ```
+68
