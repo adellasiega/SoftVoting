@@ -364,8 +364,8 @@ corrplot(cor_matrix, method = &quot;circle&quot;)</code></pre>
 The correlation plot shows multicollinearity between the variables.</p>
 <pre class="r"><code># find the most correlated variables
 columns_to_remove &lt;- c()
-for (i in seq_len(ncol(cor_matrix))) {
-  for (j in seq_len(ncol(cor_matrix))) {
+for (i in seq_len(ncol(cor_matrix) - 1)) {
+  for (j in seq_len(ncol(cor_matrix) - 1)) {
     if (i &gt; j) {
       if (abs(cor_matrix[i, j]) &gt; 0.7) {
         print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
@@ -405,12 +405,10 @@ for (i in seq_len(ncol(cor_matrix))) {
 ## [1] &quot;AFIETS PFIETS 0.935854262111417&quot;
 ## [1] &quot;AINBOED PINBOED 0.875256477164632&quot;
 ## [1] &quot;ABYSTAND PBYSTAND 0.966238760602872&quot;</code></pre>
-<pre class="r"><code>print(columns_to_remove)</code></pre>
-<pre><code>##  [1] &quot;MOSTYPE&quot;  &quot;MGODPR&quot;   &quot;MRELGE&quot;   &quot;MRELOV&quot;   &quot;MGEMOMV&quot;  &quot;MOPLMIDD&quot;
-##  [7] &quot;MHHUUR&quot;   &quot;MAUT1&quot;    &quot;MZFONDS&quot;  &quot;PWAPART&quot;  &quot;PWABEDR&quot;  &quot;PWALAND&quot; 
-## [13] &quot;PPERSAUT&quot; &quot;PBESAUT&quot;  &quot;PMOTSCO&quot;  &quot;PVRAAUT&quot;  &quot;PAANHANG&quot; &quot;PTRACTOR&quot;
-## [19] &quot;PWERKT&quot;   &quot;PBROM&quot;    &quot;PLEVEN&quot;   &quot;PPERSONG&quot; &quot;PGEZONG&quot;  &quot;PWAOREG&quot; 
-## [25] &quot;PBRAND&quot;   &quot;PZEILPL&quot;  &quot;PPLEZIER&quot; &quot;PFIETS&quot;   &quot;PINBOED&quot;  &quot;PBYSTAND&quot;</code></pre>
+<pre class="r"><code>#remove the variables that cause multicollinearity
+data &lt;- data[, !(names(data) %in% columns_to_remove)]</code></pre>
+<pre class="r"><code>#save the data
+write.csv(data, &quot;data/train.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 
 

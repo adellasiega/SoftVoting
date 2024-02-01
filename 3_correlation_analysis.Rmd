@@ -16,8 +16,8 @@ The correlation plot shows multicollinearity between the variables.
 ```{r}
 # find the most correlated variables
 columns_to_remove <- c()
-for (i in seq_len(ncol(cor_matrix))) {
-  for (j in seq_len(ncol(cor_matrix))) {
+for (i in seq_len(ncol(cor_matrix) - 1)) {
+  for (j in seq_len(ncol(cor_matrix) - 1)) {
     if (i > j) {
       if (abs(cor_matrix[i, j]) > 0.7) {
         print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
@@ -31,6 +31,12 @@ for (i in seq_len(ncol(cor_matrix))) {
 
 
 ```{r}
-print(columns_to_remove)
+#remove the variables that cause multicollinearity
+data <- data[, !(names(data) %in% columns_to_remove)]
+```
+
+```{r}
+#save the data
+write.csv(data, "data/train.csv", row.names = FALSE)
 ```
   

@@ -1,0 +1,28 @@
+# Random Forest
+
+```{r}
+library(randomForest)
+library(caret)
+```
+
+```{r}
+#Load the data
+train <- read.csv("data/train_rose.csv")
+test <- read.csv("data/test.csv")
+```
+
+```{r}
+rf <- randomForest(CARAVAN ~ ., data = train, ntree = 50, importance = TRUE)
+```
+
+
+```{r}
+#test the model
+pred <- as.numeric(predict(rf, test) > 0.5)
+print(levels(factor(pred)))
+print(levels(factor(test$CARAVAN)))
+```
+
+```{r}
+confusionMatrix(factor(pred), factor(test$CARAVAN), positive = "1")
+```

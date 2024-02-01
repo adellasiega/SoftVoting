@@ -11,7 +11,7 @@
 
 
 
-<title>5_logistic_regression.knit</title>
+<title>6_random_forest.knit</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -352,119 +352,56 @@ display: none;
 </div>
 
 
-<div id="logistic-regression" class="section level1">
-<h1>Logistic Regression</h1>
-<p>Load the data</p>
-<pre class="r"><code>train_oversampled &lt;- read.csv(&quot;data/train_oversampled.csv&quot;)
-train_rose &lt;- read.csv(&quot;data/train_rose.csv&quot;)
-test &lt;- read.csv(&quot;data/test.csv&quot;)</code></pre>
-<p>Fit the model</p>
-<pre class="r"><code>logit_rose &lt;- glm(CARAVAN ~ ., data = train_rose, family = &quot;binomial&quot;)</code></pre>
-<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
-<pre class="r"><code>summary(logit_rose)</code></pre>
-<pre><code>## 
-## Call:
-## glm(formula = CARAVAN ~ ., family = &quot;binomial&quot;, data = train_rose)
-## 
-## Coefficients:
-##               Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)  -4.718535   0.656773  -7.184 6.75e-13 ***
-## MAANTHUI     -0.405852   0.076271  -5.321 1.03e-07 ***
-## MGEMLEEF      0.305061   0.036928   8.261  &lt; 2e-16 ***
-## MOSHOOFD      0.023012   0.010849   2.121 0.033916 *  
-## MGODRK       -0.075079   0.025360  -2.960 0.003071 ** 
-## MGODOV        0.020685   0.022680   0.912 0.361747    
-## MGODGE       -0.034279   0.014872  -2.305 0.021172 *  
-## MRELSA       -0.046604   0.029742  -1.567 0.117123    
-## MFALLEEN     -0.030117   0.046312  -0.650 0.515495    
-## MFGEKIND     -0.025457   0.050077  -0.508 0.611196    
-## MFWEKIND      0.027585   0.050334   0.548 0.583660    
-## MOPLHOOG      0.106937   0.022027   4.855 1.21e-06 ***
-## MOPLLAAG     -0.120295   0.020681  -5.817 6.00e-09 ***
-## MBERHOOG      0.131897   0.035065   3.761 0.000169 ***
-## MBERZELF      0.127515   0.038143   3.343 0.000829 ***
-## MBERBOER     -0.130368   0.039105  -3.334 0.000857 ***
-## MBERMIDD      0.173390   0.033310   5.205 1.94e-07 ***
-## MBERARBG      0.039721   0.032866   1.209 0.226823    
-## MBERARBO      0.086283   0.033128   2.605 0.009199 ** 
-## MSKA          0.030882   0.038760   0.797 0.425598    
-## MSKB1         0.011682   0.036745   0.318 0.750551    
-## MSKB2         0.027748   0.033330   0.832 0.405127    
-## MSKC          0.199480   0.036820   5.418 6.03e-08 ***
-## MSKD          0.020444   0.035643   0.574 0.566262    
-## MHKOOP        0.040867   0.010128   4.035 5.46e-05 ***
-## MAUT2        -0.033249   0.020741  -1.603 0.108920    
-## MAUT0        -0.064270   0.020380  -3.154 0.001613 ** 
-## MZPART       -0.057819   0.016609  -3.481 0.000499 ***
-## MINKM30       0.072651   0.039599   1.835 0.066557 .  
-## MINK3045      0.114526   0.036976   3.097 0.001953 ** 
-## MINK4575      0.061480   0.037112   1.657 0.097594 .  
-## MINK7512      0.083986   0.038571   2.177 0.029447 *  
-## MINK123M     -0.364135   0.057373  -6.347 2.20e-10 ***
-## MINKGEM       0.153751   0.041350   3.718 0.000201 ***
-## MKOOPKLA      0.087800   0.017050   5.150 2.61e-07 ***
-## AWAPART       0.347052   0.055536   6.249 4.13e-10 ***
-## AWABEDR      -0.007961   0.199686  -0.040 0.968198    
-## AWALAND      -0.784596   0.247988  -3.164 0.001557 ** 
-## APERSAUT      0.978950   0.039960  24.498  &lt; 2e-16 ***
-## ABESAUT      -0.542779   0.301046  -1.803 0.071392 .  
-## AMOTSCO      -0.150389   0.100060  -1.503 0.132840    
-## AVRAAUT     -13.844748 298.372283  -0.046 0.962991    
-## AAANHANG      0.268833   0.192942   1.393 0.163519    
-## ATRACTOR     -0.258915   0.156913  -1.650 0.098933 .  
-## AWERKT      -13.062268 172.163731  -0.076 0.939522    
-## ABROM        -0.870945   0.119782  -7.271 3.57e-13 ***
-## ALEVEN        0.126310   0.049986   2.527 0.011507 *  
-## APERSONG     -1.378848   0.409699  -3.366 0.000764 ***
-## AGEZONG       0.576022   0.261070   2.206 0.027357 *  
-## AWAOREG       1.347152   0.276968   4.864 1.15e-06 ***
-## ABRAND        0.136145   0.051502   2.643 0.008206 ** 
-## AZEILPL       0.252804   0.910617   0.278 0.781305    
-## APLEZIER      3.045404   0.263835  11.543  &lt; 2e-16 ***
-## AFIETS        0.486426   0.094879   5.127 2.95e-07 ***
-## AINBOED       0.013590   0.225140   0.060 0.951867    
-## ABYSTAND      0.813619   0.156277   5.206 1.93e-07 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## (Dispersion parameter for binomial family taken to be 1)
-## 
-##     Null deviance: 15177  on 10947  degrees of freedom
-## Residual deviance: 12463  on 10892  degrees of freedom
-## AIC: 12575
-## 
-## Number of Fisher Scoring iterations: 14</code></pre>
-<pre class="r"><code>#Test the ROSE model
-pred_rose &lt;- as.numeric(predict(logit_rose, newdata = test, type = &quot;response&quot;) &gt; 0.5)</code></pre>
+<div id="random-forest" class="section level1">
+<h1>Random Forest</h1>
+<pre class="r"><code>library(randomForest)</code></pre>
+<pre><code>## randomForest 4.7-1.1</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;ggplot2&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:randomForest&#39;:
+## 
+##     margin</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>#change the positive class to 1
-confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
+<pre class="r"><code>#Load the data
+train &lt;- read.csv(&quot;data/train_rose.csv&quot;)
+test &lt;- read.csv(&quot;data/test.csv&quot;)</code></pre>
+<pre class="r"><code>rf &lt;- randomForest(CARAVAN ~ ., data = train, ntree = 50, importance = TRUE)</code></pre>
+<pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
+## unique values.  Are you sure you want to do regression?</code></pre>
+<pre class="r"><code>#test the model
+pred &lt;- as.numeric(predict(rf, test) &gt; 0.5)
+print(levels(factor(pred)))</code></pre>
+<pre><code>## [1] &quot;0&quot; &quot;1&quot;</code></pre>
+<pre class="r"><code>print(levels(factor(test$CARAVAN)))</code></pre>
+<pre><code>## [1] &quot;0&quot; &quot;1&quot;</code></pre>
+<pre class="r"><code>confusionMatrix(factor(pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 2643   97
-##          1 1119  141
+##          0 3561  201
+##          1  201   37
 ##                                           
-##                Accuracy : 0.696           
-##                  95% CI : (0.6815, 0.7102)
+##                Accuracy : 0.8995          
+##                  95% CI : (0.8898, 0.9086)
 ##     No Information Rate : 0.9405          
 ##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.098           
+##                   Kappa : 0.102           
 ##                                           
-##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##  Mcnemar&#39;s Test P-Value : 1               
 ##                                           
-##             Sensitivity : 0.59244         
-##             Specificity : 0.70255         
-##          Pos Pred Value : 0.11190         
-##          Neg Pred Value : 0.96460         
+##             Sensitivity : 0.15546         
+##             Specificity : 0.94657         
+##          Pos Pred Value : 0.15546         
+##          Neg Pred Value : 0.94657         
 ##              Prevalence : 0.05950         
-##          Detection Rate : 0.03525         
-##    Detection Prevalence : 0.31500         
-##       Balanced Accuracy : 0.64749         
+##          Detection Rate : 0.00925         
+##    Detection Prevalence : 0.05950         
+##       Balanced Accuracy : 0.55102         
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
