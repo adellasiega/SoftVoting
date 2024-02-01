@@ -1,0 +1,36 @@
+# Correlation Analysis
+
+```{r}
+data <- read.csv("data/train.csv", header = TRUE)
+```
+Load the data
+
+
+```{r}
+library(corrplot)
+cor_matrix <- cor(data)
+corrplot(cor_matrix, method = "circle")
+```
+The correlation plot shows multicollinearity between the variables.
+
+```{r}
+# find the most correlated variables
+columns_to_remove <- c()
+for (i in seq_len(ncol(cor_matrix))) {
+  for (j in seq_len(ncol(cor_matrix))) {
+    if (i > j) {
+      if (abs(cor_matrix[i, j]) > 0.7) {
+        print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
+                    cor_matrix[i, j]))
+        columns_to_remove <- c(columns_to_remove, colnames(cor_matrix)[j])
+      }
+    }
+  }
+}
+```
+
+
+```{r}
+print(columns_to_remove)
+```
+  

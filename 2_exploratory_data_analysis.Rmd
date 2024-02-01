@@ -42,3 +42,4 @@ for (var in cat_vars) {
 Plot of the distribution of the numerical variables
 
 
+
