@@ -15,7 +15,8 @@ rpart.plot(tree)
 
 ```{r}
 # Predict the test data
-pred <- predict(tree, test)
+x_test <- test[names(test) != "CARAVAN"]
+pred <- predict(tree, x_test)
 pred <- as.numeric(pred > 0.5)
 ```
 

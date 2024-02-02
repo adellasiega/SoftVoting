@@ -11,7 +11,7 @@
 
 
 
-<title>6_random_forest.knit</title>
+<title>7_random_forest.knit</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -367,43 +367,40 @@ display: none;
 <pre><code>## Loading required package: lattice</code></pre>
 <pre class="r"><code>#Load the data
 train &lt;- read.csv(&quot;data/train_rose.csv&quot;)
-test &lt;- read.csv(&quot;data/test.csv&quot;)</code></pre>
-<pre class="r"><code>rf &lt;- randomForest(CARAVAN ~ ., data = train, ntree = 50, importance = TRUE)</code></pre>
-<pre><code>## Warning in randomForest.default(m, y, ...): The response has five or fewer
-## unique values.  Are you sure you want to do regression?</code></pre>
+test &lt;- read.csv(&quot;data/test.csv&quot;)
+train$CARAVAN &lt;- as.factor(train$CARAVAN)
+test$CARAVAN &lt;- as.factor(test$CARAVAN)</code></pre>
+<pre class="r"><code>rf &lt;- randomForest(CARAVAN ~ ., data = train, ntree = 25, importance = TRUE)</code></pre>
 <pre class="r"><code>#test the model
-pred &lt;- as.numeric(predict(rf, test) &gt; 0.5)
-print(levels(factor(pred)))</code></pre>
-<pre><code>## [1] &quot;0&quot; &quot;1&quot;</code></pre>
-<pre class="r"><code>print(levels(factor(test$CARAVAN)))</code></pre>
-<pre><code>## [1] &quot;0&quot; &quot;1&quot;</code></pre>
-<pre class="r"><code>confusionMatrix(factor(pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
+x_test &lt;- test[, names(test) != &quot;CARAVAN&quot;]
+pred &lt;- predict(rf, x_test)</code></pre>
+<pre class="r"><code>confusionMatrix(pred, test$CARAVAN, positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3561  201
-##          1  201   37
-##                                           
-##                Accuracy : 0.8995          
-##                  95% CI : (0.8898, 0.9086)
-##     No Information Rate : 0.9405          
-##     P-Value [Acc &gt; NIR] : 1               
-##                                           
-##                   Kappa : 0.102           
-##                                           
-##  Mcnemar&#39;s Test P-Value : 1               
-##                                           
-##             Sensitivity : 0.15546         
-##             Specificity : 0.94657         
-##          Pos Pred Value : 0.15546         
-##          Neg Pred Value : 0.94657         
-##              Prevalence : 0.05950         
-##          Detection Rate : 0.00925         
-##    Detection Prevalence : 0.05950         
-##       Balanced Accuracy : 0.55102         
-##                                           
-##        &#39;Positive&#39; Class : 1               
+##          0 3553  200
+##          1  209   38
+##                                          
+##                Accuracy : 0.8978         
+##                  95% CI : (0.8879, 0.907)
+##     No Information Rate : 0.9405         
+##     P-Value [Acc &gt; NIR] : 1.0000         
+##                                          
+##                   Kappa : 0.1023         
+##                                          
+##  Mcnemar&#39;s Test P-Value : 0.6924         
+##                                          
+##             Sensitivity : 0.15966        
+##             Specificity : 0.94444        
+##          Pos Pred Value : 0.15385        
+##          Neg Pred Value : 0.94671        
+##              Prevalence : 0.05950        
+##          Detection Rate : 0.00950        
+##    Detection Prevalence : 0.06175        
+##       Balanced Accuracy : 0.55205        
+##                                          
+##        &#39;Positive&#39; Class : 1              
 ## </code></pre>
 </div>
 

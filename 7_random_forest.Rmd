@@ -9,19 +9,21 @@ library(caret)
 #Load the data
 train <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
+train$CARAVAN <- as.factor(train$CARAVAN)
+test$CARAVAN <- as.factor(test$CARAVAN)
 ```
 
 ```{r}
-rf <- randomForest(CARAVAN ~ ., data = train, ntree = 50, importance = TRUE)
+
+rf <- randomForest(CARAVAN ~ ., data = train, ntree = 25, importance = TRUE)
 ```
 
 ```{r}
 #test the model
-pred <- as.numeric(predict(rf, test) > 0.5)
-print(levels(factor(pred)))
-print(levels(factor(test$CARAVAN)))
+x_test <- test[, names(test) != "CARAVAN"]
+pred <- predict(rf, x_test)
 ```
 
 ```{r}
-confusionMatrix(factor(pred), factor(test$CARAVAN), positive = "1")
+confusionMatrix(pred, test$CARAVAN, positive = "1")
 ```
