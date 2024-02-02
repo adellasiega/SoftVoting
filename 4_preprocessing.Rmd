@@ -17,39 +17,22 @@ minmax_norm <- function(x) {
 
 ## Balancing target variable
 
-### Oversampling
-```{r}
-# Perform naive random oversampling
-
-data_0 <- data[data["CARAVAN"] == 0, ]
-data_1 <- data[data["CARAVAN"] == 1, ]
-
-n_0 <- nrow(data_0)
-n_1 <- nrow(data_1)
-
-data_over <- rbind(data_0, data_1[sample(n_1, n_0, replace = TRUE), ])
-# Shuffle the data
-data_over <- data_over[sample(nrow(data_over)), ]
-
-# Save the data
-write.csv(data_over, "data/train_oversampled.csv", row.names = FALSE)
-```
-
-```{r}
-install.packages("ROSE")
-library(ROSE)
-```
-
 ```{r}
 # Perform ROSE oversampling
-data_rose <- ovun.sample(CARAVAN ~ ., data = data, method = "over", N = n_0+round(0.5*n_0))$data
+library(ROSE)
+p <- 1
+rose_data <- ovun.sample(CARAVAN ~ .,
+                         data = data,
+                         method = "over",
+                         N = n_0 + round(p * n_0))$data
 #Save the data
-write.csv(data_rose, "data/train_rose.csv", row.names = FALSE)
+write.csv(rose_data, "data/train_rose.csv", row.names = FALSE)
 ```
+For the ROSE oversampling, the number of samples in the minority class is set to
+be equal to the number of samples in the majority class.
 
-Check the distribution of data_rose
 ```{r}
-table(data_rose$CARAVAN)
+table(rose_data$CARAVAN)
 ```
 
 

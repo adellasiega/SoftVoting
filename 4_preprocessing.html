@@ -383,17 +383,18 @@ data_over &lt;- data_over[sample(nrow(data_over)), ]
 
 # Save the data
 write.csv(data_over, &quot;data/train_oversampled.csv&quot;, row.names = FALSE)</code></pre>
-<pre class="r"><code>install.packages(&quot;ROSE&quot;)</code></pre>
-<pre><code>## Installing package into &#39;/home/alessandro/R/x86_64-pc-linux-gnu-library/4.3&#39;
-## (as &#39;lib&#39; is unspecified)</code></pre>
-<pre class="r"><code>library(ROSE)</code></pre>
-<pre><code>## Loaded ROSE 0.0-4</code></pre>
 <pre class="r"><code># Perform ROSE oversampling
-data_rose &lt;- ovun.sample(CARAVAN ~ ., data = data, method = &quot;over&quot;, N = n_0+round(0.5*n_0))$data
+library(ROSE)</code></pre>
+<pre><code>## Loaded ROSE 0.0-4</code></pre>
+<pre class="r"><code>p &lt;- 1
+rose_data &lt;- ovun.sample(CARAVAN ~ ., data = data,
+                    method = &quot;over&quot;, N = n_0 + round(p * n_0))$data
 #Save the data
-write.csv(data_rose, &quot;data/train_rose.csv&quot;, row.names = FALSE)</code></pre>
-<p>Check the distribution of data_rose</p>
-<pre class="r"><code>table(data_rose$CARAVAN)</code></pre>
+write.csv(rose_data, &quot;data/train_rose.csv&quot;, row.names = FALSE)</code></pre>
+<p>For the ROSE oversampling, the number of samples in the minority
+class is set to be equal to the number of samples in the majority
+class.</p>
+<pre class="r"><code>table(rose_data$CARAVAN)</code></pre>
 <pre><code>## 
 ##    0    1 
 ## 5474 2737</code></pre>

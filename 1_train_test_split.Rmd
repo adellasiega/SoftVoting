@@ -3,7 +3,7 @@ title: "Train-Test Split"
 output: html_notebook
 ---
 
-# Sanity Check
+# Data Cleaning
 
 ```{r}
 data <- read.csv("data/caravan-insurance-challenge.csv")
