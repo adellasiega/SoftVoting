@@ -12,14 +12,15 @@ minmax_norm <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-#data <- as.data.frame(lapply(data, minmax_norm))
+data <- as.data.frame(lapply(data, minmax_norm))
 ```
 
-## Balancing target variable
+## Balancing target variable on the training set
 
 ```{r}
 # Perform ROSE oversampling
 library(ROSE)
+n_0 <- nrow(data[data["CARAVAN"] == 0, ])
 p <- 1
 rose_data <- ovun.sample(CARAVAN ~ .,
                          data = data,
@@ -34,6 +35,20 @@ be equal to the number of samples in the majority class.
 ```{r}
 table(rose_data$CARAVAN)
 ```
+
+```{r}
+summary(rose_data)
+```
+
+```{r}
+#Performing the same normalization on the test set
+test_data <- read.csv("data/test.csv", header = TRUE, sep = ",")
+test_data <- as.data.frame(lapply(test_data, minmax_norm))
+write.csv(test_data, "data/test.csv", row.names = FALSE)
+```
+
+
+
 
 
 

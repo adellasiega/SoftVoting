@@ -363,32 +363,19 @@ minmax_norm &lt;- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
 
-#data &lt;- as.data.frame(lapply(data, minmax_norm))</code></pre>
+data &lt;- as.data.frame(lapply(data, minmax_norm))</code></pre>
 </div>
-<div id="balancing-target-variable" class="section level2">
-<h2>Balancing target variable</h2>
-<div id="oversampling" class="section level3">
-<h3>Oversampling</h3>
-<pre class="r"><code># Perform naive random oversampling
-
-data_0 &lt;- data[data[&quot;CARAVAN&quot;] == 0, ]
-data_1 &lt;- data[data[&quot;CARAVAN&quot;] == 1, ]
-
-n_0 &lt;- nrow(data_0)
-n_1 &lt;- nrow(data_1)
-
-data_over &lt;- rbind(data_0, data_1[sample(n_1, n_0, replace = TRUE), ])
-# Shuffle the data
-data_over &lt;- data_over[sample(nrow(data_over)), ]
-
-# Save the data
-write.csv(data_over, &quot;data/train_oversampled.csv&quot;, row.names = FALSE)</code></pre>
+<div id="balancing-target-variable-on-the-training-set" class="section level2">
+<h2>Balancing target variable on the training set</h2>
 <pre class="r"><code># Perform ROSE oversampling
 library(ROSE)</code></pre>
 <pre><code>## Loaded ROSE 0.0-4</code></pre>
-<pre class="r"><code>p &lt;- 1
-rose_data &lt;- ovun.sample(CARAVAN ~ ., data = data,
-                    method = &quot;over&quot;, N = n_0 + round(p * n_0))$data
+<pre class="r"><code>n_0 &lt;- nrow(data[data[&quot;CARAVAN&quot;] == 0, ])
+p &lt;- 1
+rose_data &lt;- ovun.sample(CARAVAN ~ .,
+                         data = data,
+                         method = &quot;over&quot;,
+                         N = n_0 + round(p * n_0))$data
 #Save the data
 write.csv(rose_data, &quot;data/train_rose.csv&quot;, row.names = FALSE)</code></pre>
 <p>For the ROSE oversampling, the number of samples in the minority
@@ -398,7 +385,109 @@ class.</p>
 <pre><code>## 
 ##    0    1 
 ## 5474 2737</code></pre>
-</div>
+<pre class="r"><code>summary(rose_data)</code></pre>
+<pre><code>##     MAANTHUI          MGEMLEEF         MOSHOOFD          MGODRK       
+##  Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+##  1st Qu.:0.00000   1st Qu.:0.2000   1st Qu.:0.2222   1st Qu.:0.00000  
+##  Median :0.00000   Median :0.4000   Median :0.6667   Median :0.00000  
+##  Mean   :0.01176   Mean   :0.3983   Mean   :0.5070   Mean   :0.07717  
+##  3rd Qu.:0.00000   3rd Qu.:0.4000   3rd Qu.:0.7778   3rd Qu.:0.11111  
+##  Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
+##      MGODOV           MGODGE           MRELSA          MFALLEEN     
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.2000   Median :0.3333   Median :0.1429   Median :0.2222  
+##  Mean   :0.2146   Mean   :0.3527   Mean   :0.1202   Mean   :0.1974  
+##  3rd Qu.:0.4000   3rd Qu.:0.4444   3rd Qu.:0.1429   3rd Qu.:0.3333  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MFGEKIND         MFWEKIND         MOPLHOOG         MOPLLAAG     
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.2222   1st Qu.:0.3333   1st Qu.:0.0000   1st Qu.:0.3333  
+##  Median :0.3333   Median :0.4444   Median :0.1111   Median :0.4444  
+##  Mean   :0.3604   Mean   :0.4862   Mean   :0.1785   Mean   :0.4823  
+##  3rd Qu.:0.4444   3rd Qu.:0.6667   3rd Qu.:0.2222   3rd Qu.:0.6667  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MBERHOOG         MBERZELF          MBERBOER          MBERMIDD     
+##  Min.   :0.0000   Min.   :0.00000   Min.   :0.00000   Min.   :0.0000  
+##  1st Qu.:0.1111   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.2222  
+##  Median :0.2222   Median :0.00000   Median :0.00000   Median :0.3333  
+##  Mean   :0.2252   Mean   :0.08342   Mean   :0.05076   Mean   :0.3352  
+##  3rd Qu.:0.3333   3rd Qu.:0.20000   3rd Qu.:0.11111   3rd Qu.:0.4444  
+##  Max.   :1.0000   Max.   :1.00000   Max.   :1.00000   Max.   :1.0000  
+##     MBERARBG         MBERARBO           MSKA            MSKB1       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.1111   1st Qu.:0.1111   1st Qu.:0.0000   1st Qu.:0.1111  
+##  Median :0.2222   Median :0.2222   Median :0.1111   Median :0.2222  
+##  Mean   :0.2367   Mean   :0.2423   Mean   :0.1927   Mean   :0.1853  
+##  3rd Qu.:0.3333   3rd Qu.:0.3333   3rd Qu.:0.3333   3rd Qu.:0.2222  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##      MSKB2             MSKC             MSKD            MHKOOP      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.1111   1st Qu.:0.2222   1st Qu.:0.0000   1st Qu.:0.2222  
+##  Median :0.2222   Median :0.4444   Median :0.1111   Median :0.6667  
+##  Mean   :0.2460   Mean   :0.4071   Mean   :0.1069   Mean   :0.5577  
+##  3rd Qu.:0.3333   3rd Qu.:0.5556   3rd Qu.:0.1111   3rd Qu.:0.8889  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##      MAUT2            MAUT0            MZPART          MINKM30      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.1111  
+##  Median :0.1429   Median :0.2222   Median :0.2222   Median :0.2222  
+##  Mean   :0.1897   Mean   :0.2016   Mean   :0.3185   Mean   :0.2645  
+##  3rd Qu.:0.2857   3rd Qu.:0.3333   3rd Qu.:0.4444   3rd Qu.:0.4444  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MINK3045         MINK4575         MINK7512          MINK123M      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.:0.2222   1st Qu.:0.2222   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :0.4444   Median :0.3333   Median :0.00000   Median :0.00000  
+##  Mean   :0.3946   Mean   :0.3160   Mean   :0.09704   Mean   :0.02192  
+##  3rd Qu.:0.5556   3rd Qu.:0.4444   3rd Qu.:0.11111   3rd Qu.:0.00000  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.00000  
+##     MINKGEM          MKOOPKLA         AWAPART          AWABEDR        
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000000  
+##  1st Qu.:0.3333   1st Qu.:0.2857   1st Qu.:0.0000   1st Qu.:0.000000  
+##  Median :0.4444   Median :0.4286   Median :0.0000   Median :0.000000  
+##  Mean   :0.4350   Mean   :0.4931   Mean   :0.2266   Mean   :0.002947  
+##  3rd Qu.:0.5556   3rd Qu.:0.7143   3rd Qu.:0.5000   3rd Qu.:0.000000  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000000  
+##     AWALAND           APERSAUT          ABESAUT            AMOTSCO        
+##  Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.14286   Median :0.000000   Median :0.000000  
+##  Mean   :0.01656   Mean   :0.09446   Mean   :0.002527   Mean   :0.005298  
+##  3rd Qu.:0.00000   3rd Qu.:0.14286   3rd Qu.:0.000000   3rd Qu.:0.000000  
+##  Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
+##     AVRAAUT             AAANHANG           ATRACTOR            AWERKT         
+##  Min.   :0.0000000   Min.   :0.000000   Min.   :0.000000   Min.   :0.0000000  
+##  1st Qu.:0.0000000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.0000000  
+##  Median :0.0000000   Median :0.000000   Median :0.000000   Median :0.0000000  
+##  Mean   :0.0005277   Mean   :0.004506   Mean   :0.006912   Mean   :0.0007307  
+##  3rd Qu.:0.0000000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.0000000  
+##  Max.   :1.0000000   Max.   :1.000000   Max.   :1.000000   Max.   :1.0000000  
+##      ABROM             ALEVEN           APERSONG           AGEZONG        
+##  Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.00000   Median :0.000000   Median :0.000000  
+##  Mean   :0.02777   Mean   :0.01084   Mean   :0.004506   Mean   :0.009865  
+##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000  
+##  Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
+##     AWAOREG             ABRAND           AZEILPL            APLEZIER       
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
+##  Median :0.000000   Median :0.14286   Median :0.000000   Median :0.000000  
+##  Mean   :0.003106   Mean   :0.08671   Mean   :0.001218   Mean   :0.007125  
+##  3rd Qu.:0.000000   3rd Qu.:0.14286   3rd Qu.:0.000000   3rd Qu.:0.000000  
+##  Max.   :1.000000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
+##      AFIETS          AINBOED            ABYSTAND          CARAVAN      
+##  Min.   :0.0000   Min.   :0.000000   Min.   :0.00000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.000000   Median :0.00000   Median :0.0000  
+##  Mean   :0.0134   Mean   :0.004445   Mean   :0.01297   Mean   :0.3333  
+##  3rd Qu.:0.0000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:1.0000  
+##  Max.   :1.0000   Max.   :1.000000   Max.   :1.00000   Max.   :1.0000</code></pre>
+<pre class="r"><code>#Performing the same normalization on the test set
+test_data &lt;- read.csv(&quot;data/test.csv&quot;, header = TRUE, sep = &quot;,&quot;)
+test_data &lt;- as.data.frame(lapply(test_data, minmax_norm))
+write.csv(test_data, &quot;data/test.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 </div>
 

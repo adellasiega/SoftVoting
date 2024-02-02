@@ -37,3 +37,11 @@ data <- data[, !(names(data) %in% columns_to_remove)]
 #save the data
 write.csv(data, "data/train.csv", row.names = FALSE)
 ```
+
+```{r}
+#Do the same for the test data
+test <- read.csv("data/test.csv", header = TRUE)
+test <- test[, !(names(test) %in% columns_to_remove)]
+#Save the test data
+write.csv(test, "data/test.csv", row.names = FALSE)
+```

@@ -354,156 +354,166 @@ display: none;
 
 <div id="logistic-regression" class="section level1">
 <h1>Logistic Regression</h1>
-<p>Load the data</p>
-<pre class="r"><code>train_oversampled &lt;- read.csv(&quot;data/train_oversampled.csv&quot;)
-train_rose &lt;- read.csv(&quot;data/train_rose.csv&quot;)
+<p>Load the train data set on which ROSE was applied</p>
+<pre class="r"><code>train_rose &lt;- read.csv(&quot;data/train_rose.csv&quot;)
 test &lt;- read.csv(&quot;data/test.csv&quot;)</code></pre>
 <p>Fit the model</p>
-<pre class="r"><code>logit_rose &lt;- glm(CARAVAN ~ ., data = train_rose, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>logistic_model &lt;- glm(CARAVAN ~ ., data = train_rose, family = &quot;binomial&quot;)</code></pre>
 <pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
-<pre class="r"><code>summary(logit_rose)</code></pre>
+<pre class="r"><code>summary(logistic_model)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = CARAVAN ~ ., family = &quot;binomial&quot;, data = train_rose)
 ## 
 ## Coefficients:
-##              Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)  -3.44820    0.77428  -4.453 8.45e-06 ***
-## MAANTHUI     -0.39954    0.09268  -4.311 1.63e-05 ***
-## MGEMLEEF      0.24503    0.04407   5.561 2.69e-08 ***
-## MOSHOOFD      0.01985    0.01324   1.500 0.133732    
-## MGODRK       -0.04856    0.02929  -1.658 0.097331 .  
-## MGODOV        0.04044    0.02675   1.511 0.130678    
-## MGODGE       -0.04203    0.01789  -2.350 0.018795 *  
-## MRELSA       -0.05912    0.03536  -1.672 0.094495 .  
-## MFALLEEN     -0.11793    0.05568  -2.118 0.034160 *  
-## MFGEKIND     -0.12421    0.05992  -2.073 0.038185 *  
-## MFWEKIND     -0.08189    0.06055  -1.352 0.176222    
-## MOPLHOOG      0.06461    0.02648   2.440 0.014682 *  
-## MOPLLAAG     -0.09384    0.02375  -3.951 7.77e-05 ***
-## MBERHOOG      0.07346    0.04204   1.747 0.080565 .  
-## MBERZELF      0.04662    0.04529   1.029 0.303333    
-## MBERBOER     -0.16440    0.04789  -3.433 0.000597 ***
-## MBERMIDD      0.10712    0.04009   2.672 0.007537 ** 
-## MBERARBG      0.01941    0.03982   0.487 0.625955    
-## MBERARBO      0.03598    0.03978   0.904 0.365853    
-## MSKA          0.04596    0.04629   0.993 0.320834    
-## MSKB1         0.05546    0.04415   1.256 0.209033    
-## MSKB2         0.03669    0.03967   0.925 0.355086    
-## MSKC          0.12322    0.04371   2.819 0.004819 ** 
-## MSKD         -0.01828    0.04301  -0.425 0.670797    
-## MHKOOP        0.03695    0.01200   3.080 0.002070 ** 
-## MAUT2        -0.01828    0.02480  -0.737 0.461026    
-## MAUT0        -0.05806    0.02410  -2.410 0.015971 *  
-## MZPART       -0.06308    0.01981  -3.185 0.001450 ** 
-## MINKM30       0.07263    0.04642   1.565 0.117662    
-## MINK3045      0.08137    0.04402   1.848 0.064545 .  
-## MINK4575      0.07075    0.04462   1.585 0.112855    
-## MINK7512      0.06403    0.04671   1.371 0.170493    
-## MINK123M     -0.34489    0.06847  -5.037 4.72e-07 ***
-## MINKGEM       0.14062    0.04856   2.896 0.003783 ** 
-## MKOOPKLA      0.09050    0.02090   4.331 1.48e-05 ***
-## AWAPART       0.37676    0.06731   5.598 2.17e-08 ***
-## AWABEDR      -0.35992    0.27815  -1.294 0.195663    
-## AWALAND      -0.84772    0.30612  -2.769 0.005619 ** 
-## APERSAUT      0.93670    0.04733  19.792  &lt; 2e-16 ***
-## ABESAUT      -0.71425    0.39220  -1.821 0.068587 .  
-## AMOTSCO      -0.26554    0.12711  -2.089 0.036705 *  
-## AVRAAUT     -13.31488  301.54538  -0.044 0.964780    
-## AAANHANG      0.57506    0.21940   2.621 0.008766 ** 
-## ATRACTOR     -0.33937    0.19168  -1.771 0.076638 .  
-## AWERKT      -12.36859  172.56817  -0.072 0.942862    
-## ABROM        -0.79764    0.15748  -5.065 4.08e-07 ***
-## ALEVEN        0.17976    0.05526   3.253 0.001142 ** 
-## APERSONG     -1.23352    0.52138  -2.366 0.017987 *  
-## AGEZONG       0.86692    0.28210   3.073 0.002118 ** 
-## AWAOREG       1.32727    0.30107   4.408 1.04e-05 ***
-## ABRAND        0.17210    0.06203   2.775 0.005528 ** 
-## AZEILPL      -0.32423    1.29620  -0.250 0.802480    
-## APLEZIER      2.64697    0.28036   9.441  &lt; 2e-16 ***
-## AFIETS        0.38518    0.10890   3.537 0.000405 ***
-## AINBOED       0.27384    0.24973   1.097 0.272826    
-## ABYSTAND      0.63111    0.17535   3.599 0.000319 ***
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   -4.65761    0.74896  -6.219 5.01e-10 ***
+## MAANTHUI      -2.65888    0.79968  -3.325 0.000884 ***
+## MGEMLEEF       1.17665    0.22308   5.275 1.33e-07 ***
+## MOSHOOFD       0.31139    0.11829   2.632 0.008478 ** 
+## MGODRK        -1.05663    0.27454  -3.849 0.000119 ***
+## MGODOV         0.19873    0.13567   1.465 0.142979    
+## MGODGE        -0.30965    0.15889  -1.949 0.051312 .  
+## MRELSA        -0.55928    0.24863  -2.249 0.024481 *  
+## MFALLEEN      -0.61853    0.49702  -1.244 0.213323    
+## MFGEKIND      -0.52142    0.53722  -0.971 0.331755    
+## MFWEKIND      -0.18723    0.54212  -0.345 0.729820    
+## MOPLHOOG       0.74368    0.23521   3.162 0.001568 ** 
+## MOPLLAAG      -0.78173    0.21353  -3.661 0.000251 ***
+## MBERHOOG       0.66633    0.37567   1.774 0.076109 .  
+## MBERZELF       0.33140    0.22403   1.479 0.139062    
+## MBERBOER      -1.28740    0.42788  -3.009 0.002623 ** 
+## MBERMIDD       0.93277    0.36016   2.590 0.009601 ** 
+## MBERARBG      -0.02556    0.35799  -0.071 0.943070    
+## MBERARBO       0.07320    0.35660   0.205 0.837368    
+## MSKA           0.36687    0.41823   0.877 0.380375    
+## MSKB1          0.62224    0.39616   1.571 0.116258    
+## MSKB2          0.36931    0.35764   1.033 0.301778    
+## MSKC           1.33613    0.39602   3.374 0.000741 ***
+## MSKD          -0.08188    0.38623  -0.212 0.832119    
+## MHKOOP         0.27185    0.10747   2.529 0.011423 *  
+## MAUT2         -0.02762    0.17468  -0.158 0.874357    
+## MAUT0         -0.39360    0.21867  -1.800 0.071870 .  
+## MZPART        -0.34723    0.17537  -1.980 0.047711 *  
+## MINKM30        1.04950    0.41677   2.518 0.011796 *  
+## MINK3045       1.50559    0.39643   3.798 0.000146 ***
+## MINK4575       1.13253    0.39948   2.835 0.004582 ** 
+## MINK7512       1.46174    0.42273   3.458 0.000545 ***
+## MINK123M      -2.32344    0.60467  -3.843 0.000122 ***
+## MINKGEM        0.77533    0.42792   1.812 0.070007 .  
+## MKOOPKLA       0.62309    0.14425   4.319 1.56e-05 ***
+## AWAPART        0.76489    0.13387   5.714 1.11e-08 ***
+## AWABEDR        0.73066    1.07581   0.679 0.497029    
+## AWALAND       -1.02964    0.32391  -3.179 0.001479 ** 
+## APERSAUT       6.53997    0.33032  19.799  &lt; 2e-16 ***
+## ABESAUT        0.54571    1.12348   0.486 0.627157    
+## AMOTSCO       -0.99990    0.95018  -1.052 0.292650    
+## AVRAAUT      -40.82145  951.55636  -0.043 0.965782    
+## AAANHANG       0.33178    0.69580   0.477 0.633482    
+## ATRACTOR      -1.11549    0.80386  -1.388 0.165239    
+## AWERKT       -73.56687 1018.17607  -0.072 0.942400    
+## ABROM         -1.78990    0.32570  -5.495 3.90e-08 ***
+## ALEVEN         0.31642    0.48646   0.650 0.515404    
+## APERSONG      -1.23475    0.50582  -2.441 0.014643 *  
+## AGEZONG        0.54883    0.27840   1.971 0.048683 *  
+## AWAOREG        2.10170    0.62588   3.358 0.000785 ***
+## ABRAND         0.95734    0.43040   2.224 0.026129 *  
+## AZEILPL        0.47463    0.98606   0.481 0.630271    
+## APLEZIER       5.63601    0.55518  10.152  &lt; 2e-16 ***
+## AFIETS         1.56303    0.31621   4.943 7.69e-07 ***
+## AINBOED       -0.09632    0.55221  -0.174 0.861532    
+## ABYSTAND       1.85903    0.33546   5.542 2.99e-08 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 10452.8  on 8210  degrees of freedom
-## Residual deviance:  8650.6  on 8155  degrees of freedom
-## AIC: 8762.6
+## Residual deviance:  8709.3  on 8155  degrees of freedom
+## AIC: 8821.3
 ## 
 ## Number of Fisher Scoring iterations: 14</code></pre>
-<pre class="r"><code>#Test the ROSE model
-pred_rose &lt;- as.numeric(predict(logit_rose, newdata = test, type = &quot;response&quot;) &gt; 0.5)</code></pre>
-<pre class="r"><code>library(caret)</code></pre>
+<pre class="r"><code>x_test &lt;- test[, !names(test) == &quot;CARAVAN&quot;]
+y_pred &lt;- as.numeric(predict(logistic_model,
+                             newdata = x_test,
+                             type = &quot;response&quot;) &gt; 0.5)</code></pre>
+<p>Make predictions of the test set</p>
+<pre class="r"><code>#Confusion matrix
+library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
 <pre class="r"><code>#change the positive class to 1
-confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
+confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3353  160
-##          1  409   78
+##          0 3553  187
+##          1  209   51
 ##                                           
-##                Accuracy : 0.8578          
-##                  95% CI : (0.8465, 0.8684)
+##                Accuracy : 0.901           
+##                  95% CI : (0.8913, 0.9101)
 ##     No Information Rate : 0.9405          
-##     P-Value [Acc &gt; NIR] : 1               
+##     P-Value [Acc &gt; NIR] : 1.0000          
 ##                                           
-##                   Kappa : 0.147           
+##                   Kappa : 0.1521          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##  Mcnemar&#39;s Test P-Value : 0.2913          
 ##                                           
-##             Sensitivity : 0.3277          
-##             Specificity : 0.8913          
-##          Pos Pred Value : 0.1602          
-##          Neg Pred Value : 0.9545          
-##              Prevalence : 0.0595          
-##          Detection Rate : 0.0195          
-##    Detection Prevalence : 0.1217          
-##       Balanced Accuracy : 0.6095          
+##             Sensitivity : 0.21429         
+##             Specificity : 0.94444         
+##          Pos Pred Value : 0.19615         
+##          Neg Pred Value : 0.95000         
+##              Prevalence : 0.05950         
+##          Detection Rate : 0.01275         
+##    Detection Prevalence : 0.06500         
+##       Balanced Accuracy : 0.57937         
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
-<pre class="r"><code># Get the variables with p-value &lt; 0.05
-selected_vars &lt;- summary(logit_rose)$coefficients[summary(logit_rose)$coefficients[, 4] &lt; 0.05, ]
-#Get only the names of the variables, excluding the intercept
+<pre class="r"><code># Get the variables whose coefficient has p-value &lt; 0.05
+summ &lt;- summary(logistic_model)
+selected_vars &lt;- summ$coefficients[summ$coefficients[, 4] &lt; 0.05, ]
+#Get only the names of the variables, excluding the intercept and including 
+#the target variable
 selected_vars &lt;- c(rownames(selected_vars)[-1], &quot;CARAVAN&quot;)</code></pre>
-<pre class="r"><code>#make a trainset with only the selected variables
-truncated_train_rose &lt;- train_rose[, selected_vars]
-dim(truncated_train_rose)</code></pre>
-<pre><code>## [1] 8211   31</code></pre>
-<pre class="r"><code>logit_rose_truncated &lt;- glm(CARAVAN ~ ., data = train_rose[, selected_vars], family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>#make a train set with only the selected variables
+train_truncated &lt;- train_rose[, selected_vars]</code></pre>
+<pre class="r"><code>logistic_model &lt;- glm(CARAVAN ~ .,
+                      data = train_truncated,
+                      family = &quot;binomial&quot;)</code></pre>
 <pre class="r"><code>#test the truncated model
-pred_rose_truncated &lt;- as.numeric(predict(logit_rose_truncated, newdata = test[, selected_vars], type = &quot;response&quot;) &gt; 0.5)
-confusionMatrix(factor(pred_rose_truncated), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
+x_test_truncated &lt;- test[, selected_vars[-length(selected_vars)]]
+
+y_pred &lt;- as.numeric(predict(logistic_model,
+                             newdata = x_test_truncated,
+                             type = &quot;response&quot;) &gt; 0.5)
+
+confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3365  159
-##          1  397   79
+##          0 3547  192
+##          1  215   46
 ##                                           
-##                Accuracy : 0.861           
-##                  95% CI : (0.8499, 0.8716)
+##                Accuracy : 0.8982          
+##                  95% CI : (0.8885, 0.9075)
 ##     No Information Rate : 0.9405          
-##     P-Value [Acc &gt; NIR] : 1               
+##     P-Value [Acc &gt; NIR] : 1.0000          
 ##                                           
-##                   Kappa : 0.1542          
+##                   Kappa : 0.1302          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
+##  Mcnemar&#39;s Test P-Value : 0.2755          
 ##                                           
-##             Sensitivity : 0.33193         
-##             Specificity : 0.89447         
-##          Pos Pred Value : 0.16597         
-##          Neg Pred Value : 0.95488         
+##             Sensitivity : 0.19328         
+##             Specificity : 0.94285         
+##          Pos Pred Value : 0.17625         
+##          Neg Pred Value : 0.94865         
 ##              Prevalence : 0.05950         
-##          Detection Rate : 0.01975         
-##    Detection Prevalence : 0.11900         
-##       Balanced Accuracy : 0.61320         
+##          Detection Rate : 0.01150         
+##    Detection Prevalence : 0.06525         
+##       Balanced Accuracy : 0.56806         
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>

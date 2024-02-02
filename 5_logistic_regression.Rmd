@@ -1,47 +1,61 @@
 # Logistic Regression
 
-Load the data 
+Load the train data set on which ROSE was applied
 ```{r}
-train_oversampled <- read.csv("data/train_oversampled.csv")
 train_rose <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
 ```
 
 Fit the model
 ```{r}
-logit_rose <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
+logistic_model <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
 ```
 
 ```{r}
-summary(logit_rose)
-```
-
-
-```{r}
-#Test the ROSE model
-pred_rose <- as.numeric(predict(logit_rose, newdata = test, type = "response") > 0.5)
+summary(logistic_model)
 ```
 
 ```{r}
+x_test <- test[, !names(test) == "CARAVAN"]
+y_pred <- as.numeric(predict(logistic_model,
+                             newdata = x_test,
+                             type = "response") > 0.5)
+
+```
+Make predictions of the test set
+
+```{r}
+#Confusion matrix
 library(caret)
 #change the positive class to 1
-confusionMatrix(factor(pred_rose), factor(test$CARAVAN), positive = "1")
+confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = "1")
 ```
+
 ```{r}
-# Get the variables with p-value < 0.05
-selected_vars <- summary(logit_rose)$coefficients[summary(logit_rose)$coefficients[, 4] < 0.05, ]
-#Get only the names of the variables, excluding the intercept
+# Get the variables whose coefficient has p-value < 0.05
+summ <- summary(logistic_model)
+selected_vars <- summ$coefficients[summ$coefficients[, 4] < 0.05, ]
+#Get only the names of the variables, excluding the intercept and including 
+#the target variable
 selected_vars <- c(rownames(selected_vars)[-1], "CARAVAN")
 ```
 ```{r}
-#make a trainset with only the selected variables
-truncated_train_rose <- train_rose[, selected_vars]
-dim(truncated_train_rose)
-logit_rose_truncated <- glm(CARAVAN ~ ., data = train_rose[, selected_vars], family = "binomial")
+#make a train set with only the selected variables
+train_truncated <- train_rose[, selected_vars]
+```
+```{r}
+logistic_model <- glm(CARAVAN ~ .,
+                      data = train_truncated,
+                      family = "binomial")
 
 ```
 ```{r}
 #test the truncated model
-pred_rose_truncated <- as.numeric(predict(logit_rose_truncated, newdata = test[, selected_vars], type = "response") > 0.5)
-confusionMatrix(factor(pred_rose_truncated), factor(test$CARAVAN), positive = "1")
+x_test_truncated <- test[, selected_vars[-length(selected_vars)]]
+
+y_pred <- as.numeric(predict(logistic_model,
+                             newdata = x_test_truncated,
+                             type = "response") > 0.5)
+
+confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = "1")
 ```
