@@ -23,117 +23,24 @@ Number of missing values. No missing values are present in the data.
 ```{r}
 str(data)
 ```
-Check the data types. 
-All the variables are numeric (int) except the 'ORIGIN'
-variable which is a chr.
-According to the data description 
-(https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge), all the 
-variables can be thought as factors except MAANTHUI' (avg size household) and
-'MEGEMOMV' (avg size hosehold).
-So, we will convert all the variables to factors.
+Check the data types. All the variables are numeric (int) except the 'ORIGIN' variable which is a chr. According to the data description (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge), all the variables can be thought as categorical except MAANTHUI' (avg size household) and 'MEGEMOMV' (avg size hosehold). For each group of variables exists a specific encoding (L0, L1, L2, L3). Because of the encoding, the variables that belong to L0 and L2 ('MOSTYPE', 'MOSHOOFD') require a one hot encoding.
 
 ```{r}
-#Convert all the variables to factors except 'MAANTHUI' and 'MGEMOMV'
-# for (column in names(data)) {
-#   if (column != "MAANTHUI" && column != "MGEMOMV") {
-#     data[, column] <- as.factor(data[, column])
-#   }
-# }
+# Perform one hot encoding on the variables 'MOSTYPE', 'MOSHOOFD'
+library(caret)
+vars_to_dummy <- c("MOSTYPE", "MOSHOOFD")
+# convert the vars_to_dummy to factor
+data[, vars_to_dummy] <- lapply(data[, vars_to_dummy], factor)
+# perform one hot encoding
+dummy <- dummyVars(" ~ .", data = data)
+data <- data.frame(predict(dummy, newdata = data))
+### Note that also the 'ORIGIN' variable is encoded!!!
 ```
 
 ```{r}
-l0_labels <- c(
-  "High Income, expensive child", "Very Important Provincials",
-  "High status seniors", "Affluent senior apartments", "Mixed seniors",
-  "Career and childcare", "Dinki's (double income no kids)",
-  "Middle class families", "Modern, complete families", "Stable family",
-  "Family starters", "Affluent young families", "Young all american family",
-  "Junior cosmopolitan", "Senior cosmopolitans", "Students in apartments",
-  "Fresh masters in the city", "Single youth", "Suburban youth",
-  "Etnically diverse", "Young urban have-nots", "Mixed apartment dwellers",
-  "Young and rising", "Young, low educated", "Young seniors in the city",
-  "Own home elderly", "Seniors in apartments", "Residential elderly",
-  "Porchless seniors: no front yard", "Religious elderly singles",
-  "Low income catholics", "Mixed seniors", "Lower class large families",
-  "Large family, employed child", "Village families",
-  "Couples with teens 'Married with children'", "Mixed small town dwellers",
-  "Traditional families", "Large religous families", "Large family farms",
-  "Mixed rurals"
-)
-
-l1_labels <- c("20-30 years", "30-40 years", "40-50 years",
-                "50-60 years", "60-70 years", "70-80 years")
-
-l2_labels <- c(
-  "Successful hedonists", "Driven Growers", "Average Family", "Career Loners",
-  "Living well", "Cruising Seniors", "Retired and Religious",
-  "Family with grown ups", "Conservative families", "Farmers"
-)
-
-l3_labels <- c(
-  "0_0%", "1_1 - 10%", "2_11 - 23%", "3_24 - 36%", "4_37 - 49%",
-  "5_50 - 62%", "6_63 - 75%", "7_76 - 88%", "8_89 - 99%", "9_100%"
-)
-
-l4_labels <- c(
-  "0_0", "1_1 - 49", "2_50 - 99", "3_100 - 199", "4_200 - 499",
-  "5_500 - 999", "6_1000 - 4999", "7_5000 - 9999", "8_10,000 - 19,999",
-  "9_>= 20,000"
-)
+str(data)
 ```
 
-Rename the levels of the variables to their corresponding labels given by the descri
-
-```{r}
-no_endoded_variables <- c("MAANTHUI", "MGEMOMV")
-
-l0_var <- c("MOSTYPE")
-
-l1_vars <- c("MGEMLEEF")
-
-l2_vars <- c("MOSHOOFD")
-
-l3_vars <- c(
-  "MGODRK", "MGODPR", "MGODOV", "MGODGE", "MRELGE", "MRELSA", "MRELOV",
-  "MFALLEEN", "MFGEKIND", "MFWEKIND", "MOPLHOOG", "MOPLMIDD", "MOPLLAAG",
-  "MBERHOOG", "MBERZELF", "MBERBOER", "MBERMIDD", "MBERARBG", "MBERARBO",
-  "MSKA", "MSKB1", "MSKB2", "MSKC", "MSKD", "MHHUUR", "MHKOOP", "MAUT1",
-  "MAUT2", "MAUT0", "MZFONDS", "MZPART", "MINKM30", "MINK3045", "MINK4575",
-  "MINK7512", "MINK123M", "MINKGEM", "MKOOPKLA"
-)
-
-l4_vars <- c(
-  "PWAPART", "PWABEDR", "PWALAND", "PPERSAUT", "PBESAUT", "PMOTSCO",
-  "PVRAAUT", "PAANHANG", "PTRACTOR", "PWERKT", "PBROM", "PLEVEN",
-  "PPERSONG", "PGEZONG", "PWAOREG", "PBRAND", "PZEILPL", "PPLEZIER",
-  "PFIETS", "PINBOED", "PBYSTAND", "AWAPART", "AWABEDR", "AWALAND",
-  "APERSAUT", "ABESAUT", "AMOTSCO", "AVRAAUT", "AAANHANG", "ATRACTOR",
-  "AWERKT", "ABROM", "ALEVEN", "APERSONG", "AGEZONG", "AWAOREG",
-  "ABRAND", "AZEILPL", "APLEZIER", "AFIETS", "AINBOED", "ABYSTAND"
-)
-```
-The 'CARAVAN' variable belongs to the l4 encoding but it will be considered
-as a binary variable (0 or 1) instead of a categorical variable (0,1,2,3,...)
-because such variable shows only 0,1 values.
-
-
-```{r}
-# for (column in names(data)) {
-#   if (column %in% l0_var) {
-#     levels(data[, column]) <- l0_labels
-#   } else if (column %in% l1_vars) {
-#     levels(data[, column]) <- l1_labels
-#   } else if (column %in% l2_vars) {
-#     levels(data[, column]) <- l2_labels
-#   } else if (column %in% l3_vars) {
-#     levels(data[, column]) <- l3_labels
-#   } else if (column %in% l4_vars) {
-#     levels(data[, column]) <- l4_labels
-#   } else if (column == "CARAVAN") {
-#     levels(data[, column]) <- c("0", "1")
-#   }
-# }
-```
 
 # Train-Test Split
 ```{r}
@@ -141,14 +48,16 @@ str(data)
 ```
 
 ```{r}
-train <- data[data$ORIGIN == "train", ]
-test <- data[data$ORIGIN == "test", ]
+train <- data[data$ORIGINtrain == 1, ]
+test <- data[data$ORIGINtest == 1, ]
 ```
 Perform the train-test split according to the variable.
 
 ```{r}
-train <- train[, -which(names(train) == "ORIGIN")]
-test <- test[, -which(names(test) == "ORIGIN")]
+train <- train[, -which(names(train) == "ORIGINtest")]
+train <- train[, -which(names(train) == "ORIGINtrain")]
+test <- test[, -which(names(test) == "ORIGINtest")]
+test <- test[, -which(names(test) == "ORIGINtrain")]
 ```
 Remove the 'ORIGIN' variable from the data.
 
