@@ -23,23 +23,14 @@ Number of missing values. No missing values are present in the data.
 ```{r}
 str(data)
 ```
-Check the data types. All the variables are numeric (int) except the 'ORIGIN' variable which is a chr. According to the data description (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge), all the variables can be thought as categorical except MAANTHUI' (avg size household) and 'MEGEMOMV' (avg size hosehold). For each group of variables exists a specific encoding (L0, L1, L2, L3). Because of the encoding, the variables that belong to L0 and L2 ('MOSTYPE', 'MOSHOOFD') require a one hot encoding.
-
-```{r}
-# Perform one hot encoding on the variables 'MOSTYPE', 'MOSHOOFD'
-library(caret)
-vars_to_dummy <- c("MOSTYPE", "MOSHOOFD")
-# convert the vars_to_dummy to factor
-data[, vars_to_dummy] <- lapply(data[, vars_to_dummy], factor)
-# perform one hot encoding
-dummy <- dummyVars(" ~ .", data = data)
-data <- data.frame(predict(dummy, newdata = data))
-### Note that also the 'ORIGIN' variable is encoded!!!
-```
-
-```{r}
-str(data)
-```
+Check the data types. 
+All the variables are numeric (int) except the 'ORIGIN'
+variable which is a chr.
+According to the data description 
+(https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge) the only variables that need to be one hot encoded are the 'MOSTYPE' and 'MOSHOOFD' variables. They will be dummified just before building the models.
+The 'CARAVAN' variable belongs to the l4 encoding but it will be considered
+as a binary variable (0 or 1) instead of a categorical variable (0,1,2,3,...)
+because such variable shows only 0,1 values.
 
 
 # Train-Test Split
@@ -48,16 +39,14 @@ str(data)
 ```
 
 ```{r}
-train <- data[data$ORIGINtrain == 1, ]
-test <- data[data$ORIGINtest == 1, ]
+train <- data[data$ORIGIN == "train", ]
+test <- data[data$ORIGIN == "test", ]
 ```
 Perform the train-test split according to the variable.
 
 ```{r}
-train <- train[, -which(names(train) == "ORIGINtest")]
-train <- train[, -which(names(train) == "ORIGINtrain")]
-test <- test[, -which(names(test) == "ORIGINtest")]
-test <- test[, -which(names(test) == "ORIGINtrain")]
+train <- train[, -which(names(train) == "ORIGIN")]
+test <- test[, -which(names(test) == "ORIGIN")]
 ```
 Remove the 'ORIGIN' variable from the data.
 
@@ -70,7 +59,7 @@ dim(test)
 ```
 
 ```{r}
-write.csv(train, "data/train.csv", row.names = FALSE)
-write.csv(test, "data/test.csv", row.names = FALSE)
+write.csv(train, "data/train_raw.csv", row.names = FALSE)
+write.csv(test, "data/test_raw.csv", row.names = FALSE)
 ```
 Save the train and test data.

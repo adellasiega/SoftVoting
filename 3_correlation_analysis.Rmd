@@ -1,7 +1,7 @@
-# Correlation Analysis
+# Correlation Analysis & Variable Selection
 
 ```{r}
-data <- read.csv("data/train.csv", header = TRUE)
+data <- read.csv("data/train_raw.csv", header = TRUE)
 ```
 Load the data
 
@@ -29,19 +29,23 @@ for (i in seq_len(ncol(cor_matrix) - 1)) {
 ```
 
 ```{r}
+print(columns_to_remove)
+```
+
+```{r}
 #remove the variables that cause multicollinearity
 data <- data[, !(names(data) %in% columns_to_remove)]
 ```
 
 ```{r}
 #save the data
-write.csv(data, "data/train.csv", row.names = FALSE)
+write.csv(data, "data/train_var_selection.csv", row.names = FALSE)
 ```
 
 ```{r}
 #Do the same for the test data
-test <- read.csv("data/test.csv", header = TRUE)
+test <- read.csv("data/test_raw.csv", header = TRUE)
 test <- test[, !(names(test) %in% columns_to_remove)]
 #Save the test data
-write.csv(test, "data/test.csv", row.names = FALSE)
+write.csv(test, "data/test_var_selection.csv", row.names = FALSE)
 ```

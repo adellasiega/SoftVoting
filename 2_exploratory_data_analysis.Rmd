@@ -4,7 +4,7 @@ output: html_notebook
 ---
 
 ```{r}
-data <- read.csv("data/train.csv")
+data <- read.csv("data/train_raw.csv")
 ```
 Load the train data set.
 

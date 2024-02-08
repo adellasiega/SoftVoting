@@ -354,10 +354,205 @@ display: none;
 
 <div id="preprocessing" class="section level1">
 <h1>Preprocessing</h1>
-<div id="scaling" class="section level2">
-<h2>Scaling</h2>
 <pre class="r"><code># Load the data
 data &lt;- read.csv(&quot;data/train.csv&quot;, header = TRUE, sep = &quot;,&quot;)</code></pre>
+<div id="one-hot-encoding" class="section level2">
+<h2>One Hot Encoding</h2>
+<p>The variables MOSTYPE and MOSHOOFD need to be one hot encoded.
+Actually, the variable MOSTYPE has been remove during correlation
+analysis since it is a specification on MOSHOOFD.</p>
+<pre class="r"><code># One hot encoding
+library(caret)</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre class="r"><code># Convert the variables to factor
+data$MOSHOOFD &lt;- as.factor(data$MOSHOOFD)
+# Perform one hot encoding
+dummy &lt;- dummyVars(&quot; ~ .&quot;, data = data)
+data &lt;- data.frame(predict(dummy, newdata = data))</code></pre>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    5822 obs. of  65 variables:
+##  $ MAANTHUI   : num  1 1 1 1 1 1 2 1 1 2 ...
+##  $ MGEMLEEF   : num  2 2 2 3 2 1 2 3 4 3 ...
+##  $ MOSHOOFD.1 : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MOSHOOFD.2 : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MOSHOOFD.3 : num  0 0 0 1 0 0 0 0 0 1 ...
+##  $ MOSHOOFD.4 : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MOSHOOFD.5 : num  0 0 0 0 0 1 0 0 0 0 ...
+##  $ MOSHOOFD.6 : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MOSHOOFD.7 : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MOSHOOFD.8 : num  1 1 1 0 0 0 0 1 1 0 ...
+##  $ MOSHOOFD.9 : num  0 0 0 0 0 0 1 0 0 0 ...
+##  $ MOSHOOFD.10: num  0 0 0 0 1 0 0 0 0 0 ...
+##  $ MGODRK     : num  0 1 0 2 1 0 2 0 0 3 ...
+##  $ MGODOV     : num  1 1 2 2 1 0 0 0 3 0 ...
+##  $ MGODGE     : num  3 4 4 4 4 5 5 2 6 2 ...
+##  $ MRELSA     : num  0 2 2 2 1 6 2 2 0 0 ...
+##  $ MFALLEEN   : num  1 0 4 2 2 3 0 0 3 2 ...
+##  $ MFGEKIND   : num  2 4 4 3 4 5 3 5 3 2 ...
+##  $ MFWEKIND   : num  6 5 2 4 4 2 6 4 3 6 ...
+##  $ MOPLHOOG   : num  1 0 0 3 5 0 0 0 0 0 ...
+##  $ MOPLLAAG   : num  7 4 4 2 0 4 5 6 8 5 ...
+##  $ MBERHOOG   : num  1 0 0 4 0 2 0 2 1 2 ...
+##  $ MBERZELF   : num  0 0 0 0 5 0 0 0 1 0 ...
+##  $ MBERBOER   : num  1 0 0 0 4 0 0 0 0 0 ...
+##  $ MBERMIDD   : num  2 5 7 3 0 4 4 2 1 3 ...
+##  $ MBERARBG   : num  5 0 0 1 0 2 1 5 8 3 ...
+##  $ MBERARBO   : num  2 4 2 2 0 2 5 2 1 3 ...
+##  $ MSKA       : num  1 0 0 3 9 2 0 2 1 1 ...
+##  $ MSKB1      : num  1 2 5 2 0 2 1 1 1 2 ...
+##  $ MSKB2      : num  2 3 0 1 0 2 4 2 0 1 ...
+##  $ MSKC       : num  6 5 4 4 0 4 5 5 8 4 ...
+##  $ MSKD       : num  1 0 0 0 0 2 0 2 1 2 ...
+##  $ MHKOOP     : num  8 7 2 4 5 0 3 9 0 9 ...
+##  $ MAUT2      : num  0 1 0 0 2 3 0 4 2 1 ...
+##  $ MAUT0      : num  1 2 2 0 1 3 1 2 3 2 ...
+##  $ MZPART     : num  1 3 0 2 4 0 0 3 2 3 ...
+##  $ MINKM30    : num  0 2 4 1 0 5 4 2 7 2 ...
+##  $ MINK3045   : num  4 0 5 5 0 2 3 5 2 3 ...
+##  $ MINK4575   : num  5 5 0 3 9 3 3 3 1 3 ...
+##  $ MINK7512   : num  0 2 0 0 0 0 0 0 0 1 ...
+##  $ MINK123M   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ MINKGEM    : num  4 5 3 4 6 3 3 3 2 4 ...
+##  $ MKOOPKLA   : num  3 4 4 4 3 3 5 3 3 7 ...
+##  $ AWAPART    : num  0 2 1 0 0 0 0 0 0 1 ...
+##  $ AWABEDR    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AWALAND    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ APERSAUT   : num  1 0 1 1 0 1 1 0 1 0 ...
+##  $ ABESAUT    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AMOTSCO    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AVRAAUT    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AAANHANG   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ ATRACTOR   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AWERKT     : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ ABROM      : num  0 0 0 0 0 0 0 1 0 0 ...
+##  $ ALEVEN     : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ APERSONG   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AGEZONG    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AWAOREG    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ ABRAND     : num  1 1 1 1 1 0 0 0 0 1 ...
+##  $ AZEILPL    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ APLEZIER   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AFIETS     : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ AINBOED    : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ ABYSTAND   : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ CARAVAN    : num  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+</div>
+<div id="scaling" class="section level2">
+<h2>Scaling</h2>
+<pre class="r"><code>summary(data)</code></pre>
+<pre><code>##     MAANTHUI         MGEMLEEF       MOSHOOFD.1        MOSHOOFD.2     
+##  Min.   : 1.000   Min.   :1.000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.: 1.000   1st Qu.:2.000   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median : 1.000   Median :3.000   Median :0.00000   Median :0.00000  
+##  Mean   : 1.111   Mean   :2.991   Mean   :0.09481   Mean   :0.08622  
+##  3rd Qu.: 1.000   3rd Qu.:3.000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+##  Max.   :10.000   Max.   :6.000   Max.   :1.00000   Max.   :1.00000  
+##    MOSHOOFD.3       MOSHOOFD.4         MOSHOOFD.5        MOSHOOFD.6     
+##  Min.   :0.0000   Min.   :0.000000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.:0.0000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :0.0000   Median :0.000000   Median :0.00000   Median :0.00000  
+##  Mean   :0.1522   Mean   :0.008932   Mean   :0.09773   Mean   :0.03521  
+##  3rd Qu.:0.0000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+##  Max.   :1.0000   Max.   :1.000000   Max.   :1.00000   Max.   :1.00000  
+##    MOSHOOFD.7        MOSHOOFD.8       MOSHOOFD.9      MOSHOOFD.10     
+##  Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+##  1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000  
+##  Median :0.00000   Median :0.0000   Median :0.0000   Median :0.00000  
+##  Mean   :0.09447   Mean   :0.2685   Mean   :0.1146   Mean   :0.04741  
+##  3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
+##  Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
+##      MGODRK           MGODOV         MGODGE          MRELSA      
+##  Min.   :0.0000   Min.   :0.00   Min.   :0.000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.00   1st Qu.:2.000   1st Qu.:0.0000  
+##  Median :0.0000   Median :1.00   Median :3.000   Median :1.0000  
+##  Mean   :0.6965   Mean   :1.07   Mean   :3.259   Mean   :0.8835  
+##  3rd Qu.:1.0000   3rd Qu.:2.00   3rd Qu.:4.000   3rd Qu.:1.0000  
+##  Max.   :9.0000   Max.   :5.00   Max.   :9.000   Max.   :7.0000  
+##     MFALLEEN        MFGEKIND       MFWEKIND      MOPLHOOG        MOPLLAAG    
+##  Min.   :0.000   Min.   :0.00   Min.   :0.0   Min.   :0.000   Min.   :0.000  
+##  1st Qu.:0.000   1st Qu.:2.00   1st Qu.:3.0   1st Qu.:0.000   1st Qu.:3.000  
+##  Median :2.000   Median :3.00   Median :4.0   Median :1.000   Median :5.000  
+##  Mean   :1.888   Mean   :3.23   Mean   :4.3   Mean   :1.461   Mean   :4.572  
+##  3rd Qu.:3.000   3rd Qu.:4.00   3rd Qu.:6.0   3rd Qu.:2.000   3rd Qu.:6.000  
+##  Max.   :9.000   Max.   :9.00   Max.   :9.0   Max.   :9.000   Max.   :9.000  
+##     MBERHOOG        MBERZELF        MBERBOER         MBERMIDD    
+##  Min.   :0.000   Min.   :0.000   Min.   :0.0000   Min.   :0.000  
+##  1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:2.000  
+##  Median :2.000   Median :0.000   Median :0.0000   Median :3.000  
+##  Mean   :1.895   Mean   :0.398   Mean   :0.5223   Mean   :2.899  
+##  3rd Qu.:3.000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:4.000  
+##  Max.   :9.000   Max.   :5.000   Max.   :9.0000   Max.   :9.000  
+##     MBERARBG       MBERARBO          MSKA           MSKB1           MSKB2      
+##  Min.   :0.00   Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
+##  1st Qu.:1.00   1st Qu.:1.000   1st Qu.:0.000   1st Qu.:1.000   1st Qu.:1.000  
+##  Median :2.00   Median :2.000   Median :1.000   Median :2.000   Median :2.000  
+##  Mean   :2.22   Mean   :2.306   Mean   :1.621   Mean   :1.607   Mean   :2.203  
+##  3rd Qu.:3.00   3rd Qu.:3.000   3rd Qu.:2.000   3rd Qu.:2.000   3rd Qu.:3.000  
+##  Max.   :9.00   Max.   :9.000   Max.   :9.000   Max.   :9.000   Max.   :9.000  
+##       MSKC            MSKD           MHKOOP          MAUT2      
+##  Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
+##  1st Qu.:2.000   1st Qu.:0.000   1st Qu.:2.000   1st Qu.:0.000  
+##  Median :4.000   Median :1.000   Median :5.000   Median :1.000  
+##  Mean   :3.759   Mean   :1.067   Mean   :4.772   Mean   :1.316  
+##  3rd Qu.:5.000   3rd Qu.:2.000   3rd Qu.:7.000   3rd Qu.:2.000  
+##  Max.   :9.000   Max.   :9.000   Max.   :9.000   Max.   :7.000  
+##      MAUT0           MZPART         MINKM30         MINK3045    
+##  Min.   :0.000   Min.   :0.000   Min.   :0.000   Min.   :0.000  
+##  1st Qu.:1.000   1st Qu.:1.000   1st Qu.:1.000   1st Qu.:2.000  
+##  Median :2.000   Median :2.000   Median :2.000   Median :4.000  
+##  Mean   :1.959   Mean   :2.729   Mean   :2.574   Mean   :3.536  
+##  3rd Qu.:3.000   3rd Qu.:4.000   3rd Qu.:4.000   3rd Qu.:5.000  
+##  Max.   :9.000   Max.   :9.000   Max.   :9.000   Max.   :9.000  
+##     MINK4575        MINK7512         MINK123M         MINKGEM     
+##  Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
+##  1st Qu.:1.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:3.000  
+##  Median :3.000   Median :0.0000   Median :0.0000   Median :4.000  
+##  Mean   :2.731   Mean   :0.7961   Mean   :0.2027   Mean   :3.784  
+##  3rd Qu.:4.000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:4.000  
+##  Max.   :9.000   Max.   :9.0000   Max.   :9.0000   Max.   :9.000  
+##     MKOOPKLA        AWAPART         AWABEDR           AWALAND       
+##  Min.   :1.000   Min.   :0.000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.:3.000   1st Qu.:0.000   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :4.000   Median :0.000   Median :0.00000   Median :0.00000  
+##  Mean   :4.236   Mean   :0.403   Mean   :0.01477   Mean   :0.02061  
+##  3rd Qu.:6.000   3rd Qu.:1.000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+##  Max.   :8.000   Max.   :2.000   Max.   :5.00000   Max.   :1.00000  
+##     APERSAUT         ABESAUT           AMOTSCO           AVRAAUT        
+##  Min.   :0.0000   Min.   :0.00000   Min.   :0.00000   Min.   :0.000000  
+##  1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000  
+##  Median :1.0000   Median :0.00000   Median :0.00000   Median :0.000000  
+##  Mean   :0.5622   Mean   :0.01048   Mean   :0.04105   Mean   :0.002233  
+##  3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000  
+##  Max.   :7.0000   Max.   :4.00000   Max.   :8.00000   Max.   :3.000000  
+##     AAANHANG          ATRACTOR           AWERKT             ABROM        
+##  Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.00000  
+##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000  
+##  Median :0.00000   Median :0.00000   Median :0.000000   Median :0.00000  
+##  Mean   :0.01254   Mean   :0.03367   Mean   :0.006183   Mean   :0.07042  
+##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.00000  
+##  Max.   :3.00000   Max.   :4.00000   Max.   :6.000000   Max.   :2.00000  
+##      ALEVEN           APERSONG           AGEZONG            AWAOREG        
+##  Min.   :0.00000   Min.   :0.000000   Min.   :0.000000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.000000   Median :0.000000   Median :0.000000  
+##  Mean   :0.07661   Mean   :0.005325   Mean   :0.006527   Mean   :0.004638  
+##  3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.000000  
+##  Max.   :8.00000   Max.   :1.000000   Max.   :1.000000   Max.   :2.000000  
+##      ABRAND          AZEILPL             APLEZIER            AFIETS       
+##  Min.   :0.0000   Min.   :0.0000000   Min.   :0.000000   Min.   :0.00000  
+##  1st Qu.:0.0000   1st Qu.:0.0000000   1st Qu.:0.000000   1st Qu.:0.00000  
+##  Median :1.0000   Median :0.0000000   Median :0.000000   Median :0.00000  
+##  Mean   :0.5701   Mean   :0.0005153   Mean   :0.006012   Mean   :0.03178  
+##  3rd Qu.:1.0000   3rd Qu.:0.0000000   3rd Qu.:0.000000   3rd Qu.:0.00000  
+##  Max.   :7.0000   Max.   :1.0000000   Max.   :2.000000   Max.   :3.00000  
+##     AINBOED            ABYSTAND          CARAVAN       
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :0.000000   Median :0.00000   Median :0.00000  
+##  Mean   :0.007901   Mean   :0.01426   Mean   :0.05977  
+##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+##  Max.   :2.000000   Max.   :2.00000   Max.   :1.00000</code></pre>
 <pre class="r"><code># Perform Min-Max Normalization on each column
 minmax_norm &lt;- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
@@ -386,104 +581,125 @@ class.</p>
 ##    0    1 
 ## 5474 2737</code></pre>
 <pre class="r"><code>summary(rose_data)</code></pre>
-<pre><code>##     MAANTHUI          MGEMLEEF         MOSHOOFD          MGODRK       
-##  Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
-##  1st Qu.:0.00000   1st Qu.:0.2000   1st Qu.:0.2222   1st Qu.:0.00000  
-##  Median :0.00000   Median :0.4000   Median :0.6667   Median :0.00000  
-##  Mean   :0.01176   Mean   :0.3983   Mean   :0.5070   Mean   :0.07717  
-##  3rd Qu.:0.00000   3rd Qu.:0.4000   3rd Qu.:0.7778   3rd Qu.:0.11111  
-##  Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
-##      MGODOV           MGODGE           MRELSA          MFALLEEN     
+<pre><code>##     MAANTHUI         MGEMLEEF        MOSHOOFD.1       MOSHOOFD.2    
 ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.0000   1st Qu.:0.0000  
-##  Median :0.2000   Median :0.3333   Median :0.1429   Median :0.2222  
-##  Mean   :0.2146   Mean   :0.3527   Mean   :0.1202   Mean   :0.1974  
-##  3rd Qu.:0.4000   3rd Qu.:0.4444   3rd Qu.:0.1429   3rd Qu.:0.3333  
+##  1st Qu.:0.0000   1st Qu.:0.2000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.4000   Median :0.0000   Median :0.0000  
+##  Mean   :0.0115   Mean   :0.3991   Mean   :0.1057   Mean   :0.1162  
+##  3rd Qu.:0.0000   3rd Qu.:0.4000   3rd Qu.:0.0000   3rd Qu.:0.0000  
 ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-##     MFGEKIND         MFWEKIND         MOPLHOOG         MOPLLAAG     
+##    MOSHOOFD.3       MOSHOOFD.4         MOSHOOFD.5        MOSHOOFD.6     
+##  Min.   :0.0000   Min.   :0.000000   Min.   :0.00000   Min.   :0.00000  
+##  1st Qu.:0.0000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :0.0000   Median :0.000000   Median :0.00000   Median :0.00000  
+##  Mean   :0.1584   Mean   :0.006333   Mean   :0.08111   Mean   :0.02923  
+##  3rd Qu.:0.0000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.00000  
+##  Max.   :1.0000   Max.   :1.000000   Max.   :1.00000   Max.   :1.00000  
+##    MOSHOOFD.7        MOSHOOFD.8       MOSHOOFD.9     MOSHOOFD.10     
+##  Min.   :0.00000   Min.   :0.0000   Min.   :0.000   Min.   :0.00000  
+##  1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.00000  
+##  Median :0.00000   Median :0.0000   Median :0.000   Median :0.00000  
+##  Mean   :0.08221   Mean   :0.2684   Mean   :0.115   Mean   :0.03739  
+##  3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:0.000   3rd Qu.:0.00000  
+##  Max.   :1.00000   Max.   :1.0000   Max.   :1.000   Max.   :1.00000  
+##      MGODRK            MGODOV           MGODGE           MRELSA      
+##  Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.0000  
+##  Median :0.00000   Median :0.2000   Median :0.3333   Median :0.1429  
+##  Mean   :0.07794   Mean   :0.2132   Mean   :0.3529   Mean   :0.1207  
+##  3rd Qu.:0.11111   3rd Qu.:0.4000   3rd Qu.:0.4444   3rd Qu.:0.1429  
+##  Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MFALLEEN         MFGEKIND         MFWEKIND         MOPLHOOG     
 ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.2222   1st Qu.:0.3333   1st Qu.:0.0000   1st Qu.:0.3333  
-##  Median :0.3333   Median :0.4444   Median :0.1111   Median :0.4444  
-##  Mean   :0.3604   Mean   :0.4862   Mean   :0.1785   Mean   :0.4823  
-##  3rd Qu.:0.4444   3rd Qu.:0.6667   3rd Qu.:0.2222   3rd Qu.:0.6667  
+##  1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.3333   1st Qu.:0.0000  
+##  Median :0.2222   Median :0.3333   Median :0.4444   Median :0.1111  
+##  Mean   :0.1980   Mean   :0.3603   Mean   :0.4851   Mean   :0.1807  
+##  3rd Qu.:0.3333   3rd Qu.:0.4444   3rd Qu.:0.6667   3rd Qu.:0.2222  
 ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-##     MBERHOOG         MBERZELF          MBERBOER          MBERMIDD     
-##  Min.   :0.0000   Min.   :0.00000   Min.   :0.00000   Min.   :0.0000  
-##  1st Qu.:0.1111   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.2222  
-##  Median :0.2222   Median :0.00000   Median :0.00000   Median :0.3333  
-##  Mean   :0.2252   Mean   :0.08342   Mean   :0.05076   Mean   :0.3352  
-##  3rd Qu.:0.3333   3rd Qu.:0.20000   3rd Qu.:0.11111   3rd Qu.:0.4444  
-##  Max.   :1.0000   Max.   :1.00000   Max.   :1.00000   Max.   :1.0000  
-##     MBERARBG         MBERARBO           MSKA            MSKB1       
-##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.1111   1st Qu.:0.1111   1st Qu.:0.0000   1st Qu.:0.1111  
-##  Median :0.2222   Median :0.2222   Median :0.1111   Median :0.2222  
-##  Mean   :0.2367   Mean   :0.2423   Mean   :0.1927   Mean   :0.1853  
-##  3rd Qu.:0.3333   3rd Qu.:0.3333   3rd Qu.:0.3333   3rd Qu.:0.2222  
-##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-##      MSKB2             MSKC             MSKD            MHKOOP      
-##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.1111   1st Qu.:0.2222   1st Qu.:0.0000   1st Qu.:0.2222  
-##  Median :0.2222   Median :0.4444   Median :0.1111   Median :0.6667  
-##  Mean   :0.2460   Mean   :0.4071   Mean   :0.1069   Mean   :0.5577  
-##  3rd Qu.:0.3333   3rd Qu.:0.5556   3rd Qu.:0.1111   3rd Qu.:0.8889  
-##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-##      MAUT2            MAUT0            MZPART          MINKM30      
-##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.2222   1st Qu.:0.1111  
-##  Median :0.1429   Median :0.2222   Median :0.2222   Median :0.2222  
-##  Mean   :0.1897   Mean   :0.2016   Mean   :0.3185   Mean   :0.2645  
-##  3rd Qu.:0.2857   3rd Qu.:0.3333   3rd Qu.:0.4444   3rd Qu.:0.4444  
-##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-##     MINK3045         MINK4575         MINK7512          MINK123M      
+##     MOPLLAAG         MBERHOOG         MBERZELF          MBERBOER      
 ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.00000  
-##  1st Qu.:0.2222   1st Qu.:0.2222   1st Qu.:0.00000   1st Qu.:0.00000  
-##  Median :0.4444   Median :0.3333   Median :0.00000   Median :0.00000  
-##  Mean   :0.3946   Mean   :0.3160   Mean   :0.09704   Mean   :0.02192  
-##  3rd Qu.:0.5556   3rd Qu.:0.4444   3rd Qu.:0.11111   3rd Qu.:0.00000  
+##  1st Qu.:0.2222   1st Qu.:0.1111   1st Qu.:0.00000   1st Qu.:0.00000  
+##  Median :0.4444   Median :0.2222   Median :0.00000   Median :0.00000  
+##  Mean   :0.4794   Mean   :0.2255   Mean   :0.08357   Mean   :0.05095  
+##  3rd Qu.:0.6667   3rd Qu.:0.3333   3rd Qu.:0.20000   3rd Qu.:0.11111  
 ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.00000  
-##     MINKGEM          MKOOPKLA         AWAPART          AWABEDR        
-##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000000  
-##  1st Qu.:0.3333   1st Qu.:0.2857   1st Qu.:0.0000   1st Qu.:0.000000  
-##  Median :0.4444   Median :0.4286   Median :0.0000   Median :0.000000  
-##  Mean   :0.4350   Mean   :0.4931   Mean   :0.2266   Mean   :0.002947  
-##  3rd Qu.:0.5556   3rd Qu.:0.7143   3rd Qu.:0.5000   3rd Qu.:0.000000  
-##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000000  
-##     AWALAND           APERSAUT          ABESAUT            AMOTSCO        
-##  Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
-##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
-##  Median :0.00000   Median :0.14286   Median :0.000000   Median :0.000000  
-##  Mean   :0.01656   Mean   :0.09446   Mean   :0.002527   Mean   :0.005298  
-##  3rd Qu.:0.00000   3rd Qu.:0.14286   3rd Qu.:0.000000   3rd Qu.:0.000000  
-##  Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
-##     AVRAAUT             AAANHANG           ATRACTOR            AWERKT         
-##  Min.   :0.0000000   Min.   :0.000000   Min.   :0.000000   Min.   :0.0000000  
-##  1st Qu.:0.0000000   1st Qu.:0.000000   1st Qu.:0.000000   1st Qu.:0.0000000  
-##  Median :0.0000000   Median :0.000000   Median :0.000000   Median :0.0000000  
-##  Mean   :0.0005277   Mean   :0.004506   Mean   :0.006912   Mean   :0.0007307  
-##  3rd Qu.:0.0000000   3rd Qu.:0.000000   3rd Qu.:0.000000   3rd Qu.:0.0000000  
-##  Max.   :1.0000000   Max.   :1.000000   Max.   :1.000000   Max.   :1.0000000  
-##      ABROM             ALEVEN           APERSONG           AGEZONG        
-##  Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
-##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
-##  Median :0.00000   Median :0.00000   Median :0.000000   Median :0.000000  
-##  Mean   :0.02777   Mean   :0.01084   Mean   :0.004506   Mean   :0.009865  
-##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.000000  
-##  Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
-##     AWAOREG             ABRAND           AZEILPL            APLEZIER       
-##  Min.   :0.000000   Min.   :0.00000   Min.   :0.000000   Min.   :0.000000  
-##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.000000  
-##  Median :0.000000   Median :0.14286   Median :0.000000   Median :0.000000  
-##  Mean   :0.003106   Mean   :0.08671   Mean   :0.001218   Mean   :0.007125  
-##  3rd Qu.:0.000000   3rd Qu.:0.14286   3rd Qu.:0.000000   3rd Qu.:0.000000  
-##  Max.   :1.000000   Max.   :1.00000   Max.   :1.000000   Max.   :1.000000  
-##      AFIETS          AINBOED            ABYSTAND          CARAVAN      
-##  Min.   :0.0000   Min.   :0.000000   Min.   :0.00000   Min.   :0.0000  
-##  1st Qu.:0.0000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000  
-##  Median :0.0000   Median :0.000000   Median :0.00000   Median :0.0000  
-##  Mean   :0.0134   Mean   :0.004445   Mean   :0.01297   Mean   :0.3333  
-##  3rd Qu.:0.0000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:1.0000  
-##  Max.   :1.0000   Max.   :1.000000   Max.   :1.00000   Max.   :1.0000</code></pre>
+##     MBERMIDD         MBERARBG         MBERARBO           MSKA       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.2222   1st Qu.:0.1111   1st Qu.:0.1111   1st Qu.:0.0000  
+##  Median :0.3333   Median :0.2222   Median :0.2222   Median :0.1111  
+##  Mean   :0.3353   Mean   :0.2361   Mean   :0.2435   Mean   :0.1944  
+##  3rd Qu.:0.4444   3rd Qu.:0.3333   3rd Qu.:0.3333   3rd Qu.:0.3333  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##      MSKB1            MSKB2             MSKC             MSKD       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.1111   1st Qu.:0.1111   1st Qu.:0.2222   1st Qu.:0.0000  
+##  Median :0.2222   Median :0.2222   Median :0.4444   Median :0.1111  
+##  Mean   :0.1848   Mean   :0.2453   Mean   :0.4061   Mean   :0.1078  
+##  3rd Qu.:0.2222   3rd Qu.:0.3333   3rd Qu.:0.5556   3rd Qu.:0.2222  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##      MHKOOP           MAUT2            MAUT0            MZPART      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.2222   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.2222  
+##  Median :0.6667   Median :0.1429   Median :0.2222   Median :0.3333  
+##  Mean   :0.5632   Mean   :0.1903   Mean   :0.2010   Mean   :0.3199  
+##  3rd Qu.:0.8889   3rd Qu.:0.2857   3rd Qu.:0.3333   3rd Qu.:0.4444  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MINKM30          MINK3045         MINK4575         MINK7512     
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.1111   1st Qu.:0.2222   1st Qu.:0.2222   1st Qu.:0.0000  
+##  Median :0.2222   Median :0.4444   Median :0.3333   Median :0.0000  
+##  Mean   :0.2643   Mean   :0.3921   Mean   :0.3184   Mean   :0.0972  
+##  3rd Qu.:0.4444   3rd Qu.:0.5556   3rd Qu.:0.4444   3rd Qu.:0.1111  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     MINK123M         MINKGEM          MKOOPKLA         AWAPART      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.3333   1st Qu.:0.2857   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.4444   Median :0.4286   Median :0.0000  
+##  Mean   :0.0228   Mean   :0.4359   Mean   :0.4938   Mean   :0.2293  
+##  3rd Qu.:0.0000   3rd Qu.:0.5556   3rd Qu.:0.7143   3rd Qu.:0.5000  
+##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+##     AWABEDR            AWALAND           APERSAUT         ABESAUT        
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.0000   Min.   :0.000000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.000000  
+##  Median :0.000000   Median :0.00000   Median :0.1429   Median :0.000000  
+##  Mean   :0.002996   Mean   :0.01778   Mean   :0.0947   Mean   :0.002223  
+##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.1429   3rd Qu.:0.000000  
+##  Max.   :1.000000   Max.   :1.00000   Max.   :1.0000   Max.   :1.000000  
+##     AMOTSCO            AVRAAUT             AAANHANG           ATRACTOR       
+##  Min.   :0.000000   Min.   :0.0000000   Min.   :0.000000   Min.   :0.000000  
+##  1st Qu.:0.000000   1st Qu.:0.0000000   1st Qu.:0.000000   1st Qu.:0.000000  
+##  Median :0.000000   Median :0.0000000   Median :0.000000   Median :0.000000  
+##  Mean   :0.005663   Mean   :0.0005277   Mean   :0.005115   Mean   :0.007459  
+##  3rd Qu.:0.000000   3rd Qu.:0.0000000   3rd Qu.:0.000000   3rd Qu.:0.000000  
+##  Max.   :1.000000   Max.   :1.0000000   Max.   :1.000000   Max.   :1.000000  
+##      AWERKT              ABROM             ALEVEN           APERSONG       
+##  Min.   :0.0000000   Min.   :0.00000   Min.   :0.00000   Min.   :0.000000  
+##  1st Qu.:0.0000000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000  
+##  Median :0.0000000   Median :0.00000   Median :0.00000   Median :0.000000  
+##  Mean   :0.0007307   Mean   :0.02795   Mean   :0.01099   Mean   :0.004506  
+##  3rd Qu.:0.0000000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000  
+##  Max.   :1.0000000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000  
+##     AGEZONG           AWAOREG             ABRAND           AZEILPL        
+##  Min.   :0.00000   Min.   :0.000000   Min.   :0.00000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.000000   Median :0.14286   Median :0.000000  
+##  Mean   :0.01035   Mean   :0.003775   Mean   :0.08748   Mean   :0.001705  
+##  3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.14286   3rd Qu.:0.000000  
+##  Max.   :1.00000   Max.   :1.000000   Max.   :1.00000   Max.   :1.000000  
+##     APLEZIER            AFIETS           AINBOED           ABYSTAND    
+##  Min.   :0.000000   Min.   :0.00000   Min.   :0.00000   Min.   :0.000  
+##  1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000  
+##  Median :0.000000   Median :0.00000   Median :0.00000   Median :0.000  
+##  Mean   :0.007977   Mean   :0.01327   Mean   :0.00475   Mean   :0.012  
+##  3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000  
+##  Max.   :1.000000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000  
+##     CARAVAN      
+##  Min.   :0.0000  
+##  1st Qu.:0.0000  
+##  Median :0.0000  
+##  Mean   :0.3333  
+##  3rd Qu.:1.0000  
+##  Max.   :1.0000</code></pre>
 <pre class="r"><code>#Performing the same normalization on the test set
 test_data &lt;- read.csv(&quot;data/test.csv&quot;, header = TRUE, sep = &quot;,&quot;)
 test_data &lt;- as.data.frame(lapply(test_data, minmax_norm))

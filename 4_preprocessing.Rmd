@@ -1,36 +1,106 @@
 # Preprocessing
 
-## Scaling
 ```{r}
 # Load the data
-data <- read.csv("data/train.csv", header = TRUE, sep = ",")
+train <- read.csv("data/train_var_selection.csv", header = TRUE, sep = ",")
+test <- read.csv("data/test_var_selection.csv", header = TRUE, sep = ",")
 ```
+
+## One Hot Encoding
+The variables MOSTYPE and MOSHOOFD need to be one hot encoded. Actually, the variable MOSTYPE has been remove during correlation analysis since it is a specification on MOSHOOFD.
+```{r}
+# One hot encoding function
+one_hot <- function(data, variable) {
+  library(caret)
+  # Convert the variable to factor
+  data[[variable]] <- as.factor(data[[variable]])
+  # Perform one hot encoding
+  dummy <- dummyVars(" ~ .", data = data)
+  data <- data.frame(predict(dummy, newdata = data))
+  return(data)
+}
+
+train <- one_hot(train, "MOSHOOFD")
+test <- one_hot(test, "MOSHOOFD")
+```
+
+```{r}
+str(train)
+```
+
+```{r}
+str(test)
+```
+
+
+## Scaling
 
 ```{r}
 # Perform Min-Max Normalization on each column
-minmax_norm <- function(x) {
-  return ((x - min(x)) / (max(x) - min(x)))
+# Each variable has a different domain, so we need to specify the normalization
+# for each variable
+# Apply the normalization to all the variables except MAAANTHUI, MGEMOMV
+# MGEMLEEF and CARAVAN
+
+minmax <- function(data) {
+  # Domain MAANTHUI:  [1,10]
+  if ("MAANTHUI" %in% colnames(data)) {
+    data$MAANTHUI <- (data$MAANTHUI - 1) / (10 - 1)
+  }
+  # Domain MGEMOMV and MGEMLEEF:  [1,6]
+  if ("MGEMOMV" %in% colnames(data)) {
+    data$MGEMOMV <- (data$MGEMOMV - 1) / (6 - 1)
+  }
+
+  if ("MGEMLEEF" %in% colnames(data)) {
+    data$MMGEMLEEF <- (data$MGEMLEEF - 1) / (6 - 1)
+  }
+
+  # All the other variables have domain [0, 9]
+  for (i in colnames(data)) {
+    if (i != "CARAVAN" &&
+        i != "MAANTHUI" &&
+        i != "MGEMOMV" &&
+        i != "MGEMLEEF") {
+      data[[i]] <- (data[[i]] - 0) / (9 - 0)
+    }
+  }
+  return(data)
 }
 
-data <- as.data.frame(lapply(data, minmax_norm))
+train <- minmax(train)
+test <- minmax(test)
+#save test data
+write.csv(test, "data/test.csv", row.names = FALSE)
 ```
+
+```{r}
+```
+
+```{r}
+str(train)
+```
+
+```{r}
+str(test)
+```
+
 
 ## Balancing target variable on the training set
 
 ```{r}
 # Perform ROSE oversampling
 library(ROSE)
-n_0 <- nrow(data[data["CARAVAN"] == 0, ])
-p <- 1
-rose_data <- ovun.sample(CARAVAN ~ .,
-                         data = data,
-                         method = "over",
-                         N = n_0 + round(p * n_0))$data
+n_0 <- nrow(train[train["CARAVAN"] == 0, ])
+print(n_0)
+rose <- ovun.sample(CARAVAN ~ .,
+                    data = train,
+                    method = "over",
+                    N = 2 * n_0)
 #Save the data
-write.csv(rose_data, "data/train_rose.csv", row.names = FALSE)
+write.csv(rose$data, "data/train_rose.csv", row.names = FALSE)
 ```
-For the ROSE oversampling, the number of samples in the minority class is set to
-be equal to the number of samples in the majority class.
+The CARAVAN variable in the train set is now perfectly balanced, as all things should be.
 
 ```{r}
 table(rose_data$CARAVAN)
@@ -39,16 +109,3 @@ table(rose_data$CARAVAN)
 ```{r}
 summary(rose_data)
 ```
-
-```{r}
-#Performing the same normalization on the test set
-test_data <- read.csv("data/test.csv", header = TRUE, sep = ",")
-test_data <- as.data.frame(lapply(test_data, minmax_norm))
-write.csv(test_data, "data/test.csv", row.names = FALSE)
-```
-
-
-
-
-
-
