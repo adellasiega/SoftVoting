@@ -2,12 +2,45 @@
 
 ```{r}
 # Load the data
-train <- read.csv("data/train_var_selection.csv", header = TRUE, sep = ",")
-test <- read.csv("data/test_var_selection.csv", header = TRUE, sep = ",")
+train <- read.csv("data/train_raw.csv", header = TRUE, sep = ",")
+test <- read.csv("data/test_raw.csv", header = TRUE, sep = ",")
+```
+
+## Variable Selection
+Remove the redundant variables that we found during the correlation analysis.
+```{r}
+library(caret)
+corr_matrix <- cor(train)
+multicorr_columns <- c()
+n_col <- ncol(cor_matrix) - 1 #exclude the target variable
+corr_threshold <- 0.7
+
+for (i in seq_len(n_col - 1)) {
+  for (j in seq(i + 1, n_col)) {
+    if (abs(cor_matrix[i, j]) > corr_threshold) {
+      print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
+                  cor_matrix[i, j]))
+      multicorr_columns <- c(multicorr_columns, colnames(cor_matrix)[j])
+    }
+  }
+}
+
+print(multicorr_columns)
+```
+
+Remove the redundant (multicollinear) variables
+```{r}
+train <- train[, !colnames(train) %in% multicorr_columns]
+test <- test[, !colnames(test) %in% multicorr_columns]
+```
+
+The columns left are
+```{r}
+colnames(train)
 ```
 
 ## One Hot Encoding
-The variables MOSTYPE and MOSHOOFD need to be one hot encoded. Actually, the variable MOSTYPE has been remove during correlation analysis since it is a specification on MOSHOOFD.
+The variables MOSTYPE and MOSHOOFD need to be one hot encoded. Actually, the variable MOSHOOFD has been remove during correlation analysis since it is a generalization of MOSTYPE.
 ```{r}
 # One hot encoding function
 one_hot <- function(data, variable) {
@@ -20,8 +53,8 @@ one_hot <- function(data, variable) {
   return(data)
 }
 
-train <- one_hot(train, "MOSHOOFD")
-test <- one_hot(test, "MOSHOOFD")
+train <- one_hot(train, "MOSTYPE")
+test <- one_hot(test, "MOSTYPE")
 ```
 
 ```{r}
@@ -35,14 +68,12 @@ str(test)
 
 ## Scaling
 
-```{r}
-# Perform Min-Max Normalization on each column
-# Each variable has a different domain, so we need to specify the normalization
-# for each variable
-# Apply the normalization to all the variables except MAAANTHUI, MGEMOMV
-# MGEMLEEF and CARAVAN
+Let's perform Min-Max Normalization on each variale. Note that each variable has a different domain, since it could belong to a different domain, so we need to specify the normalization for each variable.
+The target variable CARAVAN is not normalized, since it is a binary variable.
 
+```{r}
 minmax <- function(data) {
+  
   # Domain MAANTHUI:  [1,10]
   if ("MAANTHUI" %in% colnames(data)) {
     data$MAANTHUI <- (data$MAANTHUI - 1) / (10 - 1)
@@ -51,7 +82,6 @@ minmax <- function(data) {
   if ("MGEMOMV" %in% colnames(data)) {
     data$MGEMOMV <- (data$MGEMOMV - 1) / (6 - 1)
   }
-
   if ("MGEMLEEF" %in% colnames(data)) {
     data$MMGEMLEEF <- (data$MGEMLEEF - 1) / (6 - 1)
   }
@@ -73,10 +103,6 @@ test <- minmax(test)
 #save test data
 write.csv(test, "data/test.csv", row.names = FALSE)
 ```
-
-```{r}
-```
-
 ```{r}
 str(train)
 ```
@@ -84,7 +110,6 @@ str(train)
 ```{r}
 str(test)
 ```
-
 
 ## Balancing target variable on the training set
 

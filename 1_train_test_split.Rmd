@@ -1,65 +1,53 @@
----
-title: "Train-Test Split"
-output: html_notebook
----
+# Sanity Check
 
-# Data Cleaning
-
+Load the data.
 ```{r}
 data <- read.csv("data/caravan-insurance-challenge.csv")
 ```
-Load the data.
 
+Number of rows and columns.
 ```{r}
 dim(data)
 ```
-Number of rows and columns.
 
+Number of missing values.
 ```{r}
 sum(is.na(data))
 ```
-Number of missing values. No missing values are present in the data.
+No missing values are present in the data.
 
-```{r}
-str(data)
-```
-Check the data types. 
-All the variables are numeric (int) except the 'ORIGIN'
-variable which is a chr.
-According to the data description 
-(https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge) the only variables that need to be one hot encoded are the 'MOSTYPE' and 'MOSHOOFD' variables. They will be dummified just before building the models.
-The 'CARAVAN' variable belongs to the l4 encoding but it will be considered
-as a binary variable (0 or 1) instead of a categorical variable (0,1,2,3,...)
-because such variable shows only 0,1 values.
+According to the data description (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge) the only variables that need to be one hot encoded are the 'MOSTYPE' and 'MOSHOOFD' variables. They will be one-hot encoded just before building the models.
+The 'CARAVAN' variable (response variable) belongs to the L4 encoding but it will be considered as a binary variable (0 or 1) instead of a categorical variable (0,1,2,3,...) because such variable assumes only 0,1 values.
 
 
 # Train-Test Split
-```{r}
-str(data)
-```
 
+Perform the train-test split according to the 'ORIGIN' variable.
 ```{r}
 train <- data[data$ORIGIN == "train", ]
 test <- data[data$ORIGIN == "test", ]
 ```
-Perform the train-test split according to the variable.
 
+Remove the 'ORIGIN' variable from the data, since it is not necessary anymore.
 ```{r}
 train <- train[, -which(names(train) == "ORIGIN")]
 test <- test[, -which(names(test) == "ORIGIN")]
 ```
-Remove the 'ORIGIN' variable from the data.
 
 ```{r}
 dim(train)
 ```
+The train set has 5822 rows and 86 columns.
 
 ```{r}
 dim(test)
 ```
+The test set has 4000 rows and 86 columns.
+This means that the test set includes approximately the 40% of the original data.
 
+
+Save the train and test data. These sets will be denoted as raw because they have not been preprocessed yet.
 ```{r}
 write.csv(train, "data/train_raw.csv", row.names = FALSE)
 write.csv(test, "data/test_raw.csv", row.names = FALSE)
 ```
-Save the train and test data.

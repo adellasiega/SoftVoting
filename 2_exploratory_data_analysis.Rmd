@@ -1,17 +1,41 @@
----
-title: "Exploratory Data Analysis"
-output: html_notebook
----
+# Exploratory Data Analysis
 
+In order to not get information from the test set, we will perform the
+exploratory data analysis only on the train set. The test set will be used
+only to evaluate the future models.
+Load the train data set.
 ```{r}
 data <- read.csv("data/train_raw.csv")
 ```
-Load the train data set.
 
+```{r}
+str(data)
+```
+
+```{r}
+summary(data)
+```
+
+
+
+According to the data description (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge).
+
+Each observation in the data set refers to a zip area code.
+
+The variables its interpretation is truly numeric are "MAANTHUI" and "MGEMOMV".
+
+All the other variables are numeric but they are actually categorical variables. The variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts (religion, social clas, etc.). In particular their encoding is nominal, so it is not possible to consider them as numeric variables.
+
+The other variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
+
+The "CARAVAN" variable (response variable) belongs to the L4 encoding. The L4 encoding domain is 0-9, where 0->0, 1->1-49, 2->50-99, etc.
+If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1. This means that the variable is binary, so we can consider it as a binary variable.
+
+
+Evaluate the absolute frequency of the response variable.
 ```{r}
 table(data$CARAVAN)
 ```
-Absolute frequency of the target variable.
 
 ```{r}
 sum(data$CARAVAN == 1) / nrow(data)
@@ -19,10 +43,7 @@ sum(data$CARAVAN == 1) / nrow(data)
 The categories of the target variable are higly unbalanced, the ratio is 1:19 
 for the value 1.
 
-```{r}
-names(data)
-```
-
+Plot of the distribution of the numerical variables "MAANTHUI" and "MGEMOMV"
 ```{r}
 num_vars <- c("MAANTHUI", "MGEMOMV")
 par(mfrow = c(1, 2))
@@ -30,7 +51,7 @@ for (var in num_vars) {
   hist(data[, var], main = var, xlab = var, las = 2)
 }
 ```
-Plot of the distribution of the numerical variables
+
 
 ```{r}
 par(mfrow = c(1, 1))
@@ -39,7 +60,7 @@ for (var in cat_vars) {
   barplot(table(data[, var]), main = var, xlab = var, las = 2)
 }
 ```
-Plot of the distribution of the numerical variables
+Plot of the distribution of the other variables
 
 
 

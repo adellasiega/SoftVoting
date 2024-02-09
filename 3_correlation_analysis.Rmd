@@ -1,51 +1,67 @@
-# Correlation Analysis & Variable Selection
+# Correlation Analysis
+Load the data
 
 ```{r}
 data <- read.csv("data/train_raw.csv", header = TRUE)
 ```
-Load the data
 
+Correlation plot
 ```{r}
 library(corrplot)
 cor_matrix <- cor(data)
 corrplot(cor_matrix, method = "circle")
 ```
-The correlation plot shows multicollinearity between the variables.
 
+Let's find the most correlated explanatory variables, which could cause multicollinearity. We do not take in consideration the target variable, which is the last one.
 ```{r}
-# find the most correlated variables
-columns_to_remove <- c()
-for (i in seq_len(ncol(cor_matrix) - 1)) {
-  for (j in seq_len(ncol(cor_matrix) - 1)) {
-    if (i > j) {
-      if (abs(cor_matrix[i, j]) > 0.7) {
-        print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
-                    cor_matrix[i, j]))
-        columns_to_remove <- c(columns_to_remove, colnames(cor_matrix)[j])
-      }
+multicorr_columns <- c()
+n_col <- ncol(cor_matrix) - 1 #exclude the target variable
+corr_threshold <- 0.7
+
+for (i in seq_len(n_col - 1)) {
+  for (j in seq(i + 1, n_col)) {
+    if (abs(cor_matrix[i, j]) > corr_threshold) {
+      print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
+                  cor_matrix[i, j]))
+      multicorr_columns <- c(multicorr_columns, colnames(cor_matrix)[j])
     }
   }
 }
 ```
 
+We note that MOSTYPE and MOSHOOFD are highly correlated (0.99) even if they the concept of correltation is not applicable to categorical variables. This means that a precise order has been adopted for these two categorical variables. If we look at the data description, we can see that MOSHOOFD is a generalization of MOSTYPE.
+
+The variables whose name start with A is also highly correlated with the respective variables whose name start with P. This is also expected since the variables whose name start with P are just a linear combination of the variables whose name start with A.
+
+The other couples of variables that are highly correlated are:
+
+MGEMOMV ~ MFWEKIND 0.79 -> Avg size household ~ household with children (positive correlation)
+
+MGODPR ~ MGODGE -0.74 -> Protestant ~ No religion (negative correlation)
+
+MRELGE ~ MRELOV -0.88 -> Married ~ Other relation (negative correlation)
+
+MRELOV ~ MFALLEEN 0.74 -> Other relation ~ Singles (positive correlation)
+
+MOPLMIDD ~ MOPLLAAG -0.74 -> Middle level education ~ Low level education (negative correlation)
+
+MHHUUR ~ MHKOOP -0.99 -> Rented house ~ Home owner (negative correlation)
+
+MAUT1 ~ MAUT0 -0.73 -> 1 car ~ No car (negative correlation)
+
+MZFONDS ~ MZPART -0.99 -> National Health Service ~ Private health insurance (negative correlation) 
+
+So, the subset of variables that can cause multicollinearity is 
 ```{r}
-print(columns_to_remove)
+print(multicorr_columns)
 ```
 
+Plot the correlation of the target variable with the explanatory variables using a scatter plot
 ```{r}
-#remove the variables that cause multicollinearity
-data <- data[, !(names(data) %in% columns_to_remove)]
+cor_target <- cor_matrix[n_col + 1, 1:n_col + 1]
+# Use red bold X and label the points whose correlation is higher than 0.10
+plot(cor_target, pch = 8, col = "red", cex = 1.5, main = "Correlation of the target variable with the explanatory variables")
+text(x = 1:n_col, y = cor_target, labels = ifelse(cor_target > 0.10, names(cor_target), ""), pos = 1, col = "blue")
 ```
 
-```{r}
-#save the data
-write.csv(data, "data/train_var_selection.csv", row.names = FALSE)
-```
 
-```{r}
-#Do the same for the test data
-test <- read.csv("data/test_raw.csv", header = TRUE)
-test <- test[, !(names(test) %in% columns_to_remove)]
-#Save the test data
-write.csv(test, "data/test_var_selection.csv", row.names = FALSE)
-```
