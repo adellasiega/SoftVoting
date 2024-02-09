@@ -12,14 +12,14 @@ Remove the redundant variables that we found during the correlation analysis.
 library(caret)
 corr_matrix <- cor(train)
 multicorr_columns <- c()
-n_col <- ncol(cor_matrix) - 1 #exclude the target variable
+n_col <- ncol(corr_matrix) - 1 #exclude the target variable
 corr_threshold <- 0.7
 
 for (i in seq_len(n_col - 1)) {
   for (j in seq(i + 1, n_col)) {
     if (abs(corr_matrix[i, j]) > corr_threshold) {
-      print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
-                  cor_matrix[i, j]))
+      print(paste(colnames(corr_matrix)[i], colnames(corr_matrix)[j],
+                  corr_matrix[i, j]))
       multicorr_columns <- c(multicorr_columns, colnames(corr_matrix)[j])
     }
   }
