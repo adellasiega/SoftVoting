@@ -17,10 +17,10 @@ corr_threshold <- 0.7
 
 for (i in seq_len(n_col - 1)) {
   for (j in seq(i + 1, n_col)) {
-    if (abs(cor_matrix[i, j]) > corr_threshold) {
+    if (abs(corr_matrix[i, j]) > corr_threshold) {
       print(paste(colnames(cor_matrix)[i], colnames(cor_matrix)[j],
                   cor_matrix[i, j]))
-      multicorr_columns <- c(multicorr_columns, colnames(cor_matrix)[j])
+      multicorr_columns <- c(multicorr_columns, colnames(corr_matrix)[j])
     }
   }
 }
