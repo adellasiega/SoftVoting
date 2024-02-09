@@ -128,9 +128,9 @@ write.csv(rose$data, "data/train_rose.csv", row.names = FALSE)
 The CARAVAN variable in the train set is now perfectly balanced, as all things should be.
 
 ```{r}
-table(rose_data$CARAVAN)
+table(rose$data$CARAVAN)
 ```
 
 ```{r}
-str(rose_data)
+str(rose$data)
 ```
