@@ -1,0 +1,105 @@
+# Caravan Insurance Challenge
+Dataset source: (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge).
+
+Goal: Identify potential purchasers of caravan insurance policies: the target variable is CARAVAN, which is a binary variable. 
+
+Each observation corresponds to a postal code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code.
+
+```{r}
+data <- read.csv('data/caravan-insurance-challenge.csv')
+# head(data, 3)
+```
+
+## Exploratory Data Analysis
+### Dataset shape
+```{r}
+dim( data )
+```
+The dataset has 9822 rows and 86 columns, i.e. 9822 observations and 86 variables.
+
+### Checking for missing values
+```{r}
+sum( is.na(data) ) # count missing values
+```
+No missing values are present in the data. 
+
+### Train-Test Split using the 'ORIGIN' variable
+The original dataset has a column called 'ORIGIN' which indicates whether the observation belongs to the train or test set; this column is used to split the data into two sets. The 'ORIGIN' column is then removed from the data after the split, since it is not necessary anymore.
+```{r}
+train <- data[data$ORIGIN == "train", ]
+test <- data[data$ORIGIN == "test", ]
+
+# Remove the 'ORIGIN' variable from the data, since it is not necessary anymore:
+train <- train[, -which(names(train) == "ORIGIN")]
+test <- test[, -which(names(test) == "ORIGIN")]
+
+# save to disk
+write.csv(train, "data/train_raw.csv", row.names = FALSE)
+write.csv(test, "data/test_raw.csv", row.names = FALSE)
+
+print( dim(train) ) # train shape
+print( dim(test) )  # test shape
+```
+The train set has 5822 rows and 86 columns, while the test set has 4000 rows and 86 columns. This means that the test set includes approximately the 40% of the original data. These datasets will be saved to the disk and they will be denoted as raw because they have not been preprocessed yet.
+
+In the following chunks we will perform exploratory data analysis only to the portion of the data that belongs to the training set. This is because the test set is not supposed to be used for any kind of analysis, only for testing the models.
+
+### Dataset imbalance
+Analyzing the target variable distribution in the training set:
+```{r}
+library(ggplot2)
+
+# absolute frequency plot:
+ggplot(train, aes(x = CARAVAN)) + 
+  geom_bar() + 
+  labs(
+    title = "CARAVAN variable distribution - Absolute Frequency", 
+    x = "CARAVAN", y = "Frequency"
+  ) + theme_minimal()
+
+ggsave("graphs/abs_freq_CARAVAN.png", width = 10, height = 10)
+
+# rela\tive frequency plot:
+ggplot(data, aes(x = CARAVAN)) + 
+  geom_bar(aes(y = (after_stat(count))/sum(after_stat(count)))) + 
+  labs(
+    title = "CARAVAN variable distribution - Relative Frequency",
+    x = "CARAVAN", y = "Frequency"
+  ) + theme_minimal()
+
+ggsave("graphs/rel_freq_CARAVAN.png", width = 10, height = 10)
+
+# table with relative frequencies:
+table(data$CARAVAN) / nrow(data)
+```
+
+Comment: The dataset is highly unbalanced: only 5.98% of the observations belonging to the positive class, this will be taken into account when building the models.
+
+
+### Variable types
+According to the data description, the variables its interpretation is truly numeric are "MAANTHUI" and "MGEMOMV".
+
+All the other variables are encoded as numeric but they are actually categorical variables. The variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts, such as religion, social class, etc... 
+In particular their encoding is nominal, so it is not possible to consider them as numeric variables.
+
+The other variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
+
+The "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1. This means that the variable is binary, so we can consider it as a binary variable.
+
+### Correlation matrix
+```{r}
+library(dplyr)
+library(tidyr)
+library(reshape2)
+
+cormat <- train  %>% cor()
+mcor <- cormat %>% melt()
+
+mcor %>% ggplot(
+  aes(x=Var1, y=Var2, fill=value)) +
+  geom_tile() + 
+  scale_fill_gradient2(low= "blue", high = "red", mid = "white") + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+We can see that there are some variables that are highly correlated with each other: looking at the upper right quadrant, we can notice that each variable that starts with 'P', has a high correlation with other variables that start with 'A'... this means that having both in our data will likely provide little value to the analysis.
