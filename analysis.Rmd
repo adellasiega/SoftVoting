@@ -6,7 +6,7 @@ Goal: Identify potential purchasers of caravan insurance policies: the target va
 Each observation corresponds to a postal code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code.
 
 ```{r}
-data <- read.csv('data/caravan-insurance-challenge.csv')
+data <- read.csv('data/caravan-insurance-challenge.csv')  # kaggle dataset
 # head(data, 3)
 ```
 
@@ -25,27 +25,45 @@ No missing values are present in the data.
 
 ### Train-Test Split using the 'ORIGIN' variable
 The original dataset has a column called 'ORIGIN' which indicates whether the observation belongs to the train or test set; this column is used to split the data into two sets. The 'ORIGIN' column is then removed from the data after the split, since it is not necessary anymore.
+
 ```{r}
+# splitting the data into train and test sets (using 'ORIGIN' variable):
 train <- data[data$ORIGIN == "train", ]
 test <- data[data$ORIGIN == "test", ]
 
-# Remove the 'ORIGIN' variable from the data, since it is not necessary anymore:
+# remove 'ORIGIN' variable (not necessary anymore):
 train <- train[, -which(names(train) == "ORIGIN")]
 test <- test[, -which(names(test) == "ORIGIN")]
 
-# save to disk
+# dump the train and test sets to the disk:
 write.csv(train, "data/train_raw.csv", row.names = FALSE)
 write.csv(test, "data/test_raw.csv", row.names = FALSE)
 
-print( dim(train) ) # train shape
-print( dim(test) )  # test shape
+# check the shape of the train and test sets:
+print( dim(train) ) 
+print( dim(test) )  
 ```
-The train set has 5822 rows and 86 columns, while the test set has 4000 rows and 86 columns. This means that the test set includes approximately the 40% of the original data. These datasets will be saved to the disk and they will be denoted as raw because they have not been preprocessed yet.
 
-In the following chunks we will perform exploratory data analysis only to the portion of the data that belongs to the training set. This is because the test set is not supposed to be used for any kind of analysis, only for testing the models.
+```{r}
+library(ggplot2)
 
-### Dataset imbalance
-Analyzing the target variable distribution in the training set:
+train_test <- data.frame(
+  set = c("Train", "Test"),
+  count = c(nrow(train), nrow(test))
+)
+
+ggplot(train_test, aes(x = "", y = count, fill = set)) + 
+  geom_bar(stat = "identity", width = 1) + 
+  coord_polar("y", start = 0) + 
+  labs(title = "Train-test sets proportions", fill = "Set") + 
+  theme_minimal()
+
+```
+The test set includes approximately the 40% of the original data. These datasets will be denoted as raw because they have not been preprocessed yet.
+
+In the following chunks **we will perform exploratory data analysis only on the portion of the data that belongs to the training set**, this because the test set is not supposed to be used for any kind of analysis, only for testing the model.
+
+### Analyzing target variable distribution
 ```{r}
 library(ggplot2)
 
@@ -59,7 +77,7 @@ ggplot(train, aes(x = CARAVAN)) +
 
 ggsave("graphs/abs_freq_CARAVAN.png", width = 10, height = 10)
 
-# rela\tive frequency plot:
+# relaltive frequency plot:
 ggplot(data, aes(x = CARAVAN)) + 
   geom_bar(aes(y = (after_stat(count))/sum(after_stat(count)))) + 
   labs(
@@ -73,18 +91,15 @@ ggsave("graphs/rel_freq_CARAVAN.png", width = 10, height = 10)
 table(data$CARAVAN) / nrow(data)
 ```
 
-Comment: The dataset is highly unbalanced: only 5.98% of the observations belonging to the positive class, this will be taken into account when building the models.
+The dataset is highly unbalanced: only 5.98% of the observations belonging to the positive class, this will be taken into account when building the models.
 
 
-### Variable types
-According to the data description, the variables its interpretation is truly numeric are "MAANTHUI" and "MGEMOMV".
-
-All the other variables are encoded as numeric but they are actually categorical variables. The variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts, such as religion, social class, etc... 
-In particular their encoding is nominal, so it is not possible to consider them as numeric variables.
-
-The other variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
-
-The "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1. This means that the variable is binary, so we can consider it as a binary variable.
+### Variables type
+- According to the data description, the variables its interpretation is truly numeric are "MAANTHUI" and "MGEMOMV".
+- the variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts, such as religion, social class, etc... in particular their encoding is nominal, so it is not possible to consider them as numeric variables.
+- all the other variables are encoded as numeric but they are actually categorical variables. 
+- the other variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
+- the "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1: this means that the variable is binary, so we can consider it as a binary variable.
 
 ### Correlation matrix
 ```{r}
@@ -100,6 +115,120 @@ mcor %>% ggplot(
   geom_tile() + 
   scale_fill_gradient2(low= "blue", high = "red", mid = "white") + 
   theme(axis.text.x = element_text(angle = 90))
+
+ggsave("graphs/correlation_matrix.png", width = 15, height = 15)
 ```
 
 We can see that there are some variables that are highly correlated with each other: looking at the upper right quadrant, we can notice that each variable that starts with 'P', has a high correlation with other variables that start with 'A'... this means that having both in our data will likely provide little value to the analysis.
+
+## Preprocessing
+### Variables selection
+Examining the correlation plot reveals significant multicollinearity among certain variables. In this section, we will eliminate variables with high correlation coefficients (exceeding a threshold) with each other, excluding the target variable.
+
+```{r}
+library(caret)
+corr_matrix <- cor(train) # correlation matrix
+multicorr_columns <- c()  # to store the names of the columns that are highly correlated with each other
+n_col <- ncol(corr_matrix) - 1 # excluding the target variable
+corr_threshold <- 0.7 # threshold for which we consider two variables to be highly correlated
+
+for (i in seq_len(n_col - 1)) {
+  for (j in seq(i + 1, n_col)) {
+    if (abs(corr_matrix[i, j]) > corr_threshold) { # is the correlation higher than the threshold?
+      print(paste(colnames(corr_matrix)[i], colnames(corr_matrix)[j],
+                  corr_matrix[i, j]))
+      multicorr_columns <- c(multicorr_columns, colnames(corr_matrix)[j])
+    }
+  }
+}
+
+# multicorr_columns --> contains the names of the columns that are highly correlated with each other
+```
+
+```{r}
+# remove those columns from the train and test sets:
+train <- train[, !colnames(train) %in% multicorr_columns]
+test <- test[, !colnames(test) %in% multicorr_columns]
+```
+
+### One hot encoding
+The variables MOSTYPE and MOSHOOFD require one-hot encoding. MOSHOOFD was removed during correlation analysis as it serves as a generalization of MOSTYPE.
+```{r}
+one_hot <- function(data, variable_name) {
+  data[[ variable_name ]] <- as.factor(data[[ variable_name ]]) # convert to factor
+  dummy <- dummyVars(" ~ .", data = data)
+  data <- data.frame(predict(dummy, newdata = data))
+  return(data)
+}
+
+train <- one_hot(train, "MOSTYPE")
+test <- one_hot(test, "MOSTYPE")
+```
+
+### Fetures scaling
+We will conduct Min-Max Normalization on each variable, considering that each variable may belong to a different domain. The target variable CARAVAN is not normalized, since it is a binary variable.
+```{r}
+minmax <- function(data) {
+  
+  if ("MAANTHUI" %in% colnames(data)) { # Domain MAANTHUI:  [1,10]
+    data$MAANTHUI <- (data$MAANTHUI - 1) / (10 - 1)
+  }
+  
+  if ("MGEMOMV" %in% colnames(data)) { # Domain MGEMOMV and MGEMLEEF:  [1,6]
+    data$MGEMOMV <- (data$MGEMOMV - 1) / (6 - 1)
+  }
+  if ("MGEMLEEF" %in% colnames(data)) {
+    data$MGEMLEEF <- (data$MGEMLEEF - 1) / (6 - 1)
+  }
+
+  for (i in colnames(data)) { # All the others have domain [0, 9]
+    if (i != "CARAVAN" &&
+        i != "MAANTHUI" &&
+        i != "MGEMOMV" &&
+        i != "MGEMLEEF") {
+      data[[i]] <- (data[[i]] - 0) / (9 - 0)
+    }
+  }
+  return(data)
+}
+
+# apply the minmax function to the train and test sets:
+train <- minmax(train)
+test <- minmax(test)
+
+write.csv(test, "data/test.csv", row.names = FALSE)
+```
+
+### Addressing dataset unbalance
+The dataset exhibits significant class imbalance, with only 5.68% of observations belonging to the positive class. To mitigate this issue, we will utilize the *ROSE* (Random Over-Sampling Examples) technique to generate synthetic samples of the minority class through oversampling.
+
+```{r}
+library(ROSE)
+
+n_0 <- nrow(train[train["CARAVAN"] == 0, ]) # number of observations in the majority class
+rose <- ovun.sample(CARAVAN ~ .,
+                    data = train,
+                    method = "over",
+                    N = 2 * n_0)
+
+# write the new balanced training set:
+write.csv(rose$data, "data/train_rose.csv", row.names = FALSE)
+```
+
+```{r}
+# check the balance of the new training set:
+prop.table(table(rose$data$CARAVAN))
+```
+
+```{r}
+# relaltive frequency plot:
+ggplot(rose$data, aes(x = CARAVAN)) + 
+  geom_bar(aes(y = (after_stat(count))/sum(after_stat(count)))) + 
+  labs(
+    title = "CARAVAN variable distribution - Relative Frequency after ROSE",
+    x = "CARAVAN", y = "Frequency"
+  ) + theme_minimal()
+
+ggsave("graphs/ROSE_rel_freq_CARAVAN.png", width = 10, height = 10)
+```
+
