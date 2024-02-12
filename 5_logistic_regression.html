@@ -365,158 +365,303 @@ test &lt;- read.csv(&quot;data/test.csv&quot;)</code></pre>
 ## Call:
 ## glm(formula = CARAVAN ~ ., family = &quot;binomial&quot;, data = train_rose)
 ## 
-## Coefficients:
+## Coefficients: (1 not defined because of singularities)
 ##               Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)   -4.65761    0.74896  -6.219 5.01e-10 ***
-## MAANTHUI      -2.65888    0.79968  -3.325 0.000884 ***
-## MGEMLEEF       1.17665    0.22308   5.275 1.33e-07 ***
-## MOSHOOFD       0.31139    0.11829   2.632 0.008478 ** 
-## MGODRK        -1.05663    0.27454  -3.849 0.000119 ***
-## MGODOV         0.19873    0.13567   1.465 0.142979    
-## MGODGE        -0.30965    0.15889  -1.949 0.051312 .  
-## MRELSA        -0.55928    0.24863  -2.249 0.024481 *  
-## MFALLEEN      -0.61853    0.49702  -1.244 0.213323    
-## MFGEKIND      -0.52142    0.53722  -0.971 0.331755    
-## MFWEKIND      -0.18723    0.54212  -0.345 0.729820    
-## MOPLHOOG       0.74368    0.23521   3.162 0.001568 ** 
-## MOPLLAAG      -0.78173    0.21353  -3.661 0.000251 ***
-## MBERHOOG       0.66633    0.37567   1.774 0.076109 .  
-## MBERZELF       0.33140    0.22403   1.479 0.139062    
-## MBERBOER      -1.28740    0.42788  -3.009 0.002623 ** 
-## MBERMIDD       0.93277    0.36016   2.590 0.009601 ** 
-## MBERARBG      -0.02556    0.35799  -0.071 0.943070    
-## MBERARBO       0.07320    0.35660   0.205 0.837368    
-## MSKA           0.36687    0.41823   0.877 0.380375    
-## MSKB1          0.62224    0.39616   1.571 0.116258    
-## MSKB2          0.36931    0.35764   1.033 0.301778    
-## MSKC           1.33613    0.39602   3.374 0.000741 ***
-## MSKD          -0.08188    0.38623  -0.212 0.832119    
-## MHKOOP         0.27185    0.10747   2.529 0.011423 *  
-## MAUT2         -0.02762    0.17468  -0.158 0.874357    
-## MAUT0         -0.39360    0.21867  -1.800 0.071870 .  
-## MZPART        -0.34723    0.17537  -1.980 0.047711 *  
-## MINKM30        1.04950    0.41677   2.518 0.011796 *  
-## MINK3045       1.50559    0.39643   3.798 0.000146 ***
-## MINK4575       1.13253    0.39948   2.835 0.004582 ** 
-## MINK7512       1.46174    0.42273   3.458 0.000545 ***
-## MINK123M      -2.32344    0.60467  -3.843 0.000122 ***
-## MINKGEM        0.77533    0.42792   1.812 0.070007 .  
-## MKOOPKLA       0.62309    0.14425   4.319 1.56e-05 ***
-## AWAPART        0.76489    0.13387   5.714 1.11e-08 ***
-## AWABEDR        0.73066    1.07581   0.679 0.497029    
-## AWALAND       -1.02964    0.32391  -3.179 0.001479 ** 
-## APERSAUT       6.53997    0.33032  19.799  &lt; 2e-16 ***
-## ABESAUT        0.54571    1.12348   0.486 0.627157    
-## AMOTSCO       -0.99990    0.95018  -1.052 0.292650    
-## AVRAAUT      -40.82145  951.55636  -0.043 0.965782    
-## AAANHANG       0.33178    0.69580   0.477 0.633482    
-## ATRACTOR      -1.11549    0.80386  -1.388 0.165239    
-## AWERKT       -73.56687 1018.17607  -0.072 0.942400    
-## ABROM         -1.78990    0.32570  -5.495 3.90e-08 ***
-## ALEVEN         0.31642    0.48646   0.650 0.515404    
-## APERSONG      -1.23475    0.50582  -2.441 0.014643 *  
-## AGEZONG        0.54883    0.27840   1.971 0.048683 *  
-## AWAOREG        2.10170    0.62588   3.358 0.000785 ***
-## ABRAND         0.95734    0.43040   2.224 0.026129 *  
-## AZEILPL        0.47463    0.98606   0.481 0.630271    
-## APLEZIER       5.63601    0.55518  10.152  &lt; 2e-16 ***
-## AFIETS         1.56303    0.31621   4.943 7.69e-07 ***
-## AINBOED       -0.09632    0.55221  -0.174 0.861532    
-## ABYSTAND       1.85903    0.33546   5.542 2.99e-08 ***
+## (Intercept) -6.872e+00  8.443e-01  -8.139 3.98e-16 ***
+## MOSTYPE.1    3.248e+00  5.343e+00   0.608 0.543309    
+## MOSTYPE.2    5.196e+00  3.390e+00   1.533 0.125354    
+## MOSTYPE.3    6.083e+00  3.008e+00   2.022 0.043141 *  
+## MOSTYPE.4   -1.078e+01  4.146e+00  -2.600 0.009332 ** 
+## MOSTYPE.5    7.726e+00  3.102e+00   2.491 0.012750 *  
+## MOSTYPE.6    4.474e+00  5.324e+00   0.840 0.400641    
+## MOSTYPE.7    1.815e+00  3.646e+00   0.498 0.618661    
+## MOSTYPE.8    8.542e+00  4.088e+00   2.090 0.036645 *  
+## MOSTYPE.9    5.085e+00  1.866e+00   2.726 0.006417 ** 
+## MOSTYPE.10  -2.081e+00  5.246e+00  -0.397 0.691671    
+## MOSTYPE.11   3.885e+00  3.196e+00   1.215 0.224189    
+## MOSTYPE.12   8.341e+00  4.270e+00   1.953 0.050790 .  
+## MOSTYPE.13   4.551e+00  3.145e+00   1.447 0.147930    
+## MOSTYPE.15  -1.254e+02  9.299e+03  -0.013 0.989237    
+## MOSTYPE.16  -1.322e+02  4.900e+03  -0.027 0.978474    
+## MOSTYPE.17  -1.471e+02  6.781e+03  -0.022 0.982687    
+## MOSTYPE.18  -1.344e+02  4.422e+03  -0.030 0.975755    
+## MOSTYPE.19  -1.392e+02  1.207e+04  -0.012 0.990798    
+## MOSTYPE.20   1.238e+01  4.038e+00   3.067 0.002164 ** 
+## MOSTYPE.21  -1.320e+02  5.299e+03  -0.025 0.980125    
+## MOSTYPE.22   3.648e+00  3.466e+00   1.052 0.292622    
+## MOSTYPE.23  -3.858e+00  2.623e+00  -1.471 0.141278    
+## MOSTYPE.24   1.990e+00  3.397e+00   0.586 0.557962    
+## MOSTYPE.25   6.312e-01  4.651e+00   0.136 0.892046    
+## MOSTYPE.26   7.873e+00  5.010e+00   1.572 0.116066    
+## MOSTYPE.27  -8.703e+00  5.789e+00  -1.503 0.132761    
+## MOSTYPE.28  -1.373e+02  3.821e+03  -0.036 0.971332    
+## MOSTYPE.29  -1.330e-01  2.890e+00  -0.046 0.963282    
+## MOSTYPE.30   5.980e+00  3.463e+00   1.727 0.084231 .  
+## MOSTYPE.31   6.005e+00  4.374e+00   1.373 0.169758    
+## MOSTYPE.32   1.061e+01  4.345e+00   2.442 0.014612 *  
+## MOSTYPE.33   6.143e+00  2.049e+00   2.999 0.002710 ** 
+## MOSTYPE.34   3.666e+00  3.145e+00   1.166 0.243748    
+## MOSTYPE.35   7.576e-01  2.285e+00   0.332 0.740210    
+## MOSTYPE.36   1.052e+01  2.253e+00   4.668 3.04e-06 ***
+## MOSTYPE.37   8.221e+00  1.980e+00   4.151 3.31e-05 ***
+## MOSTYPE.38   9.331e+00  1.791e+00   5.211 1.88e-07 ***
+## MOSTYPE.39   7.820e+00  2.107e+00   3.711 0.000206 ***
+## MOSTYPE.40  -1.347e+02  2.278e+03  -0.059 0.952838    
+## MOSTYPE.41          NA         NA      NA       NA    
+## MAANTHUI    -1.700e+00  7.757e-01  -2.191 0.028419 *  
+## MGEMOMV     -5.812e-01  2.242e-01  -2.592 0.009538 ** 
+## MGEMLEEF     1.096e+00  2.141e-01   5.120 3.05e-07 ***
+## MGODRK      -1.948e-01  2.601e-01  -0.749 0.453925    
+## MGODPR       6.589e-01  1.559e-01   4.227 2.37e-05 ***
+## MGODOV       9.472e-01  2.271e-01   4.171 3.03e-05 ***
+## MRELGE       8.777e-01  1.942e-01   4.520 6.19e-06 ***
+## MRELSA       5.262e-01  3.389e-01   1.552 0.120546    
+## MFGEKIND    -6.685e-01  1.687e-01  -3.964 7.37e-05 ***
+## MOPLHOOG     2.332e+00  2.674e-01   8.721  &lt; 2e-16 ***
+## MOPLMIDD     1.300e+00  1.934e-01   6.719 1.83e-11 ***
+## MBERHOOG     1.039e+00  3.333e-01   3.118 0.001819 ** 
+## MBERZELF     7.711e-01  3.712e-01   2.077 0.037773 *  
+## MBERBOER     2.918e-01  3.814e-01   0.765 0.444193    
+## MBERMIDD     7.356e-01  3.226e-01   2.280 0.022598 *  
+## MBERARBG    -9.153e-02  3.148e-01  -0.291 0.771253    
+## MBERARBO     4.451e-01  3.159e-01   1.409 0.158765    
+## MSKA        -2.393e-01  3.709e-01  -0.645 0.518717    
+## MSKB1        3.935e-02  3.522e-01   0.112 0.911028    
+## MSKB2        1.075e-01  3.177e-01   0.338 0.735114    
+## MSKC         1.472e+00  3.458e-01   4.257 2.07e-05 ***
+## MSKD        -2.641e-01  3.351e-01  -0.788 0.430756    
+## MHHUUR      -2.635e-01  1.006e-01  -2.620 0.008792 ** 
+## MAUT1        8.479e-01  2.137e-01   3.968 7.26e-05 ***
+## MAUT2       -4.445e-02  2.582e-01  -0.172 0.863317    
+## MZFONDS      4.040e-01  1.650e-01   2.448 0.014367 *  
+## MINKM30      2.837e-01  3.661e-01   0.775 0.438306    
+## MINK3045     5.228e-01  3.508e-01   1.490 0.136209    
+## MINK4575    -1.040e-01  3.522e-01  -0.295 0.767790    
+## MINK7512     1.560e-01  3.637e-01   0.429 0.667933    
+## MINK123M    -2.665e+00  5.243e-01  -5.083 3.72e-07 ***
+## MINKGEM      1.266e+00  3.718e-01   3.405 0.000662 ***
+## MKOOPKLA     4.875e-01  1.256e+00   0.388 0.697942    
+## PWAPART      1.495e+00  2.683e-01   5.572 2.51e-08 ***
+## PWABEDR     -3.228e-01  7.346e-01  -0.439 0.660310    
+## PWALAND     -3.156e+00  6.087e-01  -5.185 2.16e-07 ***
+## PPERSAUT     1.999e+00  7.726e-02  25.874  &lt; 2e-16 ***
+## PBESAUT      2.482e-01  4.776e-01   0.520 0.603304    
+## PMOTSCO     -5.660e-01  2.289e-01  -2.473 0.013404 *  
+## PVRAAUT     -3.173e+01  1.116e+03  -0.028 0.977316    
+## PAANHANG     4.356e-01  1.190e+00   0.366 0.714240    
+## PTRACTOR     2.817e-01  4.510e-01   0.625 0.532209    
+## PWERKT      -5.383e+01  1.177e+03  -0.046 0.963524    
+## PBROM       -2.553e+00  3.788e-01  -6.739 1.59e-11 ***
+## PLEVEN      -5.318e-01  2.153e-01  -2.470 0.013529 *  
+## PPERSONG    -8.732e-01  1.331e+00  -0.656 0.511639    
+## PGEZONG      2.474e+00  9.307e-01   2.659 0.007849 ** 
+## PWAOREG      2.664e+00  5.115e-01   5.208 1.91e-07 ***
+## PBRAND       1.126e+00  1.462e-01   7.698 1.39e-14 ***
+## PZEILPL     -1.085e+01  1.387e+01  -0.782 0.434130    
+## PPLEZIER     7.986e+00  8.088e-01   9.873  &lt; 2e-16 ***
+## PFIETS       6.212e+00  1.180e+00   5.264 1.41e-07 ***
+## PINBOED     -1.607e+00  1.094e+00  -1.469 0.141892    
+## PBYSTAND     1.739e+00  4.234e-01   4.107 4.01e-05 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 10452.8  on 8210  degrees of freedom
-## Residual deviance:  8709.3  on 8155  degrees of freedom
-## AIC: 8821.3
+##     Null deviance: 15177  on 10947  degrees of freedom
+## Residual deviance: 11891  on 10854  degrees of freedom
+## AIC: 12079
 ## 
-## Number of Fisher Scoring iterations: 14</code></pre>
-<pre class="r"><code>x_test &lt;- test[, !names(test) == &quot;CARAVAN&quot;]
-y_pred &lt;- as.numeric(predict(logistic_model,
-                             newdata = x_test,
-                             type = &quot;response&quot;) &gt; 0.5)</code></pre>
+## Number of Fisher Scoring iterations: 15</code></pre>
+<p>The variable MOSTYPE.41 is redundant. Remove it and refit the
+model.</p>
+<pre class="r"><code>train_rose &lt;- subset(train_rose, select = -MOSTYPE.41)
+test &lt;- subset(test, select = -MOSTYPE.41)
+logistic_model &lt;- glm(CARAVAN ~ ., data = train_rose, family = &quot;binomial&quot;)</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
 <p>Make predictions of the test set</p>
-<pre class="r"><code>#Confusion matrix
-library(caret)</code></pre>
+<pre class="r"><code>x_test &lt;- test[, !names(test) == &quot;CARAVAN&quot;]
+# Make vote predictions
+y_pred &lt;- as.numeric(predict(logistic_model, x_test, type = &quot;response&quot;) &gt; 0.5)</code></pre>
+<p>Confusion matrix</p>
+<pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>#change the positive class to 1
+<pre class="r"><code># Change the positive class to 1
 confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3553  187
-##          1  209   51
+##          0 2632   98
+##          1 1130  140
 ##                                           
-##                Accuracy : 0.901           
-##                  95% CI : (0.8913, 0.9101)
+##                Accuracy : 0.693           
+##                  95% CI : (0.6784, 0.7073)
 ##     No Information Rate : 0.9405          
-##     P-Value [Acc &gt; NIR] : 1.0000          
+##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.1521          
+##                   Kappa : 0.095           
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.2913          
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
 ##                                           
-##             Sensitivity : 0.21429         
-##             Specificity : 0.94444         
-##          Pos Pred Value : 0.19615         
-##          Neg Pred Value : 0.95000         
-##              Prevalence : 0.05950         
-##          Detection Rate : 0.01275         
-##    Detection Prevalence : 0.06500         
-##       Balanced Accuracy : 0.57937         
+##             Sensitivity : 0.5882          
+##             Specificity : 0.6996          
+##          Pos Pred Value : 0.1102          
+##          Neg Pred Value : 0.9641          
+##              Prevalence : 0.0595          
+##          Detection Rate : 0.0350          
+##    Detection Prevalence : 0.3175          
+##       Balanced Accuracy : 0.6439          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
-<pre class="r"><code># Get the variables whose coefficient has p-value &lt; 0.05
-summ &lt;- summary(logistic_model)
-selected_vars &lt;- summ$coefficients[summ$coefficients[, 4] &lt; 0.05, ]
-#Get only the names of the variables, excluding the intercept and including 
-#the target variable
-selected_vars &lt;- c(rownames(selected_vars)[-1], &quot;CARAVAN&quot;)</code></pre>
-<pre class="r"><code>#make a train set with only the selected variables
-train_truncated &lt;- train_rose[, selected_vars]</code></pre>
-<pre class="r"><code>logistic_model &lt;- glm(CARAVAN ~ .,
-                      data = train_truncated,
-                      family = &quot;binomial&quot;)</code></pre>
-<pre class="r"><code>#test the truncated model
-x_test_truncated &lt;- test[, selected_vars[-length(selected_vars)]]
-
-y_pred &lt;- as.numeric(predict(logistic_model,
-                             newdata = x_test_truncated,
-                             type = &quot;response&quot;) &gt; 0.5)
-
+<div id="vif-analysis" class="section level2">
+<h2>VIF analysis</h2>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre class="r"><code># Evaluate VIF for the model
+vif_analysis &lt;- vif(logistic_model)
+# Get the variables whose VIF is greater than 10
+variables_to_remove &lt;- names(vif_analysis[vif_analysis &gt; 10])
+print(variables_to_remove)</code></pre>
+<pre><code>##  [1] &quot;MOSTYPE.1&quot;  &quot;MOSTYPE.3&quot;  &quot;MOSTYPE.6&quot;  &quot;MOSTYPE.8&quot;  &quot;MOSTYPE.10&quot;
+##  [6] &quot;MOSTYPE.12&quot; &quot;MOSTYPE.31&quot; &quot;MOSTYPE.32&quot; &quot;MOSTYPE.33&quot; &quot;MBERHOOG&quot;  
+## [11] &quot;MSKA&quot;       &quot;MSKC&quot;       &quot;MINKM30&quot;    &quot;MINK3045&quot;   &quot;MINK4575&quot;  
+## [16] &quot;MKOOPKLA&quot;</code></pre>
+<p>Remove such variables</p>
+<pre class="r"><code>train_rose &lt;- train_rose[, !names(train_rose) %in% variables_to_remove]
+test &lt;- test[, !names(test) %in% variables_to_remove]
+logistic_model &lt;- glm(CARAVAN ~ ., data = train_rose, family = &quot;binomial&quot;)</code></pre>
+<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
+<pre class="r"><code>x_test &lt;- test[, !names(test) == &quot;CARAVAN&quot;]
+y_pred &lt;- as.numeric(predict(logistic_model, x_test, type = &quot;response&quot;) &gt; 0.5)</code></pre>
+<pre class="r"><code>summary(logistic_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = CARAVAN ~ ., family = &quot;binomial&quot;, data = train_rose)
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -3.983e+00  3.403e-01 -11.706  &lt; 2e-16 ***
+## MOSTYPE.2   -1.224e+00  1.857e+00  -0.659 0.510015    
+## MOSTYPE.4   -1.695e+01  2.973e+00  -5.701 1.19e-08 ***
+## MOSTYPE.5    1.546e+00  2.356e+00   0.656 0.511627    
+## MOSTYPE.7   -4.389e+00  2.155e+00  -2.036 0.041706 *  
+## MOSTYPE.9   -1.054e+00  1.038e+00  -1.016 0.309633    
+## MOSTYPE.11  -8.022e-01  1.223e+00  -0.656 0.511909    
+## MOSTYPE.13  -1.084e+00  1.141e+00  -0.950 0.341938    
+## MOSTYPE.15  -1.335e+02  9.301e+03  -0.014 0.988548    
+## MOSTYPE.16  -1.398e+02  4.859e+03  -0.029 0.977044    
+## MOSTYPE.17  -1.528e+02  6.801e+03  -0.022 0.982074    
+## MOSTYPE.18  -1.421e+02  4.439e+03  -0.032 0.974466    
+## MOSTYPE.19  -1.462e+02  1.227e+04  -0.012 0.990495    
+## MOSTYPE.20   5.609e+00  2.709e+00   2.071 0.038383 *  
+## MOSTYPE.21  -1.392e+02  5.260e+03  -0.026 0.978882    
+## MOSTYPE.22  -4.022e+00  1.674e+00  -2.403 0.016283 *  
+## MOSTYPE.23  -1.074e+01  1.579e+00  -6.802 1.03e-11 ***
+## MOSTYPE.24  -4.928e+00  1.516e+00  -3.250 0.001154 ** 
+## MOSTYPE.25  -7.721e+00  2.137e+00  -3.612 0.000303 ***
+## MOSTYPE.26  -2.578e-01  2.721e+00  -0.095 0.924525    
+## MOSTYPE.27  -1.636e+01  4.062e+00  -4.027 5.64e-05 ***
+## MOSTYPE.28  -1.440e+02  3.851e+03  -0.037 0.970165    
+## MOSTYPE.29  -6.827e+00  2.027e+00  -3.367 0.000759 ***
+## MOSTYPE.30  -1.146e+00  1.618e+00  -0.708 0.478803    
+## MOSTYPE.34  -1.266e+00  1.274e+00  -0.994 0.320386    
+## MOSTYPE.35  -5.127e+00  1.240e+00  -4.134 3.57e-05 ***
+## MOSTYPE.36   3.632e+00  1.022e+00   3.553 0.000382 ***
+## MOSTYPE.37   1.242e+00  1.297e+00   0.958 0.338177    
+## MOSTYPE.38   3.819e+00  8.998e-01   4.245 2.19e-05 ***
+## MOSTYPE.39   2.210e+00  9.142e-01   2.418 0.015618 *  
+## MOSTYPE.40  -1.404e+02  2.261e+03  -0.062 0.950469    
+## MAANTHUI    -1.424e+00  7.607e-01  -1.872 0.061248 .  
+## MGEMOMV     -6.226e-01  2.180e-01  -2.856 0.004293 ** 
+## MGEMLEEF     1.179e+00  2.038e-01   5.785 7.24e-09 ***
+## MGODRK      -1.388e-01  2.536e-01  -0.547 0.584264    
+## MGODPR       6.367e-01  1.514e-01   4.205 2.62e-05 ***
+## MGODOV       8.832e-01  2.210e-01   3.997 6.40e-05 ***
+## MRELGE       7.628e-01  1.868e-01   4.082 4.46e-05 ***
+## MRELSA       4.753e-01  3.273e-01   1.452 0.146427    
+## MFGEKIND    -6.093e-01  1.640e-01  -3.715 0.000203 ***
+## MOPLHOOG     1.750e+00  1.986e-01   8.812  &lt; 2e-16 ***
+## MOPLMIDD     1.052e+00  1.675e-01   6.281 3.36e-10 ***
+## MBERZELF     3.256e-01  3.140e-01   1.037 0.299610    
+## MBERBOER    -7.200e-01  2.927e-01  -2.460 0.013882 *  
+## MBERMIDD     7.107e-01  1.804e-01   3.939 8.18e-05 ***
+## MBERARBG     2.863e-02  1.870e-01   0.153 0.878349    
+## MBERARBO     3.074e-01  1.973e-01   1.558 0.119213    
+## MSKB1       -5.251e-01  2.143e-01  -2.450 0.014301 *  
+## MSKB2       -5.859e-01  1.669e-01  -3.510 0.000447 ***
+## MSKD        -1.002e+00  2.300e-01  -4.355 1.33e-05 ***
+## MHHUUR      -3.070e-01  9.104e-02  -3.372 0.000746 ***
+## MAUT1        8.441e-01  2.079e-01   4.060 4.91e-05 ***
+## MAUT2       -1.733e-01  2.485e-01  -0.697 0.485527    
+## MZFONDS      4.293e-01  1.577e-01   2.722 0.006479 ** 
+## MINK7512     2.756e-01  2.354e-01   1.171 0.241760    
+## MINK123M    -2.562e+00  4.558e-01  -5.621 1.90e-08 ***
+## MINKGEM      8.012e-01  2.722e-01   2.944 0.003244 ** 
+## PWAPART      1.415e+00  2.631e-01   5.377 7.59e-08 ***
+## PWABEDR     -4.058e-01  7.287e-01  -0.557 0.577602    
+## PWALAND     -3.153e+00  6.028e-01  -5.231 1.69e-07 ***
+## PPERSAUT     1.979e+00  7.595e-02  26.053  &lt; 2e-16 ***
+## PBESAUT      5.992e-02  4.774e-01   0.126 0.900125    
+## PMOTSCO     -4.567e-01  2.241e-01  -2.038 0.041555 *  
+## PVRAAUT     -3.130e+01  1.128e+03  -0.028 0.977869    
+## PAANHANG     3.427e-01  1.137e+00   0.301 0.763090    
+## PTRACTOR     1.853e-01  4.442e-01   0.417 0.676566    
+## PWERKT      -5.555e+01  1.191e+03  -0.047 0.962809    
+## PBROM       -2.553e+00  3.753e-01  -6.803 1.03e-11 ***
+## PLEVEN      -4.810e-01  2.124e-01  -2.265 0.023519 *  
+## PPERSONG    -9.418e-01  1.310e+00  -0.719 0.472319    
+## PGEZONG      2.699e+00  9.397e-01   2.872 0.004073 ** 
+## PWAOREG      2.817e+00  5.037e-01   5.593 2.23e-08 ***
+## PBRAND       1.092e+00  1.430e-01   7.640 2.17e-14 ***
+## PZEILPL     -9.608e+00  1.034e+01  -0.929 0.352965    
+## PPLEZIER     7.326e+00  7.608e-01   9.629  &lt; 2e-16 ***
+## PFIETS       6.521e+00  1.155e+00   5.644 1.66e-08 ***
+## PINBOED     -1.741e+00  1.093e+00  -1.592 0.111358    
+## PBYSTAND     1.915e+00  4.130e-01   4.636 3.55e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 15177  on 10947  degrees of freedom
+## Residual deviance: 12039  on 10870  degrees of freedom
+## AIC: 12195
+## 
+## Number of Fisher Scoring iterations: 15</code></pre>
+<p>Confusion matrix</p>
+<pre class="r"><code>library(caret)
+# Change the positive class to 1
 confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3547  192
-##          1  215   46
+##          0 2595   88
+##          1 1167  150
 ##                                           
-##                Accuracy : 0.8982          
-##                  95% CI : (0.8885, 0.9075)
+##                Accuracy : 0.6862          
+##                  95% CI : (0.6716, 0.7006)
 ##     No Information Rate : 0.9405          
-##     P-Value [Acc &gt; NIR] : 1.0000          
+##     P-Value [Acc &gt; NIR] : 1               
 ##                                           
-##                   Kappa : 0.1302          
+##                   Kappa : 0.1025          
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.2755          
+##  Mcnemar&#39;s Test P-Value : &lt;2e-16          
 ##                                           
-##             Sensitivity : 0.19328         
-##             Specificity : 0.94285         
-##          Pos Pred Value : 0.17625         
-##          Neg Pred Value : 0.94865         
-##              Prevalence : 0.05950         
-##          Detection Rate : 0.01150         
-##    Detection Prevalence : 0.06525         
-##       Balanced Accuracy : 0.56806         
+##             Sensitivity : 0.6303          
+##             Specificity : 0.6898          
+##          Pos Pred Value : 0.1139          
+##          Neg Pred Value : 0.9672          
+##              Prevalence : 0.0595          
+##          Detection Rate : 0.0375          
+##    Detection Prevalence : 0.3292          
+##       Balanced Accuracy : 0.6600          
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
+</div>
 </div>
 
 

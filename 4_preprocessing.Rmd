@@ -83,7 +83,7 @@ minmax <- function(data) {
     data$MGEMOMV <- (data$MGEMOMV - 1) / (6 - 1)
   }
   if ("MGEMLEEF" %in% colnames(data)) {
-    data$MMGEMLEEF <- (data$MGEMLEEF - 1) / (6 - 1)
+    data$MGEMLEEF <- (data$MGEMLEEF - 1) / (6 - 1)
   }
 
   # All the other variables have domain [0, 9]
