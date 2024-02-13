@@ -8,7 +8,7 @@ Dataset source: (https://www.kaggle.com/datasets/uciml/caravan-insurance-challen
 
 Goal: Identify potential purchasers of caravan insurance policies: the target variable is CARAVAN, which is a binary variable. 
 
-Each observation corresponds to a postal code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code.
+Each observation corresponds to data derived from azip area code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code.
 
 ```{r}
 data <- read.csv('data/caravan-insurance-challenge.csv')  # kaggle dataset
@@ -101,7 +101,7 @@ The dataset is highly unbalanced: only 5.98% of the observations belonging to th
 ### Variables type
 - According to the data description, the only variables with a truly numeric interpretation are "MAANTHUI" and "MGEMOMV".
 - the variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts, such as religion, social class, etc... in particular their encoding is nominal, so it is not possible to consider them as numeric variables.
-- all the other variables are encoded as numeric but they are actually categorical variables. These variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
+- all the other variables are encoded as numeric but they are actually categorical variables. These variables are encoded using an encoding that is ordinal, so considering them as numeric seems to be a suitable solution (L1, L3, L4 encodings).
 - the "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1: this means that the variable is binary, so we can consider it as a binary variable.
 
 ```{r}
@@ -159,7 +159,14 @@ mcor %>% ggplot(
 ggsave("graphs/correlation_matrix.png", width = 15, height = 15)
 ```
 
-We can see that there are some variables that are highly correlated with each other: looking at the upper right quadrant, we can notice that each variable that starts with 'P', has a high correlation with other variables that start with 'A'... this means that having both in our data will likely provide little value to the analysis.
+We can see that there are some variables that are highly correlated with each other: looking at the upper right quadrant, we can notice that each variable that starts with 'P', has a high correlation with a respective variable that start with 'A'... this means that having both in our data will likely provide little value to the analysis.
+```{r}
+# Correlation between CARAVAN and other variables
+cor_target <- cor(train$CARAVAN, train[, -which(names(train) == "CARAVAN")])
+
+print(max(abs(cor_target)))
+```
+Furthermore there does not seem to be any explanatory variable which is strictly correlated to our response variable.
 
 ## Preprocessing
 ### Variables selection
@@ -184,6 +191,9 @@ for (i in seq_len(n_col - 1)) {
 
 # multicorr_columns --> contains the names of the columns that are highly correlated with each other
 ```
+
+These correlation values seem intuitive when we analyse what each variable represents:MOSTYPE is composed by subtypes of MOSHOOFD (costumer types). MGEMOMV(average household size) is linked to MFWEKIND(household with children). MGODPR(Protestant) is negatively correlated with MGODGE(no religion), and so on. 
+Over half of the correlated couples are composed by which differ only by the first letter being either "A" or "P". This is because for a given type of policy the dataset contains both a variable regarding the contribution amount (variables starting with "P") and a variable regarding the number of policies (variables starting with "A").
 
 ```{r}
 # remove those columns from the train and test sets:

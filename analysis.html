@@ -357,11 +357,11 @@ display: none;
 <p>Dataset source: (<a href="https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge" class="uri">https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge</a>).</p>
 <p>Goal: Identify potential purchasers of caravan insurance policies:
 the target variable is CARAVAN, which is a binary variable.</p>
-<p>Each observation corresponds to a postal code. Variables beginning
-with M refer to demographic statistics of the postal code, while
-variables beginning with P and A (as well as CARAVAN, the target
-variable) refer to product ownership and insurance statistics in the
-postal code.</p>
+<p>Each observation corresponds to data derived from azip area code.
+Variables beginning with M refer to demographic statistics of the postal
+code, while variables beginning with P and A (as well as CARAVAN, the
+target variable) refer to product ownership and insurance statistics in
+the postal code.</p>
 <pre class="r"><code>data &lt;- read.csv(&#39;data/caravan-insurance-challenge.csv&#39;)  # kaggle dataset
 # head(data, 3)</code></pre>
 <div id="exploratory-data-analysis" class="section level2">
@@ -468,7 +468,7 @@ religion, social class, etc… in particular their encoding is nominal, so
 it is not possible to consider them as numeric variables.</li>
 <li>all the other variables are encoded as numeric but they are actually
 categorical variables. These variables are encoded using an encoding
-that is ordinal, so considering they as numeric seems to be a suitable
+that is ordinal, so considering them as numeric seems to be a suitable
 solution (L1, L3, L4 encodings).</li>
 <li>the “CARAVAN” variable (response variable) belongs to the L4
 encoding. If we check the summary of the “CARAVAN” variable, we can see
@@ -802,9 +802,16 @@ mcor %&gt;% ggplot(
 <pre class="r"><code>ggsave(&quot;graphs/correlation_matrix.png&quot;, width = 15, height = 15)</code></pre>
 <p>We can see that there are some variables that are highly correlated
 with each other: looking at the upper right quadrant, we can notice that
-each variable that starts with ‘P’, has a high correlation with other
-variables that start with ‘A’… this means that having both in our data
-will likely provide little value to the analysis.</p>
+each variable that starts with ‘P’, has a high correlation with a
+respective variable that start with ‘A’… this means that having both in
+our data will likely provide little value to the analysis.</p>
+<pre class="r"><code># Correlation between CARAVAN and other variables
+cor_target &lt;- cor(train$CARAVAN, train[, -which(names(train) == &quot;CARAVAN&quot;)])
+
+print(max(abs(cor_target)))</code></pre>
+<pre><code>## [1] 0.1509097</code></pre>
+<p>Furthermore there does not seem to be any explanatory variable which
+is strictly correlated to our response variable.</p>
 </div>
 </div>
 <div id="preprocessing" class="section level2">
@@ -862,6 +869,16 @@ for (i in seq_len(n_col - 1)) {
 ## [1] &quot;PINBOED AINBOED 0.875256477164632&quot;
 ## [1] &quot;PBYSTAND ABYSTAND 0.966238760602872&quot;</code></pre>
 <pre class="r"><code># multicorr_columns --&gt; contains the names of the columns that are highly correlated with each other</code></pre>
+<p>These correlation values seem intuitive when we analyse what each
+variable represents:MOSTYPE is composed by subtypes of MOSHOOFD
+(costumer types). MGEMOMV(average household size) is linked to
+MFWEKIND(household with children). MGODPR(Protestant) is negatively
+correlated with MGODGE(no religion), and so on. Over half of the
+correlated couples are composed by which differ only by the first letter
+being either “A” or “P”. This is because for a given type of policy the
+dataset contains both a variable regarding the contribution amount
+(variables starting with “P”) and a variable regarding the number of
+policies (variables starting with “A”).</p>
 <pre class="r"><code># remove those columns from the train and test sets:
 train &lt;- train[, !colnames(train) %in% multicorr_columns]
 test &lt;- test[, !colnames(test) %in% multicorr_columns]</code></pre>
