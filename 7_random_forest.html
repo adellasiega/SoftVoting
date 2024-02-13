@@ -365,49 +365,46 @@ display: none;
 ## 
 ##     margin</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
-<pre class="r"><code>#Load the data
-train &lt;- read.csv(&quot;data/train_rose.csv&quot;)
+<p>Load the data and convert the CARAVAN column to a factor</p>
+<pre class="r"><code>train &lt;- read.csv(&quot;data/train_rose.csv&quot;)
 test &lt;- read.csv(&quot;data/test.csv&quot;)
 train$CARAVAN &lt;- as.factor(train$CARAVAN)
 test$CARAVAN &lt;- as.factor(test$CARAVAN)</code></pre>
 <pre class="r"><code>cv &lt;- trainControl(method = &quot;cv&quot;, number = 3)</code></pre>
-<pre class="r"><code>param_grid &lt;- expand.grid(mtry = c(4, 6, 8, 10))</code></pre>
 <pre class="r"><code>rf_model &lt;- train(CARAVAN ~ .,
                   data = train,
                   method = &quot;rf&quot;,
                   trControl = cv,
                   metric = &quot;Accuracy&quot;,
                   tuneLength = 3,
-                  tuneGrid = param_grid,
                   verboseIter = TRUE)</code></pre>
-<pre class="r"><code>#test the model
-x_test &lt;- test[, names(test) != &quot;CARAVAN&quot;]
+<pre class="r"><code>x_test &lt;- test[, names(test) != &quot;CARAVAN&quot;]
 pred &lt;- predict(rf_model, x_test)</code></pre>
 <pre class="r"><code>confusionMatrix(pred, test$CARAVAN, positive = &quot;1&quot;)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    0    1
-##          0 3548  203
-##          1  214   35
+##          0 3584  207
+##          1  178   31
 ##                                           
-##                Accuracy : 0.8958          
-##                  95% CI : (0.8859, 0.9051)
+##                Accuracy : 0.9038          
+##                  95% CI : (0.8942, 0.9127)
 ##     No Information Rate : 0.9405          
 ##     P-Value [Acc &gt; NIR] : 1.0000          
 ##                                           
-##                   Kappa : 0.0883          
+##                   Kappa : 0.088           
 ##                                           
-##  Mcnemar&#39;s Test P-Value : 0.6243          
+##  Mcnemar&#39;s Test P-Value : 0.1536          
 ##                                           
-##             Sensitivity : 0.14706         
-##             Specificity : 0.94312         
-##          Pos Pred Value : 0.14056         
-##          Neg Pred Value : 0.94588         
+##             Sensitivity : 0.13025         
+##             Specificity : 0.95268         
+##          Pos Pred Value : 0.14833         
+##          Neg Pred Value : 0.94540         
 ##              Prevalence : 0.05950         
-##          Detection Rate : 0.00875         
-##    Detection Prevalence : 0.06225         
-##       Balanced Accuracy : 0.54509         
+##          Detection Rate : 0.00775         
+##    Detection Prevalence : 0.05225         
+##       Balanced Accuracy : 0.54147         
 ##                                           
 ##        &#39;Positive&#39; Class : 1               
 ## </code></pre>
@@ -420,17 +417,16 @@ pred &lt;- predict(rf_model, x_test)</code></pre>
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (3 fold) 
-## Summary of sample sizes: 7298, 7299, 7299 
+## Summary of sample sizes: 7299, 7299, 7298 
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy   Kappa    
-##    4    0.9388930  0.8777860
-##    6    0.9557910  0.9115820
-##    8    0.9619107  0.9238214
-##   10    0.9652904  0.9305807
+##    2    0.8618924  0.7237840
+##   48    0.9728720  0.9457439
+##   94    0.9705884  0.9411766
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
-## The final value used for the model was mtry = 10.</code></pre>
+## The final value used for the model was mtry = 48.</code></pre>
 </div>
 
 

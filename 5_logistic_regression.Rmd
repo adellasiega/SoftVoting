@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Logistic Regression
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -156,15 +161,21 @@ We reached the goal to reduce the number of variables without worsening the mode
 
 The stepwise model, with 28 variables, reaches the best balanced accuracy on the test set, 0.5430. The factors that result to influence more the target variable are:
 
-    -MOSTYPE.12 Affluent young families
+    -MOSTYPE.12 Affluent young families,
+    if this variable is 1 (True), the log odds of 
+    the target variable to be 1 increases by 10.38.
 
     -PPLEZIER Contribution boat policies
 
     -PFIETS Contribution bicycle policies
 
-    -MOSTYPE.36 Couples with teens, Married with children
+    -MOSTYPE.36 Couples with teens, Married with children,
+    if this variable is 1 (True), the log odds of the
+    target variable to be 1 increases by 7.03.
 
-    -MOSTYPE.38 Traditional families
+    -MOSTYPE.38 Traditional families,  if this variable
+    is 1 (True), the log odds of the target variable
+    to be 1 increases by 6.49
 
 In particular these vairables have a positive effect on the target variable, meaning that the higher the value of the variable, the higher the probability of the target variable to be 1.
 The interpretation of the coefficient is note very straightforward because of the encoding and the normalization process applied to the data.
