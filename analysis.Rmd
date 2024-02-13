@@ -6,9 +6,9 @@ output:
 # Caravan Insurance Challenge
 Dataset source: (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge).
 
-Goal: Identify potential purchasers of caravan insurance policies: the target variable is CARAVAN, which is a binary variable. 
+Goal: Identify potential purchasers of caravan insurance policies. The target variable is CARAVAN, which is a binary variable. 
 
-Each observation corresponds to data derived from azip area code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code.
+Each observation corresponds to data derived from a zip area code. Variables beginning with M refer to demographic statistics of the postal code, while variables beginning with P and A (as well as CARAVAN, the target variable) refer to product ownership and insurance statistics in the postal code. Most of the variables have values described by the tables L0, L1, L2, L3 and L4 which can are described in the dataset source linked above.
 
 ```{r}
 data <- read.csv('data/caravan-insurance-challenge.csv')  # kaggle dataset
@@ -16,6 +16,15 @@ data <- read.csv('data/caravan-insurance-challenge.csv')  # kaggle dataset
 ```
 
 ## Exploratory Data Analysis
+
+In the following chunks, after checking for missing values and splitting the dataset into training set and test set (using the "ORIGIN" variable), we will perform EDA on the portion of the dataset designed for training, thus isolating the test set (which will be only used for testing the models). In particular we will:
+
+- analyze the target variable distribution (checking the balance of the dataset);
+
+- analyze and understand the variable types according to the dataset description;
+
+- check for multicollinearity (excluding the target variable).
+
 ### Dataset shape
 ```{r}
 dim( data )
@@ -133,6 +142,9 @@ print(max(abs(cor_target)))
 Furthermore there does not seem to be any explanatory variable which is strictly correlated to our response variable.
 
 ## Preprocessing
+
+In the following chunks we will perform variables selection, one hot encode the variables that have a categorical nominal nature, perform feature scaling and, finally, address the dataset unbalance using a specific oversampling technique.
+
 ### Variables selection
 Examining the correlation plot reveals significant multicollinearity among certain variables. In this section, we will eliminate variables with high correlation coefficients (exceeding a threshold) with each other, excluding the target variable.
 
