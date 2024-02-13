@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # Caravan Insurance Challenge
 Dataset source: (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge).
 
@@ -52,12 +57,11 @@ train_test <- data.frame(
   count = c(nrow(train), nrow(test))
 )
 
-ggplot(train_test, aes(x = "", y = count, fill = set)) + 
-  geom_bar(stat = "identity", width = 1) + 
-  coord_polar("y", start = 0) + 
-  labs(title = "Train-test sets proportions", fill = "Set") + 
-  theme_minimal()
-
+ggplot(train_test, aes(x = set, y = count, fill = set)) + 
+  geom_bar(stat = "identity", width = 0.7, show.legend = FALSE) + 
+  labs(title = "Train-test sets proportions", x = "Set", y = "Count") + 
+  theme_minimal() +
+  geom_text(aes(label = count), vjust = -0.3)
 ```
 The test set includes approximately the 40% of the original data. These datasets will be denoted as raw because they have not been preprocessed yet.
 
@@ -77,7 +81,7 @@ ggplot(train, aes(x = CARAVAN)) +
 
 ggsave("graphs/abs_freq_CARAVAN.png", width = 10, height = 10)
 
-# relaltive frequency plot:
+# relative frequency plot:
 ggplot(data, aes(x = CARAVAN)) + 
   geom_bar(aes(y = (after_stat(count))/sum(after_stat(count)))) + 
   labs(
@@ -95,11 +99,47 @@ The dataset is highly unbalanced: only 5.98% of the observations belonging to th
 
 
 ### Variables type
-- According to the data description, the variables its interpretation is truly numeric are "MAANTHUI" and "MGEMOMV".
+- According to the data description, the only variables with a truly numeric interpretation are "MAANTHUI" and "MGEMOMV".
 - the variables "MOSTYPE" and "MOSHOOFD" are the only variables that need to be one hot encoded because they represent concepts, such as religion, social class, etc... in particular their encoding is nominal, so it is not possible to consider them as numeric variables.
-- all the other variables are encoded as numeric but they are actually categorical variables. 
-- the other variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
+- all the other variables are encoded as numeric but they are actually categorical variables. These variables are encoded using an encoding that is ordinal, so considering they as numeric seems to be a suitable solution (L1, L3, L4 encodings).
 - the "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1: this means that the variable is binary, so we can consider it as a binary variable.
+
+```{r}
+library(rmarkdown)
+library(htmlTable)
+# L1: Average Age Keys
+dataL1 <- as.matrix(data.frame(
+  code = 1:6,
+  description = c("20-30 years", "30-40 years", "40-50 years", "50-60 years", "60-70 years", "70-80 years")
+))
+
+# L3: Total Number Keys
+dataL3 <- as.matrix(data.frame(
+  code = 0:9,
+  description = c("0%", "1-10%", "11-23%", "24-36%", "37-49%", "50-62%", "63-75%", "76-88%", "89-99%", "100%")
+))
+
+# L4: Total Number Keys
+dataL4 <- as.matrix(data.frame(
+  code = 0:9,
+  description = c("0", "1-49", "50-99", "100-199", "200-499", "500-999", "1000-4999", "5000-9999", "10000-19999", "20000")
+))
+
+# Define the titles
+titleL1 <- "L1: Average Age Keys"
+titleL3 <- "L3: Total Number Keys"
+titleL4 <- "L4: Total Number Keys"
+
+# L1: Average Age Keys table
+htmlTable(dataL1, caption = titleL1, row.names = NULL)
+
+# L3: Total Number Keys table
+htmlTable(dataL3, caption = titleL3, row.names = NULL)
+
+# L4: Total Number Keys table
+htmlTable(dataL4, caption = titleL4, row.names = NULL, escape = FALSE)
+```
+
 
 ### Correlation matrix
 ```{r}
@@ -165,7 +205,7 @@ train <- one_hot(train, "MOSTYPE")
 test <- one_hot(test, "MOSTYPE")
 ```
 
-### Fetures scaling
+### Features scaling
 We will conduct Min-Max Normalization on each variable, considering that each variable may belong to a different domain. The target variable CARAVAN is not normalized, since it is a binary variable.
 ```{r}
 minmax <- function(data) {
@@ -231,4 +271,3 @@ ggplot(rose$data, aes(x = CARAVAN)) +
 
 ggsave("graphs/ROSE_rel_freq_CARAVAN.png", width = 10, height = 10)
 ```
-
