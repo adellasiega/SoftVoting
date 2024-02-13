@@ -104,42 +104,6 @@ The dataset is highly unbalanced: only 5.98% of the observations belonging to th
 - all the other variables are encoded as numeric but they are actually categorical variables. These variables are encoded using an encoding that is ordinal, so considering them as numeric seems to be a suitable solution (L1, L3, L4 encodings).
 - the "CARAVAN" variable (response variable) belongs to the L4 encoding. If we check the summary of the "CARAVAN" variable, we can see that the minimum value is 0 and the maximum value is 1: this means that the variable is binary, so we can consider it as a binary variable.
 
-```{r}
-library(rmarkdown)
-library(htmlTable)
-# L1: Average Age Keys
-dataL1 <- as.matrix(data.frame(
-  code = 1:6,
-  description = c("20-30 years", "30-40 years", "40-50 years", "50-60 years", "60-70 years", "70-80 years")
-))
-
-# L3: Total Number Keys
-dataL3 <- as.matrix(data.frame(
-  code = 0:9,
-  description = c("0%", "1-10%", "11-23%", "24-36%", "37-49%", "50-62%", "63-75%", "76-88%", "89-99%", "100%")
-))
-
-# L4: Total Number Keys
-dataL4 <- as.matrix(data.frame(
-  code = 0:9,
-  description = c("0", "1-49", "50-99", "100-199", "200-499", "500-999", "1000-4999", "5000-9999", "10000-19999", "20000")
-))
-
-# Define the titles
-titleL1 <- "L1: Average Age Keys"
-titleL3 <- "L3: Total Number Keys"
-titleL4 <- "L4: Total Number Keys"
-
-# L1: Average Age Keys table
-htmlTable(dataL1, caption = titleL1, row.names = NULL)
-
-# L3: Total Number Keys table
-htmlTable(dataL3, caption = titleL3, row.names = NULL)
-
-# L4: Total Number Keys table
-htmlTable(dataL4, caption = titleL4, row.names = NULL, escape = FALSE)
-```
-
 
 ### Correlation matrix
 ```{r}
