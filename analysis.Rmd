@@ -1,7 +1,7 @@
 ---
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 # Caravan Insurance Challenge
 Dataset source: (https://www.kaggle.com/datasets/uciml/caravan-insurance-challenge).
