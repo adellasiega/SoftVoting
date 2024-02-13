@@ -11,18 +11,42 @@ train <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
 train$CARAVAN <- as.factor(train$CARAVAN)
 test$CARAVAN <- as.factor(test$CARAVAN)
+
+```
+
+
+
+```{r}
+cv <- trainControl(method = "cv", number = 3)
 ```
 
 ```{r}
-rf <- randomForest(CARAVAN ~ ., data = train, ntree = 25, importance = TRUE)
+param_grid <- expand.grid(mtry = c(4, 6, 8, 10))
+```
+
+
+```{r}
+rf_model <- train(CARAVAN ~ .,
+                  data = train,
+                  method = "rf",
+                  trControl = cv,
+                  metric = "Accuracy",
+                  tuneLength = 3,
+                  tuneGrid = param_grid,
+                  verboseIter = TRUE)
 ```
 
 ```{r}
 #test the model
 x_test <- test[, names(test) != "CARAVAN"]
-pred <- predict(rf, x_test)
+pred <- predict(rf_model, x_test)
 ```
 
 ```{r}
 confusionMatrix(pred, test$CARAVAN, positive = "1")
 ```
+
+```{r}
+print(rf_model)
+```
+

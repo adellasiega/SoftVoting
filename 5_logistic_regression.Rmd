@@ -6,61 +6,48 @@ train_rose <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
 ```
 
-Fit the model
 ```{r}
-logistic_model <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
+str(train_rose)
 ```
+The variable MOSTYPE.41 is a dummy variable that is redundant. We will remove it when fitting the model.
+
+```{r}
+logistic_model <- glm(CARAVAN ~ . - MOSTYPE.41,
+                      data = train_rose,
+                      family = "binomial")
+```
+
 ```{r}
 summary(logistic_model)
 ```
 
-The variable MOSTYPE.41 is redundant. Remove it and refit the model. 
-```{r}
-train_rose <- subset(train_rose, select = -MOSTYPE.41)
-test <- subset(test, select = -MOSTYPE.41)
-logistic_model <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
-```
-
-Make predictions of the test set
-```{r}
-x_test <- test[, !names(test) == "CARAVAN"]
-# Make vote predictions
-y_pred <- as.numeric(predict(logistic_model, x_test, type = "response") > 0.5)
-```
-
-Confusion matrix
+Confusion matrix on the train set:
 ```{r}
 library(caret)
-# Change the positive class to 1
-confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = "1")
+y_pred <- as.numeric(predict(logistic_model, type = "response") > 0.5)
+confusionMatrix(factor(y_pred), factor(train_rose$CARAVAN), positive = "1")
 ```
 
 ## VIF analysis
+Evaluate the Variance Inflation Factor (VIF) for the model and remove the variables whose VIF is greater than 10.
 ```{r}
 library(car)
-# Evaluate VIF for the model
 vif_analysis <- vif(logistic_model)
-# Get the variables whose VIF is greater than 10
 variables_to_remove <- names(vif_analysis[vif_analysis > 10])
 print(variables_to_remove)
 ```
 
-Remove such variables
 ```{r}
-train_rose <- train_rose[, !names(train_rose) %in% variables_to_remove]
-test <- test[, !names(test) %in% variables_to_remove]
-logistic_model <- glm(CARAVAN ~ ., data = train_rose, family = "binomial")
-x_test <- test[, !names(test) == "CARAVAN"]
-y_pred <- as.numeric(predict(logistic_model, x_test, type = "response") > 0.5)
+# Create a string that represents the formula
+formula_str <- paste("CARAVAN ~ . -MOSTYPE.41 -", paste(variables_to_remove, collapse = " - "))
+
+# Convert the string to a formula
+formula <- as.formula(formula_str)
+
+# Fit the model
+logistic_model <- glm(formula,
+                      data = train_rose,
+                      family = "binomial")
 ```
 
-```{r}
-summary(logistic_model)
-```
 
-Confusion matrix
-```{r}
-library(caret)
-# Change the positive class to 1
-confusionMatrix(factor(y_pred), factor(test$CARAVAN), positive = "1")
-```
