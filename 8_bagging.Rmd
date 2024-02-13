@@ -154,3 +154,8 @@ comparison <- data.frame(
 )
 kable(comparison, format = "markdown", caption = "Comparison of the performance of the two voting mechanisms")
 ```
+
+## Conclusion
+
+As we can see the Soft voting mechanism outperforms the Hard voting mechanism in every metric on the validation set. In the test
+set, Soft voting is better only in the balanced accuracy, however the accuracy is not a reliable metrics for the test set since it is imbalanced. However, Hard voting performs better in the F1 score.
