@@ -5,23 +5,16 @@ library(randomForest)
 library(caret)
 ```
 
+Load the data and convert the CARAVAN column to a factor
 ```{r}
-#Load the data
 train <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
 train$CARAVAN <- as.factor(train$CARAVAN)
 test$CARAVAN <- as.factor(test$CARAVAN)
-
 ```
-
-
 
 ```{r}
 cv <- trainControl(method = "cv", number = 3)
-```
-
-```{r}
-param_grid <- expand.grid(mtry = c(4, 6, 8, 10))
 ```
 
 
@@ -32,12 +25,10 @@ rf_model <- train(CARAVAN ~ .,
                   trControl = cv,
                   metric = "Accuracy",
                   tuneLength = 3,
-                  tuneGrid = param_grid,
                   verboseIter = TRUE)
 ```
 
 ```{r}
-#test the model
 x_test <- test[, names(test) != "CARAVAN"]
 pred <- predict(rf_model, x_test)
 ```

@@ -1,4 +1,10 @@
 # Logistic Regression
+## Complete model
+```{r}
+library(caret)
+library(ggplot2)
+library(car)
+```
 
 Load the train data set on which ROSE was applied
 ```{r}
@@ -6,48 +12,120 @@ train_rose <- read.csv("data/train_rose.csv")
 test <- read.csv("data/test.csv")
 ```
 
+Remove the column MOSTYPE.41 created during one-hot encoding because it is redundant.
 ```{r}
-str(train_rose)
-```
-The variable MOSTYPE.41 is a dummy variable that is redundant. We will remove it when fitting the model.
-
-```{r}
-logistic_model <- glm(CARAVAN ~ . - MOSTYPE.41,
-                      data = train_rose,
-                      family = "binomial")
+train_rose  <- subset(train_rose, select = -c(MOSTYPE.41))
+test <- subset(test, select = -c(MOSTYPE.41))
 ```
 
+Fit a logistic regression model using all the variables
 ```{r}
-summary(logistic_model)
+complete_model <- glm(
+    CARAVAN ~ .,
+    data = train_rose,
+    family = "binomial"
+    )
+
+summary(complete_model)
 ```
 
-Confusion matrix on the train set:
+Confusion matrix on the test data set for the complete model
 ```{r}
-library(caret)
-y_pred <- as.numeric(predict(logistic_model, type = "response") > 0.5)
-confusionMatrix(factor(y_pred), factor(train_rose$CARAVAN), positive = "1")
+pred <- predict(complete_model, newdata = test, type = "response")
+pred <- ifelse(pred > 0.5, 1, 0)
+confusion_matrix <- confusionMatrix(as.factor(test$CARAVAN), as.factor(pred), positive = "1")
+print(confusion_matrix)
 ```
 
-## VIF analysis
-Evaluate the Variance Inflation Factor (VIF) for the model and remove the variables whose VIF is greater than 10.
+## Reduced model
+Train a model using only the variables whose p-value is less than 0.10 and the coefficients is greater than 0.01
 ```{r}
-library(car)
-vif_analysis <- vif(logistic_model)
-variables_to_remove <- names(vif_analysis[vif_analysis > 10])
-print(variables_to_remove)
+vars <- names(which(summary(complete_model)$coefficients[,4] < 0.01 & summary(complete_model)$coefficients[,1] > abs(0.1)))
+print(vars)
+```
+Fit a logistic regression model using only the selected variables
+```{r}
+vars <- c(vars, "CARAVAN")
+reduced_model <- glm(
+    CARAVAN ~ .,
+    data = train_rose[, vars],
+    family = "binomial"
+    )
 ```
 
 ```{r}
-# Create a string that represents the formula
-formula_str <- paste("CARAVAN ~ . -MOSTYPE.41 -", paste(variables_to_remove, collapse = " - "))
+summary(reduced_model)
+```
 
-# Convert the string to a formula
-formula <- as.formula(formula_str)
+Confusion matrix on the test data set for the reduced model
+```{r}
+pred <- predict(reduced_model, newdata = test, type = "response")
+pred <- ifelse(pred > 0.5, 1, 0)
+confusion_matrix <- confusionMatrix(as.factor(test$CARAVAN), as.factor(pred), positive = "1")
+print(confusion_matrix)
+```
 
-# Fit the model
-logistic_model <- glm(formula,
-                      data = train_rose,
-                      family = "binomial")
+## Stepwise regression
+Considering the variables of the reduced model, perform a stepwise regression to select the best model
+```{r}
+# Stepwise regression
+stepwise_model <- step(
+    glm(
+        CARAVAN ~ .,
+        data = train_rose[, vars],
+        family = "binomial",
+    ),
+    k = log(nrow(train_rose)),
+    direction = "both"
+)
+```
+
+```{r}
+summary(stepwise_model)
+```
+
+Confusion matrix on the test data set for the stepwise model
+```{r}
+pred <- predict(stepwise_model, newdata = test, type = "response")
+pred <- ifelse(pred > 0.5, 1, 0)
+confusion_matrix <- confusionMatrix(as.factor(test$CARAVAN), as.factor(pred), positive = "1")
+print(confusion_matrix)
+```
+
+## Variance Inflation Factor
+Calculate the VIF for the complete, reduced models, and the stepwise model.
+Plot the results using a color map
+
+```{r}
+
+vif_visualizer <- function(model) {
+  # Calculate the VIF for the complete model
+  vif_values <- vif(model)
+  
+  # Create a data frame for plotting
+  vif_data <- data.frame(variable = names(vif_values), vif = vif_values)
+  
+  # Plot VIF
+  ggplot(vif_data, aes(x = reorder(variable, -vif), y = vif)) +
+    geom_bar(stat = "identity", fill = "skyblue") +
+    coord_flip() +
+    labs(title = "Variance Inflation Factor (VIF)",
+         x = "Variable",
+         y = "VIF") +
+    theme_minimal()
+}
+
+vif_visualizer(complete_model)
+vif_visualizer(reduced_model)
+vif_visualizer(stepwise_model)
+
+```
+
+
+## Bayesian Information Criterion
+Calculate the BIC for the complete, reduced models, and the stepwise model
+```{r}
+BIC(complete_model, reduced_model, stepwise_model)
 ```
 
 
