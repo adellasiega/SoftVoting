@@ -37,6 +37,8 @@ pred <- predict(rf_model, x_test)
 confusionMatrix(pred, test$CARAVAN, positive = "1")
 ```
 
+
+
 ```{r}
 print(rf_model)
 ```

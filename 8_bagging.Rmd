@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Bagging
 
 Bagging, which stands for Bootstrap Aggregating, is an ensemble method which consists in generating m bootstrap samples from the training set and training a model on each of them. The final prediction is obtained by leveraging a voting mechanism to combine the predictions of the m models in one final prediction. It has been prooved that bagging provides stability to learning algorithms and reduces variance, therefore we will apply it to our case study. We are going to use both Soft Voting and Hard Voting to combine the predictions of the m models and compare their performance.

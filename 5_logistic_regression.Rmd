@@ -23,40 +23,51 @@ Remove the column MOSTYPE.41 created during one-hot encoding because it is redun
 train_rose  <- subset(train_rose, select = -c(MOSTYPE.41))
 test <- subset(test, select = -c(MOSTYPE.41))
 ```
-
+```{r}
+print(dim(train_rose))
+```
 ## Complete model
 Fit a logistic regression model using all the variables
 ```{r}
 complete_model <- glm(
     CARAVAN ~ .,
     data = train_rose,
-    family = "binomial"
+    family = binomial(link = "logit")
     )
 
 summary(complete_model)
 ```
+Obviusly, this model is not interpretable because it uses all the variables. 
+We notice that many variable could be not significant and could be removed, many
+p-values are greater than 0.05. According to the great number of variables, we could
+have multicollinearity.
+
+Let's ceck the performance of the model on the test set.
 
 Confusion matrix on the test data set for the complete model
 ```{r}
 pred <- predict(complete_model, newdata = test, type = "response")
 ```
-ROC curve for the complete model
+
+ROC curve for the complete model on the test set
 ```{r}
 roc.plot(test$CARAVAN, pred)
 ```
-Confusion matrix for the complete model
+
+Confusion matrix for the complete model on the test set
 ```{r}
 pred <- ifelse(pred > 0.5, 1, 0)
 confusion_matrix <-  confusionMatrix(as.factor(test$CARAVAN), as.factor(pred), positive = "1")
 print(confusion_matrix)
 ```
 
-The model uses all the variables, but some of them may not be significant.
-We can use the Variance Inflation Factor (VIF) to check for multicollinearity.
+Our goal is to reduce the number of variables and to make the model more interpretable.
 
-## Variance Inflation Factor
-Calculate the VIF for the complete, reduced models, and the stepwise model.
-Plot the results using a color map
+We can use the Variance Inflation Factor (VIF) to check for multicollinearity.
+The VIF measures how much the variance of the estimated regression coefficients
+are inflated as compared to when the predictor variables are not linearly related.
+A VIF of 1 indicates no multicollinearity, while between 1 and 10 indicates 
+moderate multicollinearity, and greater than 10 indicates severe multicollinearity.
 
 ```{r}
 vif_visualizer <- function(model) {
@@ -77,18 +88,36 @@ vif_visualizer <- function(model) {
 vif_visualizer(complete_model)
 ```
 The VIF plot shows that are variables that cause multicollinearity. We have to
-remove some varialbes to reduce the multicollinearity and to make the model model more interpretable.
+remove some variables to reduce the multicollinearity and to make the model
+model more interpretable.
 
 
 ## Reduced model
-We can start by dropping the variables that are likely to be not different from zero and with a very small effect on the response variable. Select the variables that have a p-value less than 0.10 and a coefficient greater than 0.01. This seems to be a good compromise between the number of variables and the model s performance.
+We can start by removing the variables that have VIF greater than 10.
+```{r}
+vif_values <- vif(complete_model)
+small_VIF_vars <- names(vif_values[vif_values < 10])
+print(small_VIF_vars)
+```
+
+Let's drop the variables that are likely to be not different from zero and with
+a very small effect on the response variable.
+Select the variables that have a p-value less than 0.10 and a coefficient greater
+than 0.01. This seems to be a good compromise between the number of variables
+and the model's performance.
 
 ```{r}
-vars <- names(which(summary(complete_model)$coefficients[,4] < 0.10 & summary(complete_model)$coefficients[,1] > abs(0.01)))
+significant_vars <- names(which(summary(complete_model)$coefficients[,4] < 0.10 & summary(complete_model)$coefficients[,1] > abs(0.01)))
+print(significant_vars)
+```
+
+```{r}
+#Evaluate the intersection of the two sets of variables
+vars <- intersect(small_VIF_vars, significant_vars)
 print(vars)
 ```
 
-Fit a logistic regression model using only the selected variables
+Fit a logistic regression model using the selected variables
 ```{r}
 vars <- c(vars, "CARAVAN")
 reduced_model <- glm(
@@ -115,7 +144,7 @@ We removed 61 variables from the complete model, and the model performance metri
 
 ## Stepwise regression
 Considering the variables of the reduced model, perform a stepwise regression in order to select the best subset of variables. We use the Bayesian Information Criterion (BIC) to select the best model because we have a large number of variables and the BIC penalizes the number of variables in the model more than Akaike Information Criterion.
-```{r}
+```{r, results='hide'}
 # Stepwise regression
 stepwise_model <- step(
     glm(
@@ -141,13 +170,13 @@ ROC curve for the stepwise model
 ```{r}
 roc.plot(test$CARAVAN, pred)
 ```
+
+Confusion matrix for the stepwise model
 ```{r}
 pred <- ifelse(pred > 0.5, 1, 0)
 confusion_matrix <- confusionMatrix(as.factor(test$CARAVAN), as.factor(pred), positive = "1")
 print(confusion_matrix)
 ```
-
-The stepwise model has 28 variables, and the model performance metrics are similar to the reduced model.
 
 
 ## Bayesian Information Criterion Summary
@@ -161,22 +190,24 @@ We reached the goal to reduce the number of variables without worsening the mode
 
 The stepwise model, with 28 variables, reaches the best balanced accuracy on the test set, 0.5430. The factors that result to influence more the target variable are:
 
-    -MOSTYPE.12 Affluent young families,
-    if this variable is 1 (True), the log odds of 
-    the target variable to be 1 increases by 10.38.
 
-    -PPLEZIER Contribution boat policies
+    -PPLEZIER Contribution boat policies, if PPLEZIER increases by 1, 
+    the log odds of the target varaible to be 1 increases by 6.25/9 = 0.69 
 
-    -PFIETS Contribution bicycle policies
+    -PFIETS Contribution bicycle policies, if PFIETS increases by 1, the log odds
+    of the target varaible to be 1 increases by 7.38/9 = 0.82
+    
+    -PPERSAUT Contribution car policies, if the variable increases by 1, the 
+    log odds of the target variable to be 1 increases by 2.07/9 = 0.23.
 
     -MOSTYPE.36 Couples with teens, Married with children,
     if this variable is 1 (True), the log odds of the
-    target variable to be 1 increases by 7.03.
+    target variable to be 1 increases by 5.39.
 
     -MOSTYPE.38 Traditional families,  if this variable
     is 1 (True), the log odds of the target variable
-    to be 1 increases by 6.49
+    to be 1 increases by 5.5
 
-In particular these vairables have a positive effect on the target variable, meaning that the higher the value of the variable, the higher the probability of the target variable to be 1.
+In particular, these variables have a positive effect on the target variable, meaning that the higher the value of the variable, the higher the probability of the target variable to be 1.
 The interpretation of the coefficient is note very straightforward because of the encoding and the normalization process applied to the data.
 
